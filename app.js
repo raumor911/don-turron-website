@@ -13,9 +13,17 @@
     {src:'assets/products/humidor-viaje-detalles.webp', label:'Cierres y humidificador'},
     {src:'assets/products/humidor-viaje-ambientado.webp', label:'Vista ambientada'}
   ];
+  const CENICERO_VIEWS = [
+    {src:'assets/products/set-portatil-conjunto.webp', label:'Vista del conjunto completo'},
+    {src:'assets/products/set-portatil-herramientas.webp', label:'Guillotina, cortador en V y punzón'},
+    {src:'assets/products/set-portatil-cenicero.webp', label:'Cenicero portátil de cerámica en uso; puro no incluido'},
+    {src:'assets/products/set-portatil-punzon.webp', label:'Detalle del punzón (punch)'},
+    {src:'assets/products/set-portatil-cortador-v.webp', label:'Detalle del cortador en V'}
+  ];
+  const photosOf = p => p.id === REAL_HUMIDOR_ID ? PHOTO_VIEWS : p.id === 'cenicero-mesa' ? CENICERO_VIEWS : null;
   function productPicture(p, placement) {
-    if (p.id !== REAL_HUMIDOR_ID) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" loading="lazy" />`;
-    return `<img class="travel-photo travel-photo-${placement}" src="${PHOTO_VIEWS[0].src}" alt="Fotografía de ${html(p.name)}; ${PHOTO_VIEWS[0].label}" loading="lazy" width="620" height="620" />`;
+    if (!photosOf(p)) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" loading="lazy" />`;
+    return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${photosOf(p)[0].src}" alt="Fotografía de ${html(p.name)}; ${photosOf(p)[0].label}" loading="lazy" width="620" height="620" />`;
   }
   let selectedFilter = 'todos';
   let lastFocused = null;
@@ -152,7 +160,7 @@
   function openProduct(id, trigger) {
     const p = productById(id);
     if (!p) return;
-    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${p.id === REAL_HUMIDOR_ID ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas del humidor de viaje">${PHOTO_VIEWS.map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${p.id === REAL_HUMIDOR_ID ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p><ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul><p class="modal-caption">Precio, inventario y especificaciones pendientes de validación.</p><button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
+    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p><ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul><p class="modal-caption">Precio, inventario y especificaciones pendientes de validación.</p><button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
     openDialog($('product-modal'), $('product-modal-backdrop'), trigger);
   }
   function trapFocus(event) {
@@ -194,9 +202,11 @@
         const frame=e.currentTarget.querySelector('.travel-photo-modal');
         if (!frame) return;
         const i=Number(view.dataset.photoIndex);
-        if (!Number.isInteger(i) || i<0 || i>=PHOTO_VIEWS.length) return;
-        frame.src=PHOTO_VIEWS[i].src;
-        frame.alt='Fotografía del humidor de viaje para cinco puros: '+PHOTO_VIEWS[i].label;
+        const selectedProduct=productById(frame.dataset.productId);
+        const views=selectedProduct && photosOf(selectedProduct);
+        if (!views || !Number.isInteger(i) || i<0 || i>=views.length) return;
+        frame.src=views[i].src;
+        frame.alt='Fotografía de '+selectedProduct.name+': '+views[i].label;
         e.currentTarget.querySelectorAll('[data-photo-index]').forEach(button => button.setAttribute('aria-pressed', String(button === view)));
       }
     });

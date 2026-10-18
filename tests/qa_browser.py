@@ -58,6 +58,16 @@ with sync_playwright() as p:
   assert 'Cierres y humidificador' in page.locator('.travel-photo-modal').get_attribute('alt'), 'Galería con interacción'
   assert page.locator('.travel-gallery-controls button[data-photo-index="2"]').get_attribute('aria-pressed')=='true', 'Galería accesible'
   page.locator('#product-modal-close').click()
+  page.locator('[data-filter="ceniceros"]').click()
+  assert page.locator('.product-card').count()==1, 'Filtro de ceniceros preservado'
+  assert page.locator('.product-card[data-id="cenicero-mesa"]').count()==1, 'Misma estructura de seis fichas'
+  page.locator('.product-card [data-detail]').click()
+  assert page.locator('#product-modal-name').inner_text()=='Set portátil de cenicero y cortadores', 'Ficha del nuevo set'
+  assert page.locator('.travel-gallery-controls button').count()==5, 'Cinco fotografías del set'
+  page.locator('.travel-gallery-controls button[data-photo-index="4"]').click()
+  assert 'cortador en V' in page.locator('.travel-photo-modal').get_attribute('alt'), 'Interacción de la quinta fotografía'
+  assert page.locator('.travel-gallery-controls button[data-photo-index="4"]').get_attribute('aria-pressed')=='true', 'Estado accesible'
+  page.locator('#product-modal-close').click()
   if name=='mobile':
    page.locator('#menu-toggle').click()
    assert page.locator('#mobile-nav').is_visible(),'menú móvil'
