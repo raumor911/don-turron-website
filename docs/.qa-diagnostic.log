@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "/home/runner/work/don-turron-website/don-turron-website/tests/qa_browser.py", line 78, in <module>
-    assert page.locator('.travel-photo-modal').get_attribute('src').endswith('estuche-6-cuidado.webp'), 'Cambio de fotografía'
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: Cambio de fotografía
