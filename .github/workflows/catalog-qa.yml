@@ -1,7 +1,7 @@
 name: Don Turrón — catálogo y navegación
 on:
   push:
-    branches: [main, feat/don-turron-editorial-v3]
+    branches: [main]
     paths:
       - 'catalog.js'
       - 'app.js'
