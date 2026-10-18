@@ -1,0 +1,32 @@
+name: QA humidor viaje
+on:
+  push:
+    paths:
+      - '.github/workflows/qa-humidor-v1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Sintaxis JavaScript
+        run: |
+          node --check app.js
+          node --check catalog.js
+          node --check premium.js
+          node --check config.js
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar navegador para pruebas
+        run: |
+          python -m pip install --disable-pip-version-check playwright
+          python -m playwright install --with-deps chromium
+      - name: Probar catálogo, imágenes y carrito
+        run: python tests/qa_browser.py
