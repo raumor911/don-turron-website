@@ -1,0 +1,69 @@
+name: Atelier Motion V2 · integración de diseño
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-atelier-motion-v2.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  integracion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout rama principal
+        uses: actions/checkout@v4
+      - name: Instalar assets de movimiento verificados
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/premium-css.gz.b64 <<'PREMIUM_CSS'
+          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
+          PREMIUM_CSS
+          cat > /tmp/premium-js.gz.b64 <<'PREMIUM_JS'
+          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
+          PREMIUM_JS
+          base64 -d /tmp/premium-css.gz.b64 | gzip -dc > premium.css
+          base64 -d /tmp/premium-js.gz.b64 | gzip -dc > premium.js
+          echo '7d481ae0789a414c5e69b470ddc8f5b141d631503bb4e44eb558f7b322187f71  premium.css' | sha256sum -c -
+          echo 'd2050be8b3dd444411dba9d5bd8a979e07ace9d5dda66c5f962814efc95ecaf7  premium.js' | sha256sum -c -
+      - name: Integrar hojas, scripts y titular editorial
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          edits = [
+            ('<link rel="stylesheet" href="styles.css" />','<link rel="stylesheet" href="styles.css" />\n  <link rel="stylesheet" href="premium.css" />'),
+            ('<script defer src="app.js"></script>','<script defer src="app.js"></script>\n  <script defer src="premium.js"></script>'),
+            ('El arte está<br>en los <em>detalles.</em>','<span class="dt-title-line">El arte está</span><span class="dt-title-line">en los <em>detalles.</em></span>')
+          ]
+          for old,new in edits:
+            if old not in s:
+              raise RuntimeError('No se encontró el ancla HTML: '+old)
+            s=s.replace(old,new,1)
+          p.write_text(s,encoding='utf-8')
+          assert 'Accesorios para personas adultas' not in s
+          assert s.count('src="premium.js"') == 1
+          assert s.count('href="premium.css"') == 1
+          PY
+      - name: Validaciones estáticas
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check app.js
+          node --check premium.js
+          node --check catalog.js
+          node --check config.js
+          test -f assets/don-turron-emblema.jpg
+          test -f assets/don-turron-monograma.png
+      - name: Publicar cambios validados
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html premium.css premium.js
+          if ! git diff --cached --quiet; then
+            git commit -m 'feat: atelier motion V2 luxury interaction layer'
+            git push origin HEAD:main
+          fi
