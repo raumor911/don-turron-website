@@ -68,6 +68,16 @@ with sync_playwright() as p:
   assert 'cortador en V' in page.locator('.travel-photo-modal').get_attribute('alt'), 'Interacción de la quinta fotografía'
   assert page.locator('.travel-gallery-controls button[data-photo-index="4"]').get_attribute('aria-pressed')=='true', 'Estado accesible'
   page.locator('#product-modal-close').click()
+  page.locator('[data-filter="estuches"]').click()
+  assert page.locator('.product-card').count()==1, 'La categoría estuches mantiene una sola tarjeta'
+  assert page.locator('.product-card[data-id="estuche-viaje"]').count()==1, 'Identificador original preservado'
+  page.locator('.product-card [data-detail]').click()
+  assert page.locator('#product-modal-name').inner_text()=='Estuche porta puros con humidificador', 'Título del tercer producto'
+  assert page.locator('.travel-gallery-controls button').count()==5, 'Cinco vistas del estuche'
+  page.locator('.travel-gallery-controls button[data-photo-index="3"]').click()
+  assert page.locator('.travel-photo-modal').get_attribute('src').endswith('estuche-6-cuidado.webp'), 'Cambio de fotografía'
+  assert page.locator('.travel-gallery-controls button[data-photo-index="3"]').get_attribute('aria-pressed')=='true', 'Control de galería accesible'
+  page.locator('#product-modal-close').click()
   if name=='mobile':
    page.locator('#menu-toggle').click()
    assert page.locator('#mobile-nav').is_visible(),'menú móvil'

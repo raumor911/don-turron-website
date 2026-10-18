@@ -1,40 +1,36 @@
-name: Validación de catálogo Don Turrón
+name: Don Turrón — catálogo y navegación
 on:
   push:
+    branches: [main]
     paths:
-      - '.github/workflows/catalog-qa.yml'
       - 'catalog.js'
       - 'app.js'
-      - 'premium.js'
       - 'premium.css'
-      - 'assets/products/**'
+      - 'index.html'
       - 'tests/qa_browser.py'
+      - 'assets/products/**'
+      - '.github/workflows/catalog-qa.yml'
   workflow_dispatch:
-
 permissions:
   contents: read
-
 jobs:
-  catalog:
-    name: Escritorio y móvil
+  smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 12
     steps:
-      - name: Obtener código
-        uses: actions/checkout@v4
-      - name: Preparar Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Verificar JavaScript
+      - name: Validación de JavaScript
         run: |
           node --check app.js
           node --check catalog.js
           node --check premium.js
           node --check config.js
-      - name: Instalar Playwright y Chromium
+      - name: Dependencias para pruebas de navegador
         run: |
-          python -m pip install --disable-pip-version-check playwright
-          python -m playwright install chromium --with-deps
-      - name: Comprobar catálogo y galerías con navegador real
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Pruebas escritorio y móvil
         run: python tests/qa_browser.py
