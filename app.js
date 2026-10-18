@@ -27,7 +27,11 @@
     {src:'assets/products/estuche-6-cuidado.webp',label:'Recomendación visual para humedecer la esponja'},
     {src:'assets/products/estuche-6-cierre.webp',label:'Detalle del cierre de cremallera'}
   ];
-  const photosOf = p => p.id === REAL_HUMIDOR_ID ? PHOTO_VIEWS : p.id === 'cenicero-mesa' ? CENICERO_VIEWS : p.id === 'estuche-viaje' ? ESTUCHE_VIEWS : null;
+  const KIT_VIAJE_VIEWS = [
+    {src:'assets/products/estuche-set-lounge.webp',label:'Estuche portátil y accesorios en cigar lounge; composición ilustrativa'},
+    {src:'assets/products/estuche-set-medidas.webp',label:'Lámina técnica con medidas indicativas de estuche y accesorios'}
+  ];
+  const photosOf = p => p.id === REAL_HUMIDOR_ID ? PHOTO_VIEWS : p.id === 'cenicero-mesa' ? CENICERO_VIEWS : p.id === 'estuche-viaje' ? ESTUCHE_VIEWS : p.id === 'estuche-kit-viaje' ? KIT_VIAJE_VIEWS : null;
   function productPicture(p, placement) {
     if (!photosOf(p)) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" loading="lazy" />`;
     return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${photosOf(p)[0].src}" alt="Fotografía de ${html(p.name)}; ${photosOf(p)[0].label}" loading="lazy" width="620" height="620" />`;

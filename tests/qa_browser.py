@@ -69,14 +69,24 @@ with sync_playwright() as p:
   assert page.locator('.travel-gallery-controls button[data-photo-index="4"]').get_attribute('aria-pressed')=='true', 'Estado accesible'
   page.locator('#product-modal-close').click()
   page.locator('[data-filter="estuches"]').click()
-  assert page.locator('.product-card').count()==1, 'La categoría estuches mantiene una sola tarjeta'
-  assert page.locator('.product-card[data-id="estuche-viaje"]').count()==1, 'Identificador original preservado'
-  page.locator('.product-card [data-detail]').click()
+  assert page.locator('.product-card').count()==2, 'Dos estuches en la misma categoría'
+  assert page.locator('.product-card[data-id="estuche-viaje"]').count()==1, 'Tercer producto preservado'
+  assert page.locator('.product-card[data-id="estuche-kit-viaje"]').count()==1, 'Cuarto producto sin ampliar las seis tarjetas'
+  page.locator('.product-card[data-id="estuche-viaje"] [data-detail]').click()
   assert page.locator('#product-modal-name').inner_text()=='Estuche porta puros con humidificador', 'Título del tercer producto'
-  assert page.locator('.travel-gallery-controls button').count()==5, 'Cinco vistas del estuche'
+  assert page.locator('.travel-gallery-controls button').count()==5, 'Cinco vistas del tercer producto'
   page.locator('.travel-gallery-controls button[data-photo-index="3"]').click()
-  assert 'Recomendación visual para humedecer la esponja' in page.locator('.travel-photo-modal').get_attribute('alt'), 'Cambio de fotografía'
-  assert page.locator('.travel-gallery-controls button[data-photo-index="3"]').get_attribute('aria-pressed')=='true', 'Control de galería accesible'
+  assert 'Recomendación visual para humedecer la esponja' in page.locator('.travel-photo-modal').get_attribute('alt'), 'Cambio de fotografía del tercer producto'
+  assert page.locator('.travel-gallery-controls button[data-photo-index="3"]').get_attribute('aria-pressed')=='true', 'Galería accesible anterior'
+  page.locator('#product-modal-close').click()
+  page.locator('.product-card[data-id="estuche-kit-viaje"] [data-detail]').click()
+  assert page.locator('#product-modal-name').inner_text()=='Estuche portátil para 4 a 8 puros', 'Ficha del cuarto producto'
+  assert page.locator('.travel-gallery-controls button').count()==2, 'Dos fotografías del cuarto producto'
+  page.locator('.travel-gallery-controls button[data-photo-index="1"]').click()
+  assert 'Lámina técnica con medidas indicativas' in page.locator('.travel-photo-modal').get_attribute('alt'), 'Cambio de vista técnica'
+  assert page.locator('.travel-gallery-controls button[data-photo-index="1"]').get_attribute('aria-pressed')=='true', 'Galería del cuarto producto accesible'
+  assert (PROJECT/'assets/products/estuche-set-lounge.webp').is_file(), 'Fotografía editorial incorporada'
+  assert (PROJECT/'assets/products/estuche-set-medidas.webp').is_file(), 'Lámina técnica incorporada'
   page.locator('#product-modal-close').click()
   if name=='mobile':
    page.locator('#menu-toggle').click()
