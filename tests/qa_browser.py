@@ -88,6 +88,21 @@ with sync_playwright() as p:
   assert (PROJECT/'assets/products/estuche-set-lounge.webp').is_file(), 'Fotografía editorial incorporada'
   assert (PROJECT/'assets/products/estuche-set-medidas.webp').is_file(), 'Lámina técnica incorporada'
   page.locator('#product-modal-close').click()
+  page.locator('[data-filter="soportes"]').click()
+  assert page.locator('.product-card').count()==1, 'Filtro de soportes sin cambiar el diseño'
+  assert page.locator('.product-card[data-id="reposa-puros-plegable"]').count()==1, 'Quinto producto en una tarjeta existente'
+  assert page.locator('.category-tile[data-category="soportes"]').count()==1, 'Categoría de soportes disponible'
+  page.locator('.product-card[data-id="reposa-puros-plegable"] [data-detail]').click()
+  assert page.locator('#product-modal-name').inner_text()=='Reposa puros plegable de acero inoxidable', 'Detalle del quinto artículo'
+  assert page.locator('.travel-gallery-controls button').count()==3, 'Tres fotografías del reposa puros'
+  page.locator('.travel-gallery-controls button[data-photo-index="2"]').click()
+  assert 'en negro' in page.locator('.travel-photo-modal').get_attribute('alt'), 'Vista de la variante negra'
+  assert page.locator('.travel-gallery-controls button[data-photo-index="2"]').get_attribute('aria-pressed')=='true', 'Selección accesible de variante'
+  page.locator('#product-modal-content [data-add]').click()
+  assert page.locator('#cart-count').inner_text()=='2', 'Añadir soporte sin romper selección'
+  page.locator('#product-modal-close').click()
+  for asset in ['reposa-puros-dos-acabados.webp','reposa-puros-plata.webp','reposa-puros-negro.webp']:
+   assert (PROJECT/'assets/products'/asset).is_file(), f'Falta imagen {asset}'
   if name=='mobile':
    page.locator('#menu-toggle').click()
    assert page.locator('#mobile-nav').is_visible(),'menú móvil'

@@ -31,7 +31,12 @@
     {src:'assets/products/estuche-set-lounge.webp',label:'Estuche portátil y accesorios en cigar lounge; composición ilustrativa'},
     {src:'assets/products/estuche-set-medidas.webp',label:'Lámina técnica con medidas indicativas de estuche y accesorios'}
   ];
-  const photosOf = p => p.id === REAL_HUMIDOR_ID ? PHOTO_VIEWS : p.id === 'cenicero-mesa' ? CENICERO_VIEWS : p.id === 'estuche-viaje' ? ESTUCHE_VIEWS : p.id === 'estuche-kit-viaje' ? KIT_VIAJE_VIEWS : null;
+  const REPOSA_PUROS_VIEWS = [
+    {src:'assets/products/reposa-puros-dos-acabados.webp',label:'Versiones plata y negro sobre fondo mineral oscuro'},
+    {src:'assets/products/reposa-puros-plata.webp',label:'Reposa puros plegable de acero inoxidable en plata'},
+    {src:'assets/products/reposa-puros-negro.webp',label:'Reposa puros plegable de acero inoxidable en negro'}
+  ];
+  const photosOf = p => p.id === REAL_HUMIDOR_ID ? PHOTO_VIEWS : p.id === 'cenicero-mesa' ? CENICERO_VIEWS : p.id === 'estuche-viaje' ? ESTUCHE_VIEWS : p.id === 'estuche-kit-viaje' ? KIT_VIAJE_VIEWS : p.id === 'reposa-puros-plegable' ? REPOSA_PUROS_VIEWS : null;
   function productPicture(p, placement) {
     if (!photosOf(p)) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" loading="lazy" />`;
     return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${photosOf(p)[0].src}" alt="Fotografía de ${html(p.name)}; ${photosOf(p)[0].label}" loading="lazy" width="620" height="620" />`;
