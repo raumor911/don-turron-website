@@ -1,0 +1,117 @@
+/* DON TURRÓN / ATELIER MOTION
+   V2 · Opt-in enhancement. Brand first, movement second.
+   All effects degrade gracefully without JavaScript. */
+:root{--dt-ease:cubic-bezier(.22,1,.36,1);--dt-gold:#caab7b;--dt-gold-soft:#ead6b6}
+html{scroll-behavior:smooth}
+body{overflow-x:clip}
+/* An extremely fine progress mark, not a competing navigation element. */
+.dt-progress{position:fixed;inset:0 auto auto 0;width:100%;height:2px;z-index:38;pointer-events:none;background:linear-gradient(90deg,#8e6b40,#efce94 52%,#a77d47);transform:scaleX(0);transform-origin:left;will-change:transform}
+/* The brand stays tactile, yet restrained. */
+.brand-icon img,.footer-brand img{transition:filter .65s var(--dt-ease),transform .65s var(--dt-ease)}
+.brand:hover .brand-icon img,.brand:focus-visible .brand-icon img,.footer-brand:hover img{transform:rotate(-4deg) scale(1.045);filter:brightness(0) saturate(100%) invert(86%) sepia(28%) saturate(572%) hue-rotate(344deg) brightness(99%) contrast(94%)}
+.desktop-nav a,.footer-links a{position:relative;transition:color .35s var(--dt-ease)}
+.desktop-nav a::after,.footer-links a::after{content:"";position:absolute;bottom:-9px;left:0;right:0;height:1px;background:var(--dt-gold);transform:scaleX(0);transform-origin:left;transition:transform .55s var(--dt-ease)}
+.desktop-nav a:hover::after,.desktop-nav a:focus-visible::after,.footer-links a:hover::after,.footer-links a:focus-visible::after{transform:scaleX(1)}
+/* Entrance is choreographed: typography and emblem never wait for a loader. */
+.hero .hero-grid{isolation:isolate}
+.hero .hero-art{transition:filter 1.3s var(--dt-ease)}
+.hero .hero-photo{filter:brightness(.88) contrast(1.045);transition:filter 1.5s var(--dt-ease)}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(520px circle at var(--dt-x,73%) var(--dt-y,38%),rgba(225,178,104,.105),transparent 70%);mix-blend-mode:screen}
+.hero-copy{isolation:isolate}
+.hero h1 .dt-title-line{display:block;overflow:visible}
+.hero h1 .dt-title-line em{display:inline-block;position:relative}
+.hero h1 .dt-title-line em::after{content:"";position:absolute;left:0;bottom:-.09em;width:100%;height:1px;background:linear-gradient(90deg,transparent,#d9b37c 24%,#a97942 80%,transparent);transform:scaleX(0);transform-origin:left;opacity:.8;transition:transform 1.6s var(--dt-ease) .7s}
+html.dt-ready .hero h1 .dt-title-line em::after{transform:scaleX(1)}
+html.dt-ready .hero-eyebrow{animation:dt-rise .9s var(--dt-ease) both}
+html.dt-ready .hero h1 .dt-title-line:first-child{animation:dt-rise 1.1s var(--dt-ease) .12s both}
+html.dt-ready .hero h1 .dt-title-line:nth-child(2){animation:dt-rise 1.1s var(--dt-ease) .26s both}
+html.dt-ready .hero-copy>p{animation:dt-rise 1.05s var(--dt-ease) .44s both}
+html.dt-ready .hero-links{animation:dt-rise 1s var(--dt-ease) .55s both}
+html.dt-ready .hero-footnote{animation:dt-fade 1s ease .8s both}
+html.dt-ready .hero-art{animation:dt-hero-light 1.8s var(--dt-ease) both}
+@keyframes dt-rise{from{opacity:0;transform:translate3d(0,22px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes dt-fade{from{opacity:0}to{opacity:1}}
+@keyframes dt-hero-light{from{opacity:.45;filter:brightness(.65)}to{opacity:1;filter:brightness(1)}}
+/* Gold should catch light on interaction, never resemble a flashy app button. */
+.btn-gold{position:relative;isolation:isolate;overflow:hidden;box-shadow:inset 0 1px rgba(255,242,215,.3),0 9px 30px rgba(0,0,0,.075);transition:background .5s var(--dt-ease),transform .55s var(--dt-ease),box-shadow .55s var(--dt-ease)}
+.btn-gold::before{content:"";position:absolute;top:-100%;bottom:-100%;width:40%;left:-65%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .9s var(--dt-ease);pointer-events:none}
+.btn-gold:hover::before,.btn-gold:focus-visible::before{left:130%}
+.btn-gold:hover{box-shadow:inset 0 1px rgba(255,242,215,.45),0 13px 34px rgba(0,0,0,.13);transform:translateY(-2px)}
+.btn span,.text-link span,.light-text-link span{display:inline-block;transition:transform .5s var(--dt-ease)}
+.btn:hover span,.btn:focus-visible span,.text-link:hover span,.text-link:focus-visible span,.light-text-link:hover span,.light-text-link:focus-visible span{transform:translate(3px,-3px)}
+.hero-scroll b{display:inline-block;animation:dt-scroll 2.9s ease-in-out infinite}
+@keyframes dt-scroll{0%,100%{transform:translateY(0);opacity:.7}55%{transform:translateY(5px);opacity:1}}
+/* Reveal only when the script has registered an observer. */
+html.dt-ready .dt-reveal{opacity:1;transform:none}
+html.dt-ready .dt-reveal.dt-inview{animation:dt-rise 1s var(--dt-ease) both;animation-delay:var(--dt-delay,0ms)}
+/* Fine ruled borders draw across the editorial segments. */
+.section-header .eyebrow,.center-heading .eyebrow,.faq-layout .eyebrow{position:relative}
+.section-header .eyebrow::after,.center-heading .eyebrow::after,.faq-layout .eyebrow::after{content:"";display:block;width:24px;height:1px;background:#ac8550;margin-top:13px;transform-origin:left;transform:scaleX(.35);transition:transform 1s var(--dt-ease)}
+.dt-inview .eyebrow::after{transform:scaleX(1)}
+/* Category showcases: a controlled halo and an icon that travels along a precise arc. */
+.category-tile{outline-offset:3px;transition:box-shadow .7s var(--dt-ease)}
+.category-tile::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0;background:radial-gradient(330px circle at var(--dt-x,60%) var(--dt-y,30%),rgba(248,207,142,.18),transparent 72%);transition:opacity .55s ease}
+.category-index,.category-caption{position:relative;z-index:1}
+.category-tile .cat-bg{transition:transform 1.25s var(--dt-ease),opacity 1s var(--dt-ease)}
+.category-tile .circle-arrow{transition:transform .65s var(--dt-ease),color .45s,border-color .45s,background .45s}
+.category-tile:hover,.category-tile:focus-visible{box-shadow:0 18px 40px rgba(35,26,16,.19)}
+.category-tile:hover::before,.category-tile:focus-visible::before{opacity:1}
+.category-tile:hover .circle-arrow,.category-tile:focus-visible .circle-arrow{transform:rotate(45deg);background:#d2ad78;color:#1e1710;border-color:#d2ad78}
+.category-tile:hover .cat-bg,.category-tile:focus-visible .cat-bg{transform:scale(1.075)}
+.category-tile .category-caption h3{transition:transform .65s var(--dt-ease)}
+.category-tile:hover .category-caption h3,.category-tile:focus-visible .category-caption h3{transform:translateY(-3px)}
+/* Curated pieces: no dramatic card flip or imprecise elastic motion. */
+.product-card{transition:transform .8s var(--dt-ease),box-shadow .8s var(--dt-ease),border-color .5s ease}
+.product-card:hover,.product-card:focus-within{transform:translateY(-5px);box-shadow:0 22px 48px rgba(63,46,27,.105);border-color:#cabb9f}
+.product-art::before{content:"";position:absolute;z-index:1;inset:0;opacity:0;pointer-events:none;background:radial-gradient(250px circle at var(--dt-x,50%) var(--dt-y,40%),rgba(244,206,149,.19),transparent 75%);transition:opacity .65s ease}
+.product-card:hover .product-art::before,.product-card:focus-within .product-art::before{opacity:1}
+.product-art img{transition:transform 1.1s var(--dt-ease),filter 1s var(--dt-ease);filter:drop-shadow(0 12px 14px rgba(0,0,0,.12))}
+.product-card:hover .product-art img,.product-card:focus-within .product-art img{transform:translateY(-5px) scale(1.045);filter:drop-shadow(0 18px 20px rgba(0,0,0,.2))}
+.product-quick{display:grid;place-items:center;overflow:hidden;transition:transform .65s var(--dt-ease),background .45s var(--dt-ease),color .45s var(--dt-ease),border-color .45s}
+.product-quick:hover,.product-quick:focus-visible{transform:rotate(45deg);background:#dcb989;color:#1a140e;border-color:#dcb989}
+.add-product{position:relative;transition:color .3s ease}
+.add-product::after{content:"";height:1px;position:absolute;bottom:3px;left:8px;right:0;background:#af8555;transform:scaleX(0);transform-origin:left;transition:transform .45s var(--dt-ease)}
+.add-product:hover::after,.add-product:focus-visible::after{transform:scaleX(1)}
+.add-product span{display:inline-block;transition:transform .45s var(--dt-ease)}
+.add-product:hover span,.add-product:focus-visible span{transform:rotate(90deg)}
+.product-card.dt-enter{animation:dt-card .65s var(--dt-ease) both;animation-delay:var(--dt-stagger,0ms)}
+@keyframes dt-card{from{opacity:.2;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+/* Iconography moves as if machined, not cartooned. */
+.selection-trigger svg{transition:transform .55s var(--dt-ease),color .5s ease}
+.selection-trigger:hover svg,.selection-trigger:focus-visible svg{transform:translateY(-2px);color:#f2d7a5}
+.cart-count{transition:border-color .4s,color .4s,background .4s}
+.cart-count.dt-pulse{animation:dt-count .6s var(--dt-ease)}
+@keyframes dt-count{0%,100%{transform:scale(1)}38%{transform:scale(1.2);background:#cfaa73;color:#17120d;border-color:#cfaa73}}
+.menu-toggle span{transform-origin:center;transition:transform .45s var(--dt-ease),opacity .25s}
+.menu-toggle[aria-expanded="true"] span:first-child{transform:translateY(3.5px) rotate(45deg)}
+.menu-toggle[aria-expanded="true"] span:last-child{transform:translateY(-3.5px) rotate(-45deg)}
+.mobile-nav:not([hidden]) a{animation:dt-rise .55s var(--dt-ease) both}
+.mobile-nav:not([hidden]) a:nth-child(2){animation-delay:75ms}
+.mobile-nav:not([hidden]) a:nth-child(3){animation-delay:140ms}
+.step-art{display:inline-block;transition:transform .8s var(--dt-ease),color .6s}
+.step:hover .step-art{transform:rotate(24deg) scale(1.12);color:#d7ad77}
+.philosophy-frame{position:relative}
+.philosophy-frame::after{content:"";position:absolute;inset:-15px;border:1px solid rgba(198,156,101,.18);border-radius:50%;transform:scale(.93);transition:transform 1.4s var(--dt-ease),border-color 1s}
+.philosophy-section:hover .philosophy-frame::after{transform:scale(1.055);border-color:rgba(198,156,101,.45)}
+.philosophy-frame img{transition:filter 1.2s var(--dt-ease),transform 1.2s var(--dt-ease)}
+.philosophy-section:hover .philosophy-frame img{transform:scale(1.025);filter:brightness(1.07)}
+.faq-items summary span{display:inline-block;transition:transform .4s var(--dt-ease)}
+.faq-items details[open]>p{animation:dt-rise .5s var(--dt-ease) both}
+/* Overlay choreography; age verification still takes precedence. */
+.selection-drawer{transition:transform .6s var(--dt-ease)}
+.product-modal{transition:transform .55s var(--dt-ease),opacity .45s var(--dt-ease)}
+.close-icon{transition:transform .5s var(--dt-ease),background .3s,border-color .3s}
+.close-icon:hover,.close-icon:focus-visible{transform:rotate(90deg);border-color:#9e7c52}
+/* Visitor-controlled motion preference, separate from the OS preference. */
+.dt-motion-toggle{display:inline-flex;align-items:center;gap:9px;border:1px solid #5f4d37;background:transparent;color:#c7ae88;font-size:10px;padding:10px 12px;cursor:pointer;transition:border-color .4s,color .4s}
+.dt-motion-toggle::before{content:"";display:block;width:7px;height:7px;border:1px solid currentColor;border-radius:50%;box-shadow:0 0 0 3px rgba(184,144,91,.1)}
+.dt-motion-toggle:hover,.dt-motion-toggle:focus-visible{color:#f2d9af;border-color:#b58b57}
+/* A proper keyboard experience is a form of craftsmanship. */
+:where(a,button,summary):focus-visible{outline:2px solid #d6ac6b;outline-offset:4px}
+@media (hover:none),(pointer:coarse){.hero::after{display:none}.category-tile::before,.product-art::before{display:none}.category-tile:hover,.product-card:hover{box-shadow:none;transform:none}.category-tile:hover .cat-bg{transform:none}.product-card:hover .product-art img{transform:none}.btn-gold:hover{transform:none}}
+@media (max-width:580px){.dt-motion-toggle{margin-top:6px}.product-card:hover{transform:none}.hero h1 .dt-title-line{white-space:normal}.section-header .eyebrow::after{margin-top:9px}}
+@media (prefers-reduced-motion:reduce){.dt-progress{display:none!important}}
+html.dt-still *,html.dt-still *::before,html.dt-still *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+html.dt-still .dt-reveal,html.dt-still .dt-enter{opacity:1!important;transform:none!important}
+html.dt-still .dt-progress{display:none!important}
+@media (prefers-reduced-motion:reduce){html.dt-ready .dt-reveal,html.dt-ready .dt-enter{opacity:1!important;transform:none!important}html.dt-ready .hero .hero-art,html.dt-ready .hero-eyebrow,html.dt-ready .hero h1 .dt-title-line,html.dt-ready .hero-copy>p,html.dt-ready .hero-links,html.dt-ready .hero-footnote{opacity:1!important;transform:none!important;animation:none!important}}
