@@ -75,7 +75,7 @@ with sync_playwright() as p:
   assert page.locator('#product-modal-name').inner_text()=='Estuche porta puros con humidificador', 'Título del tercer producto'
   assert page.locator('.travel-gallery-controls button').count()==5, 'Cinco vistas del estuche'
   page.locator('.travel-gallery-controls button[data-photo-index="3"]').click()
-  assert page.locator('.travel-photo-modal').get_attribute('src').endswith('estuche-6-cuidado.webp'), 'Cambio de fotografía'
+  assert 'Recomendación visual para humedecer la esponja' in page.locator('.travel-photo-modal').get_attribute('alt'), 'Cambio de fotografía'
   assert page.locator('.travel-gallery-controls button[data-photo-index="3"]').get_attribute('aria-pressed')=='true', 'Control de galería accesible'
   page.locator('#product-modal-close').click()
   if name=='mobile':
