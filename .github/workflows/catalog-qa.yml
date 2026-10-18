@@ -12,7 +12,7 @@ on:
       - '.github/workflows/catalog-qa.yml'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   smoke:
     runs-on: ubuntu-latest
@@ -33,4 +33,15 @@ jobs:
           python -m pip install playwright
           python -m playwright install --with-deps chromium
       - name: Pruebas escritorio y móvil
-        run: python tests/qa_browser.py
+        run: |
+          set -o pipefail
+          python tests/qa_browser.py 2>&1 | tee /tmp/catalog-qa-last.log
+      - name: Guardar diagnóstico temporal si falla
+        if: failure()
+        run: |
+          cp /tmp/catalog-qa-last.log docs/.qa-diagnostic.log
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/.qa-diagnostic.log
+          git commit -m 'test: capture temporary browser diagnostic'
+          git push origin HEAD:main
