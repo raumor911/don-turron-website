@@ -69,16 +69,14 @@ La prueba inyecta los archivos y activos en memoria porque el navegador de este 
 
 ## Git / creación del repositorio remoto
 
-La entrega contiene un Git inicializado con un commit en `main`. Puedes publicar el repositorio en una cuenta GitHub propia. Si el remoto está vacío:
+El código de esta V1 está publicado en GitHub. Para clonar directamente:
 
 ```bash
-# En GitHub, crea primero el repositorio vacío (sin README adicional)
-cd don-turron
-git remote add origin https://github.com/TU_USUARIO/don-turron.git
-git push -u origin main
+git clone https://github.com/raumor911/don-turron-website.git
+cd don-turron-website
 ```
 
-La URL es **un ejemplo**, no un repositorio ya creado. Si recibes un archivo `.bundle`, restaura con:
+El repositorio remoto de este proyecto es **https://github.com/raumor911/don-turron-website**. Si recibes un archivo `.bundle`, restaura con:
 
 ```bash
 git clone don-turron.bundle don-turron
