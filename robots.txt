@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: /
+# Sitio de prueba: levantar bloqueo de rastreo cuando esté listo para producción.

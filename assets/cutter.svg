@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 360" role="img" aria-label="Ilustración conceptual de accesorio">
+<defs>
+ <linearGradient id="metal" x1="0" x2="1" y1="0" y2=".25"><stop stop-color="#5d3c22"/><stop offset=".16" stop-color="#ecd29c"/><stop offset=".43" stop-color="#b68548"/><stop offset=".59" stop-color="#f3daab"/><stop offset=".83" stop-color="#8d5c2d"/><stop offset="1" stop-color="#d6ad71"/></linearGradient>
+ <linearGradient id="steel" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#e7d7b6"/><stop offset=".35" stop-color="#776957"/><stop offset=".55" stop-color="#fff2d3"/><stop offset=".88" stop-color="#3a2f25"/><stop offset="1" stop-color="#ad8f69"/></linearGradient>
+ <linearGradient id="black" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#4e4437"/><stop offset=".35" stop-color="#151616"/><stop offset=".7" stop-color="#282321"/><stop offset="1" stop-color="#070a0a"/></linearGradient>
+ <linearGradient id="wood" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#8b5b35"/><stop offset=".2" stop-color="#4a291c"/><stop offset=".56" stop-color="#97663e"/><stop offset="1" stop-color="#251713"/></linearGradient>
+ <radialGradient id="inner"><stop stop-color="#332418"/><stop offset=".6" stop-color="#15120f"/><stop offset="1" stop-color="#090b0c"/></radialGradient>
+ <filter id="shadow" x="-70%" y="-70%" width="240%" height="240%"><feGaussianBlur stdDeviation="11"/></filter>
+</defs>
+<ellipse cx="210" cy="297" rx="112" ry="17" fill="#000" opacity=".35" filter="url(#shadow)"/>
+<g transform="translate(205 179) rotate(-18)">
+ <rect x="-77" y="-48" width="155" height="105" rx="18" fill="url(#metal)" stroke="#f5dcb2" stroke-width="2"/>
+ <rect x="-62" y="-34" width="123" height="80" rx="10" fill="url(#black)" stroke="#5e4730" stroke-width="3"/>
+ <circle cx="-36" cy="6" r="26" fill="url(#steel)" stroke="#d2b68c" stroke-width="3"/>
+ <circle cx="-36" cy="6" r="13" fill="#16120f"/>
+ <circle cx="34" cy="6" r="26" fill="url(#steel)" stroke="#d2b68c" stroke-width="3"/>
+ <circle cx="34" cy="6" r="13" fill="#16120f"/>
+ <path d="M-7 -36L17 42L34 -36Z" fill="url(#steel)" stroke="#fae1b5" stroke-width="1.5"/>
+ <path d="M-88 -11H-65M64 -11H88" stroke="#e4c08e" stroke-width="5" stroke-linecap="round"/>
+</g>
+</svg>
