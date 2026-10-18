@@ -115,3 +115,15 @@ html.dt-still *,html.dt-still *::before,html.dt-still *::after{animation:none!im
 html.dt-still .dt-reveal,html.dt-still .dt-enter{opacity:1!important;transform:none!important}
 html.dt-still .dt-progress{display:none!important}
 @media (prefers-reduced-motion:reduce){html.dt-ready .dt-reveal,html.dt-ready .dt-enter{opacity:1!important;transform:none!important}html.dt-ready .hero .hero-art,html.dt-ready .hero-eyebrow,html.dt-ready .hero h1 .dt-title-line,html.dt-ready .hero-copy>p,html.dt-ready .hero-links,html.dt-ready .hero-footnote{opacity:1!important;transform:none!important;animation:none!important}}
+
+/* Don Turrón · fotografías del producto real, sin alterar la retícula. */
+.product-art .travel-photo{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;filter:brightness(.98);transition:transform .65s var(--dt-ease),filter .5s ease}
+.product-card:hover .travel-photo-card{transform:scale(1.04);filter:brightness(1.06)}
+.drawer-art img.travel-photo{width:100%;height:100%;object-fit:cover}
+.modal-art{position:relative;overflow:hidden}
+.modal-art img.travel-photo-modal{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .25s ease}
+.travel-gallery-controls{position:absolute;z-index:3;bottom:14px;left:14px;right:14px;display:flex;gap:7px;justify-content:center}
+.travel-gallery-controls button{width:44px;height:44px;cursor:pointer;color:#dfc29c;background:rgba(19,15,12,.81);border:1px solid rgba(204,171,120,.5);font:600 11px var(--sans);transition:background .2s,color .2s,border-color .2s}
+.travel-gallery-controls button:hover,.travel-gallery-controls button:focus-visible,.travel-gallery-controls button[aria-pressed="true"]{color:#1b150e;background:#e3bb7f;border-color:#f3d4a8;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.travel-photo,.travel-gallery-controls button{transition:none!important}}
+@media(max-width:580px){.travel-gallery-controls{bottom:9px;left:8px;right:8px}.travel-gallery-controls button{height:42px;width:42px}}

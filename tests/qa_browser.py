@@ -35,6 +35,7 @@ with sync_playwright() as p:
   page.wait_for_timeout(350)
   page.screenshot(path=str(PROJECT/f'tests/{name}.png'),full_page=True)
   assert page.locator('.product-card').count()==6, 'Producto inicial'
+  assert page.locator('.product-card[data-id="humidor-viaje-5-puros"]').count()==1, 'Humidor real agregado sin variar seis productos'
   assert page.locator('.dt-progress').count()==1, 'Línea de progreso'
   assert page.locator('.dt-motion-toggle').count()==1, 'Control de movimiento'
   assert page.locator('.product-card.dt-enter').count()==6, 'Animación productos'

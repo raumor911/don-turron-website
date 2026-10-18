@@ -6,6 +6,17 @@
   const KEY = 'dt-selection-v1';
   const AGE_KEY = 'dt-age-confirmed-v1';
   const MAX_QUANTITY = 20;
+  const REAL_HUMIDOR_ID = 'humidor-viaje-5-puros';
+  const PHOTO_VIEWS = [
+    {src:'assets/products/humidor-viaje-interior.webp', label:'Interior abierto'},
+    {src:'assets/products/humidor-viaje-medidas.webp', label:'Estuche cerrado y medidas ilustrativas'},
+    {src:'assets/products/humidor-viaje-detalles.webp', label:'Cierres y humidificador'},
+    {src:'assets/products/humidor-viaje-ambientado.webp', label:'Vista ambientada'}
+  ];
+  function productPicture(p, placement) {
+    if (p.id !== REAL_HUMIDOR_ID) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" loading="lazy" />`;
+    return `<img class="travel-photo travel-photo-${placement}" src="${PHOTO_VIEWS[0].src}" alt="Fotografía de ${html(p.name)}; ${PHOTO_VIEWS[0].label}" loading="lazy" width="620" height="620" />`;
+  }
   let selectedFilter = 'todos';
   let lastFocused = null;
   let currentDialog = null;
@@ -43,7 +54,7 @@
       <article class="product-card" data-id="${html(p.id)}">
         <div class="product-art art-${html(p.art)}">
           ${p.badge ? `<span class="product-badge">${html(p.badge)}</span>` : ''}
-          <img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name.toLowerCase())}" loading="lazy" width="420" height="360" />
+          ${productPicture(p, "card")}
           <button type="button" class="product-quick" data-detail="${html(p.id)}" aria-label="Ver detalles de ${html(p.name)}">↗</button>
         </div>
         <div class="product-details"><div class="product-category">${html(p.categoryLabel.toUpperCase())}</div>
@@ -84,7 +95,7 @@
     const items = Object.entries(cart).map(([id, qty]) => ({product:productById(id),qty})).filter(v => v.product);
     if (!items.length) contents.innerHTML = `<div class="drawer-empty"><span class="empty-signet">✦</span><h3>Tu selección está vacía.</h3><p>Descubre la colección y guarda los accesorios que llamen tu atención.</p></div>`;
     else contents.innerHTML = items.map(({product:p,qty}) => `
-      <div class="drawer-line"><div class="drawer-art"><img src="assets/${html(p.art)}.svg" alt="" /></div>
+      <div class="drawer-line"><div class="drawer-art">${productPicture(p, "drawer")}</div>
         <div class="drawer-line-text"><h3>${html(p.name)}</h3><p>PRECIO Y DISPONIBILIDAD POR CONFIRMAR</p>
           <div class="qty-controls"><button type="button" data-qty="-1" data-id="${html(p.id)}" aria-label="Quitar una unidad de ${html(p.name)}">−</button><span>${qty}</span><button type="button" data-qty="1" data-id="${html(p.id)}" aria-label="Agregar una unidad de ${html(p.name)}">+</button></div>
           <button type="button" class="remove-line" data-remove="${html(p.id)}">Eliminar</button>
@@ -141,7 +152,7 @@
   function openProduct(id, trigger) {
     const p = productById(id);
     if (!p) return;
-    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art"><img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" /></div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / CATÁLOGO CONCEPTUAL</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p><ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul><p class="modal-caption">Precio, inventario y especificaciones pendientes de validación.</p><button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
+    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${p.id === REAL_HUMIDOR_ID ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas del humidor de viaje">${PHOTO_VIEWS.map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${p.id === REAL_HUMIDOR_ID ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p><ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul><p class="modal-caption">Precio, inventario y especificaciones pendientes de validación.</p><button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
     openDialog($('product-modal'), $('product-modal-backdrop'), trigger);
   }
   function trapFocus(event) {
@@ -176,7 +187,19 @@
     $('filters').addEventListener('click', e => { const btn = e.target.closest('[data-filter]'); if (btn) setFilter(btn.dataset.filter); });
     document.querySelectorAll('[data-category]').forEach(link => link.addEventListener('click', () => setFilter(link.dataset.category)));
     $('product-grid').addEventListener('click', e => { const add=e.target.closest('[data-add]'), detail=e.target.closest('[data-detail]'); if(add) changeQuantity(add.dataset.add,1); if(detail) openProduct(detail.dataset.detail,detail); });
-    $('product-modal-content').addEventListener('click', e => { const add=e.target.closest('[data-add]');if(add) changeQuantity(add.dataset.add,1); });
+    $('product-modal-content').addEventListener('click', e => {
+      const add=e.target.closest('[data-add]'); if (add) changeQuantity(add.dataset.add,1);
+      const view=e.target.closest('[data-photo-index]');
+      if (view) {
+        const frame=e.currentTarget.querySelector('.travel-photo-modal');
+        if (!frame) return;
+        const i=Number(view.dataset.photoIndex);
+        if (!Number.isInteger(i) || i<0 || i>=PHOTO_VIEWS.length) return;
+        frame.src=PHOTO_VIEWS[i].src;
+        frame.alt='Fotografía del humidor de viaje para cinco puros: '+PHOTO_VIEWS[i].label;
+        e.currentTarget.querySelectorAll('[data-photo-index]').forEach(button => button.setAttribute('aria-pressed', String(button === view)));
+      }
+    });
     $('open-selection').addEventListener('click', e=>openSelection(e.currentTarget));
     $('close-selection').addEventListener('click', closeDialog);
     $('drawer-backdrop').addEventListener('click',closeDialog);
