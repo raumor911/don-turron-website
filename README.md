@@ -97,3 +97,8 @@ cd don-turron
 - [ ] SEO público (retirar `noindex`), indexación y analítica con consentimiento cuando corresponda.
 
 © Don Turrón. Código entregado para desarrollo de este proyecto. Sin declaración de licencia abierta de redistribución.
+
+
+## Atelier Motion V2 — experiencia premium
+
+La versión V2 incorpora `premium.css` y `premium.js` como mejora progresiva de la experiencia visual: animaciones editoriales, reflejos interactivos, microinteracciones de íconos y respuesta de selección. Respeta `prefers-reduced-motion` e incluye un control de movimiento en el pie. No activa compras ni modifica el catálogo conceptual. Documentación: [`docs/INTERACCIONES_PREMIUM_V2.md`](docs/INTERACCIONES_PREMIUM_V2.md). Pruebas: `python tests/qa_browser.py` (requiere Playwright y Chromium).
