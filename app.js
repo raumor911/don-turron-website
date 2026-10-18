@@ -112,12 +112,12 @@
     save();
     updateCounters();
     renderDrawer();
-    if (by > 0) toast('Pieza añadida a tu selección.');
+    if (by > 0) toast('Agregamos el accesorio a tu selección.');
   }
   function renderDrawer() {
     const contents = $('drawer-contents');
     const items = Object.entries(cart).map(([id, qty]) => ({product:productById(id),qty})).filter(v => v.product);
-    if (!items.length) contents.innerHTML = `<div class="drawer-empty"><span class="empty-signet">✦</span><h3>Tu selección está vacía.</h3><p>Descubre la colección y guarda los accesorios que llamen tu atención.</p></div>`;
+    if (!items.length) contents.innerHTML = `<div class="drawer-empty"><span class="empty-signet">✦</span><h3>Tu selección está vacía.</h3><p>Puedes guardar aquí los accesorios que te interesen.</p></div>`;
     else contents.innerHTML = items.map(({product:p,qty}) => `
       <div class="drawer-line"><div class="drawer-art">${productPicture(p, "drawer")}</div>
         <div class="drawer-line-text"><h3>${html(p.name)}</h3><p>PRECIO Y DISPONIBILIDAD POR CONFIRMAR</p>
@@ -142,9 +142,9 @@
         if (!document.execCommand('copy')) throw new Error('copy failed');
         field.remove();
       }
-      toast('Selección copiada. Compártela cuando quieras.');
+      toast('Tu selección está copiada. Puedes guardarla para consultarla después.');
     } catch (e) {
-      toast('No fue posible copiar automáticamente.');
+      toast('No pudimos copiar tu selección. Inténtalo de nuevo.');
     }
   }
 
@@ -176,7 +176,7 @@
   function openProduct(id, trigger) {
     const p = productById(id);
     if (!p) return;
-    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p><ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul><p class="modal-caption">Precio, inventario y especificaciones pendientes de validación.</p><button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
+    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p><ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul><p class="modal-caption">Precio y disponibilidad por confirmar. Las características se muestran según la información disponible.</p><button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
     openDialog($('product-modal'), $('product-modal-backdrop'), trigger);
   }
   function trapFocus(event) {
