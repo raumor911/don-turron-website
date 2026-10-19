@@ -1,10 +1,10 @@
 name: DT Semantic Core — Validación y build
 on:
   push:
-    branches: [feat/dt-semantic-core-v1]
-    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','semantic-release.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
+    branches: [feat/dt-semantic-core-v1, feat/dt-cortador-v-product]
+    paths: ['assets/products/**','knowledge/**','scripts/dt-semantic/**','package.json','semantic-release.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
   pull_request:
-    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
+    paths: ['assets/products/**','knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
   workflow_dispatch:
 permissions:
   contents: write
@@ -41,7 +41,7 @@ jobs:
           python tests/qa_semantic_nojs.py
           node scripts/dt-semantic/observability.test.mjs
       - name: Registrar solo artefactos generados en la rama de desarrollo
-        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/dt-semantic-core-v1'
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/feat/dt-semantic-core-v1' || github.ref == 'refs/heads/feat/dt-cortador-v-product')
         shell: bash
         run: |
           set -euo pipefail
@@ -53,5 +53,5 @@ jobs:
           if [ -f sitemap.xml ]; then exit 1; fi
           if ! git diff --cached --quiet; then
             git commit -m 'build: generate deterministic Don Turrón semantic assets'
-            git push origin HEAD:feat/dt-semantic-core-v1
+            git push origin HEAD:${GITHUB_REF_NAME}
           fi

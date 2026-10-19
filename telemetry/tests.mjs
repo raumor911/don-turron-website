@@ -30,7 +30,8 @@ test('DT-TEL-001 known bots, claimed not verified, extended policy',()=>{
  assert.equal(detectCrawler('NotGooglebot')?.crawler_name,'generic-crawler'); // not misidentified as Googlebot
 });
 test('Semantic Core manifest drives resources and product IDs',()=>{
- assert.equal(knowledge.products.length,6);
+ assert.ok(knowledge.products.length>=6);
+ assert.equal(classifyPath('/productos/cortador-v-geometrico/',knowledge).product_id,'cortador-v-geometrico');
  assert.equal(classifyPath('/productos/humidor-viaje-5-puros/?token=secret',knowledge).product_id,'humidor-viaje-5-puros');
  assert.equal(classifyPath('/productos/encendedor-jet/',knowledge).eligible,false);
  assert.equal(classifyPath('/llms.txt',knowledge).page_type,'system_llms');

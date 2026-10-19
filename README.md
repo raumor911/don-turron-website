@@ -132,3 +132,7 @@ La rama `feat/dt-telemetry-v1` añade la captura de crawlers **por importación 
 **Ejecución:** `node --test telemetry/tests.mjs telemetry/receiver.test.mjs`; `python tests/qa_browser.py` con Playwright/Chromium. Para desplegar el receptor opcional, instalar `mysql2` del paquete `telemetry/package.json` en el backend autorizado y revisar [despliegue](docs/DT_TELEMETRY_DEPLOYMENT.md), [contrato SQL](docs/DT_TELEMETRY_DB_CONTRACT.md), [eventos](docs/DT_TELEMETRY_EVENTS.md) y [pruebas](docs/DT_TELEMETRY_TESTS.md).
 
 **No operativa en MySQL real:** falta confirmar conexión, `SHOW COLUMNS`, `SHOW INDEX`, grants, retención y prueba controlada de persistencia. `TELEMETRY_ENABLED=false` y `TELEMETRY_WRITE_APPROVED=false` por defecto. Ni el cliente ni el importador realizan operaciones DDL.
+
+## Cortapuros en V — Galería verificada
+
+Se añadió la ficha `cortador-v-geometrico` con acabados plateado y dorado; los cinco archivos WebP originales están versionados en `assets/products/` con hashes documentados en [el control de activos](docs/DT_CORTADOR_V_ASSETS.md). Se mantiene el estado de prelanzamiento y no se registran precios ni existencias.

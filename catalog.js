@@ -203,5 +203,56 @@ window.DON_TURRON_CATALOG = [
     ],
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation"
+  },
+  {
+    "id": "cortador-v-geometrico",
+    "name": "Cortapuros en V de metal con acabado geométrico",
+    "category": "cortadores",
+    "categoryLabel": "Cortadores",
+    "subtitle": "Una pieza compacta para preparar el corte.",
+    "description": "Cortapuros metálico de corte en V con una superficie de relieve geométrico tridimensional. Su mecanismo de accionamiento por pulsación permite preparar el corte con un solo movimiento. Formato compacto, disponible en acabados plateado y dorado; características y desempeño según descripción del proveedor, pendientes de verificación independiente.",
+    "features": [
+      "Cuchilla de corte en V; desempeño pendiente de verificación",
+      "Mecanismo accionado mediante pulsación",
+      "Cuerpo metálico con relieve geométrico tridimensional",
+      "Acabados: plateado y dorado (existencias por confirmar)",
+      "Dimensiones de referencia del proveedor: 50.5 × 42 × 14.5 mm"
+    ],
+    "art": "cutter",
+    "badge": "NUEVA PIEZA",
+    "images": [
+      {
+        "src": "assets/products/cortador-v-plateado.webp",
+        "label": "Cortapuros en V, acabado plateado sobre fondo oscuro"
+      },
+      {
+        "src": "assets/products/cortador-v-dorado.webp",
+        "label": "Cortapuros en V, acabado dorado sobre fondo oscuro"
+      },
+      {
+        "src": "assets/products/cortador-v-medidas.webp",
+        "label": "Dimensiones ilustrativas del cortapuros; medición del proveedor"
+      },
+      {
+        "src": "assets/products/cortador-v-mecanismo.webp",
+        "label": "Mecanismo abierto y geometría de corte en V"
+      },
+      {
+        "src": "assets/products/cortador-v-uso.webp",
+        "label": "Demostración de uso del cortapuros; puro ilustrativo no incluido"
+      }
+    ],
+    "variants": [
+      {
+        "label": "Plateado",
+        "status": "pending_confirmation"
+      },
+      {
+        "label": "Dorado",
+        "status": "pending_confirmation"
+      }
+    ],
+    "contentStatus": "documented",
+    "commercialStatus": "pending_confirmation"
   }
 ];

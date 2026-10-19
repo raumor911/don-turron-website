@@ -64,5 +64,16 @@
     ],
     "visibility": "public_preview",
     "volatility": "periodic"
+  },
+  {
+    "id": "claim:cortador-v-geometrico-description",
+    "subjectId": "cortador-v-geometrico",
+    "statement": "Cortapuros metálico de corte en V con una superficie de relieve geométrico tridimensional. Su mecanismo de accionamiento por pulsación permite preparar el corte con un solo movimiento. Formato compacto, disponible en acabados plateado y dorado; características y desempeño según descripción del proveedor, pendientes de verificación independiente.",
+    "status": "supplier_declared",
+    "sourceIds": [
+      "source:cortador-v-geometrico"
+    ],
+    "visibility": "public_preview",
+    "volatility": "periodic"
   }
 ]

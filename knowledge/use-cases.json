@@ -25,7 +25,8 @@
     "name": "Preparar el corte",
     "description": "Contar con herramientas de corte para puros.",
     "productIds": [
-      "cenicero-mesa"
+      "cenicero-mesa",
+      "cortador-v-geometrico"
     ],
     "visibility": "public_preview"
   },

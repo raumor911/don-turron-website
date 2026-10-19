@@ -38,5 +38,13 @@
     "collectionId": "collection:accesorios-puros",
     "visibility": "public_preview",
     "displayOrder": 5
+  },
+  {
+    "id": "category:cortadores",
+    "name": "Cortadores",
+    "slug": "cortadores",
+    "collectionId": "collection:accesorios-puros",
+    "visibility": "public_preview",
+    "displayOrder": 6
   }
 ]

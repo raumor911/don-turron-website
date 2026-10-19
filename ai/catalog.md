@@ -12,6 +12,7 @@ Estado: prelanzamiento; no se reciben pedidos, precios y existencias por confirm
 - [Estuche porta puros con humidificador](/productos/estuche-viaje/)
 - [Estuche portátil para 4 a 8 puros](/productos/estuche-kit-viaje/)
 - [Reposa puros plegable de acero inoxidable](/productos/reposa-puros-plegable/)
+- [Cortapuros en V de metal con acabado geométrico](/productos/cortador-v-geometrico/)
 
 ## Referencia conceptual
 - Encendedor de flama jet (sin oferta comercial).
