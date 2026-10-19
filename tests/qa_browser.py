@@ -196,7 +196,7 @@ with sync_playwright() as p:
   page.emulate_media(reduced_motion='reduce')
   assert page.evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches"), 'Respeta preferencia del sistema'
   page.emulate_media(reduced_motion='no-preference')
-  assert not page.locator('.footer-bottom').inner_text().find('Sitio en preparación') >= 0, 'Se retiró la leyenda obsoleta'
+  assert 'Sitio en preparación' not in page.locator('.footer-bottom').inner_text(), 'Se retiró la leyenda obsoleta'
   assert page.locator('.footer-bottom .footer-credit a[href="https://rauvia.com.mx/"]').count()==1, 'Crédito RAUVIA en footer'
   credit=page.locator('.footer-bottom .footer-credit').bounding_box()
   footer=page.locator('.footer-bottom').bounding_box()

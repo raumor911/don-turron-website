@@ -18,6 +18,11 @@ const publicFiles=['llms.txt','llms-full.txt','ai/brand.md','ai/catalog.md','ai/
 for(const file of publicFiles){if(!fs.existsSync(path.join(ROOT,file)))throw new Error('Missing output '+file);}
 for(const file of ['ai/products.json','ai/knowledge-graph.json','ai/intents.json','ai/sources.json','ai/content-manifest.json'])JSON.parse(read(file));
 for(const file of publicFiles){const s=read(file);if(/sk-proj-|BEGIN PRIVATE KEY|acquisitionCost|grossMargin|example\.com/i.test(s))throw new Error('Private value in '+file);}
+const retired='encendedor-jet';
+if(k.products.some(p=>p.id===retired))throw new Error('Removed phantom product returned in Semantic Core');
+for(const rel of ['catalog.js','index.html','ai/products.json','ai/catalog.md','ai/brand.md','llms-full.txt','ai/knowledge-graph.json']){
+  if(read(rel).includes(retired))throw new Error('Retired product leaked in public artifact '+rel);
+}
 const documented=k.products.filter(p=>p.contentStatus==='documented');
 for(const p of documented){
   const route='productos/'+p.id+'/index.html';
@@ -31,7 +36,7 @@ for(const p of documented){
   if(nodes.some(x=>x['@type']==='Offer'||x['@type']==='Review'))throw new Error('Unsupported Product Offer '+route);
 }
 if(fs.existsSync(path.join(ROOT,'productos/encendedor-jet/index.html')))throw new Error('Conceptual product published with product page');
-if(!read('index.html').includes('DT-CATALOG-START')||(home.match(/class="product-card"/g)||[]).length!==k.products.length)throw new Error('Home not prerendered with seven cards');
+if(!read('index.html').includes('DT-CATALOG-START')||(home.match(/class="product-card"/g)||[]).length!==k.products.length)throw new Error('Home not prerendered with current product count');
 if(!read('guia/estuche-o-humidor/index.html').includes('noindex, nofollow'))throw new Error('Guide not gated');
 const gate=JSON.parse(read('semantic-release.json'));
 if(gate.mode!=='prelaunch'||gate.enableIndexing!==false||gate.enableCommerce!==false||gate.verifiedDomain!==null)throw new Error('Invalid release gate');
