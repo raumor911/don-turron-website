@@ -78,7 +78,9 @@
       <article class="product-card" data-id="${html(p.id)}">
         <div class="product-art art-${html(p.art)}">
           ${p.badge ? `<span class="product-badge">${html(p.badge)}</span>` : ''}
-          ${productPicture(p, "card")}
+          <button type="button" class="product-image-trigger" data-open-photo="${html(p.id)}" aria-label="Ver detalles de ${html(p.name)}">
+            ${productPicture(p, "card")}
+          </button>
           <button type="button" class="product-quick" data-detail="${html(p.id)}" aria-label="Ver detalles de ${html(p.name)}">↗</button>
         </div>
         <div class="product-details"><div class="product-category">${html(p.categoryLabel.toUpperCase())}</div>
@@ -210,7 +212,7 @@
   function bind() {
     $('filters').addEventListener('click', e => { const btn = e.target.closest('[data-filter]'); if (btn) setFilter(btn.dataset.filter); });
     document.querySelectorAll('[data-category]').forEach(link => link.addEventListener('click', () => setFilter(link.dataset.category)));
-    $('product-grid').addEventListener('click', e => { const add=e.target.closest('[data-add]'), detail=e.target.closest('[data-detail]'); if(add) changeQuantity(add.dataset.add,1); if(detail) openProduct(detail.dataset.detail,detail); });
+    $('product-grid').addEventListener('click', e => { const add=e.target.closest('[data-add]'), detail=e.target.closest('[data-detail], [data-open-photo]'); if(add) changeQuantity(add.dataset.add,1); if(detail) openProduct(detail.dataset.detail || detail.dataset.openPhoto,detail); });
     $('product-modal-content').addEventListener('click', e => {
       const add=e.target.closest('[data-add]'); if (add) changeQuantity(add.dataset.add,1);
       const view=e.target.closest('[data-photo-index]');

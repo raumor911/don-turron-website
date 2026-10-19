@@ -37,6 +37,14 @@ with sync_playwright() as p:
   page.wait_for_timeout(350)
   page.screenshot(path=str(PROJECT/f'tests/{name}.png'),full_page=True)
   assert page.locator('.product-card').count()==6, 'Producto inicial'
+  assert page.locator('.product-card .product-image-trigger').count()==6, 'Imagen clicable en las seis tarjetas'
+  page.locator('.product-card[data-id="encendedor-jet"] .product-image-trigger').click()
+  assert page.locator('#product-modal-name').inner_text()=='Encendedor de flama jet', 'Abrir detalle al pulsar la foto conceptual'
+  page.locator('#product-modal-close').click()
+  page.locator('.product-card[data-id="humidor-viaje-5-puros"] .product-image-trigger').focus()
+  page.keyboard.press('Enter')
+  assert page.locator('#product-modal-name').inner_text()=='Humidor de viaje para 5 puros', 'Abrir detalle de la foto con teclado'
+  page.locator('#product-modal-close').click()
   assert page.locator('.product-card[data-id="humidor-viaje-5-puros"]').count()==1, 'Humidor real agregado sin variar seis productos'
   assert page.locator('.dt-progress').count()==1, 'Línea de progreso'
   assert page.locator('.dt-motion-toggle').count()==1, 'Control de movimiento'
@@ -116,7 +124,7 @@ with sync_playwright() as p:
    ('encendedor-jet',1)
   ]
   for product_id,total in cases:
-   page.locator(f'.product-card[data-id="{product_id}"] [data-detail]').click()
+   page.locator(f'.product-card[data-id="{product_id}"] .product-image-trigger').click()
    image=page.locator('.modal-art .dt-image-open img')
    assert image.count()==1, f'Imagen ampliable en {product_id}'
    assert image.evaluate('(img)=>getComputedStyle(img).objectFit')=='contain', f'Fotografía sin recorte {product_id}'

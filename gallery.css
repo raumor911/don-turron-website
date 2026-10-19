@@ -46,3 +46,10 @@
  .dt-lightbox-zoom{flex:1}
 }
 @media(prefers-reduced-motion:reduce){.dt-gallery-nav,.dt-lightbox-zoom,.dt-lightbox-arrow{transition:none!important}}
+
+/* V4.1 — La fotografía de cada tarjeta abre su detalle sin modificar su composición. */
+.product-art .product-image-trigger{position:absolute;inset:0;z-index:0;display:grid;place-items:center;width:100%;height:100%;padding:0;border:0;overflow:hidden;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.product-art .product-image-trigger:focus-visible{outline:2px solid #eac490;outline-offset:-3px}
+.product-art .product-image-trigger img{display:block;max-width:100%;max-height:100%}
+.product-art .product-image-trigger .travel-photo-card{inset:0;width:100%;height:100%}
+.product-art .product-badge{pointer-events:none}
