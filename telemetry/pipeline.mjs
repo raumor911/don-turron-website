@@ -51,14 +51,16 @@ export function crawlerRow(row,knowledge){
  const bot=detectCrawler(ua);if(!bot)return null;
  const code=Number(row.status??row.status_code??row.EdgeResponseStatus);
  if(!Number.isInteger(code)||code<100||code>599)return null;
- const when=utc(row.timestamp??row.requested_at??row.datetime);
+ const rawTimestamp=row.timestamp??row.requested_at??row.datetime;
+ if(typeof rawTimestamp==='string'&&!/(?:Z|[+-]\\d{2}:?\\d{2})$/i.test(rawTimestamp))return null; // no ambiguous local timezones
+ const when=utc(rawTimestamp);
  if(!when)return null;
  const duration=Number(row.duration_ms??row.response_time_ms);
  const elapsed=Number.isFinite(duration)&&duration>=0&&duration<=300000?Math.round(duration):null;
  const properties={telemetry_version:'DT-TEL-V1',site_id:SITE_ID,page_type:path.page_type,semantic_intent:path.semantic_intent,
   product_id:path.product_id,category_id:path.category_id,resource_type:path.resource_type,crawler_purpose:bot.crawler_purpose,
   detection_method:bot.detection_method,verification_status:'claimed',source:row.source==='cdn_log'?'cdn_log':'hosting_log',test_run:row.test_run===true};
- return {method,path:path.path,ua,code,when,elapsed,properties,bot};
+ return {method,path:path.path,ua:bot.crawler_name,code,when,elapsed,properties,bot}; // canonical UA declaration only; no raw header retained
 }
 export function createPipeline(db,knowledge,{max=30}={}){
  const queue=[];let active=false;const state=db.state;

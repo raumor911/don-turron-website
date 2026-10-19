@@ -47,9 +47,11 @@ test('GET/HEAD, real 404 and 500, no duplicate suppression and redaction',()=>{
  for(const method of ['GET','HEAD'])for(const status of [200,404,500]){
   const row=crawlerRow({method,path:'/llms.txt?key=private',status,user_agent:'GPTBot/1',timestamp:'2026-10-18T11:00:00Z',duration_ms:23,ip:'192.0.2.5'},knowledge);
   assert.equal(row.method,method);assert.equal(row.code,status);assert.equal(row.path,'/llms.txt');
-  assert.equal(row.properties.verification_status,'claimed');assert.equal(row.properties.source,'hosting_log');
+  assert.equal(row.properties.verification_status,'claimed');
+  assert.equal(row.ua,'GPTBot'); // raw UA header is not persistedassert.equal(row.properties.source,'hosting_log');
   assert.equal(JSON.stringify(row).includes('private'),false);assert.equal(JSON.stringify(row).includes('192.0.2.5'),false);
  }
+ assert.equal(crawlerRow({method:'GET',path:'/',status:200,user_agent:'Googlebot',timestamp:'2026-10-18 10:00:00'},knowledge),null); // reject ambiguous timezone
  assert.equal(crawlerRow({method:'POST',path:'/',status:200,user_agent:'Googlebot',timestamp:new Date().toISOString()},knowledge),null);
  assert.equal(crawlerRow({method:'GET',path:'/styles.css',status:200,user_agent:'Googlebot',timestamp:new Date().toISOString()},knowledge),null);
  assert.equal(crawlerRow({method:'GET',path:'/',status:200,user_agent:'Mozilla',timestamp:new Date().toISOString()},knowledge),null);

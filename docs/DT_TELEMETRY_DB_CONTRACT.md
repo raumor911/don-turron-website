@@ -24,3 +24,5 @@ Variables iniciales: `TELEMETRY_ENABLED=false`, `TELEMETRY_WRITE_APPROVED=false`
 
 ## Comprobación de conectividad
 **No ejecutada contra la base real en esta intervención.** Falta acceso autorizado a `DB_HOST`, `DB_USER` y `DB_PASSWORD`, así como a la configuración de retención. Las pruebas de CI usan exclusivamente dobles de prueba. No se efectuaron DDL, DML ni SELECT de datos reales.
+
+El contenido persistido en la columna `user_agent` se limita al nombre canónico declarado del crawler, no a la cabecera HTTP completa, para evitar guardar cadenas arbitrarias o identificadores accidentales. Los registros importados deben tener marca temporal ISO-8601 con zona explícita u origen numérico UTC; se rechazan horas locales ambiguas.
