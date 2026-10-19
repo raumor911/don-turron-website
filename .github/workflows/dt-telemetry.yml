@@ -2,9 +2,9 @@ name: DT Telemetry V1 — isolated QA
 on:
   push:
     branches: [feat/dt-telemetry-v1]
-    paths: ['telemetry/**','knowledge/products.json','knowledge/intents.json','ai/content-manifest.json','.github/workflows/dt-telemetry.yml','app.js','gallery.js','index.html','telemetry-client.js','tests/qa_browser.py']
+    paths: ['telemetry/**','knowledge/products.json','knowledge/intents.json','ai/content-manifest.json','.github/workflows/dt-telemetry.yml','app.js','gallery.js','index.html','telemetry-client.js','tests/qa_browser.py','tests/qa_rauvia_footer.py']
   pull_request:
-    paths: ['telemetry/**','knowledge/products.json','knowledge/intents.json','ai/content-manifest.json','.github/workflows/dt-telemetry.yml','app.js','gallery.js','index.html','telemetry-client.js','tests/qa_browser.py']
+    paths: ['telemetry/**','knowledge/products.json','knowledge/intents.json','ai/content-manifest.json','.github/workflows/dt-telemetry.yml','app.js','gallery.js','index.html','telemetry-client.js','tests/qa_browser.py','tests/qa_rauvia_footer.py']
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,4 +31,6 @@ jobs:
       - name: Compile fresh Semantic Core before browser QA
         run: npm run build:semantic
       - name: Verify desktop, mobile, gallery and event hooks
-        run: python tests/qa_browser.py
+        run: |
+          python tests/qa_browser.py
+          python tests/qa_rauvia_footer.py
