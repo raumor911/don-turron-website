@@ -3,6 +3,7 @@
   const catalog = window.DON_TURRON_CATALOG || [];
   const config = window.DON_TURRON_CONFIG || {};
   const $ = (id) => document.getElementById(id);
+  const emit = (event, properties={}) => { try { window.dispatchEvent(new CustomEvent('dt:interaction',{detail:{event,...properties}})); } catch {} };
   const KEY = 'dt-selection-v1';
   const AGE_KEY = 'dt-age-confirmed-v1';
   const MAX_QUANTITY = 20;
@@ -92,6 +93,7 @@
 
   function setFilter(filter, scroll = false) {
     if (filter !== 'todos' && !catalog.some(p => p.category === filter)) return;
+    const previousFilter = selectedFilter;
     selectedFilter = filter;
     document.querySelectorAll('[data-filter]').forEach(btn => {
       const active = btn.dataset.filter === filter;
@@ -99,6 +101,7 @@
       btn.setAttribute('aria-pressed', String(active));
     });
     renderProducts();
+    if (filter!==previousFilter) emit('category_filter',{filter});
     if (scroll) setTimeout(() => $('coleccion').scrollIntoView({behavior:'smooth'}), 30);
   }
 
@@ -108,12 +111,14 @@
   }
   function changeQuantity(id, by) {
     if (!productById(id)) return;
-    const newQuantity = asInt((cart[id] || 0) + by);
+    const beforeQuantity = cart[id] || 0;
+    const newQuantity = asInt(beforeQuantity + by);
     if (newQuantity > 0) cart[id] = newQuantity;
     else delete cart[id];
     save();
     updateCounters();
     renderDrawer();
+    if (newQuantity !== beforeQuantity) emit(newQuantity>beforeQuantity?'selection_add':'selection_remove',{product_id:id});
     if (by > 0) toast('Agregamos el accesorio a tu selección.');
   }
   function renderDrawer() {
@@ -145,6 +150,7 @@
         field.remove();
       }
       toast('Tu selección está copiada. Puedes guardarla para consultarla después.');
+      emit('selection_copy');
     } catch (e) {
       toast('No pudimos copiar tu selección. Inténtalo de nuevo.');
     }
@@ -174,12 +180,14 @@
   function openSelection(trigger) {
     renderDrawer();
     openDialog($('selection-drawer'), $('drawer-backdrop'), trigger);
+    emit('selection_open');
   }
   function openProduct(id, trigger) {
     const p = productById(id);
     if (!p) return;
     $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p><ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul><p class="modal-caption">Precio y disponibilidad por confirmar. Las características se muestran según la información disponible.</p><button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
     openDialog($('product-modal'), $('product-modal-backdrop'), trigger);
+    emit('product_view',{product_id:id});
   }
   function trapFocus(event) {
     if (event.key !== 'Tab') return;
@@ -223,9 +231,11 @@
         const selectedProduct=productById(frame.dataset.productId);
         const views=selectedProduct && photosOf(selectedProduct);
         if (!views || !Number.isInteger(i) || i<0 || i>=views.length) return;
+        const changed = view.getAttribute('aria-pressed') !== 'true';
         frame.src=views[i].src;
         frame.alt='Fotografía de '+selectedProduct.name+': '+views[i].label;
         e.currentTarget.querySelectorAll('[data-photo-index]').forEach(button => button.setAttribute('aria-pressed', String(button === view)));
+        if(changed) emit('gallery_navigation',{product_id:selectedProduct.id,image_index:i});
       }
     });
     $('open-selection').addEventListener('click', e=>openSelection(e.currentTarget));
@@ -236,7 +246,7 @@
     $('drawer-contents').addEventListener('click',e=>{
       const qty=e.target.closest('[data-qty]'); const remove=e.target.closest('[data-remove]');
       if(qty) changeQuantity(qty.dataset.id,Number(qty.dataset.qty));
-      if(remove) {delete cart[remove.dataset.remove];save();updateCounters();renderDrawer();}
+      if(remove) {const id=remove.dataset.remove;const existed=Boolean(cart[id]);delete cart[id];save();updateCounters();renderDrawer();if(existed)emit('selection_remove',{product_id:id});}
     });
     $('copy-selection').addEventListener('click',copySelection);
     $('request-selection').addEventListener('click', () => {

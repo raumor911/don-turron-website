@@ -18,11 +18,19 @@ export function humanPayload(body,knowledge){
  const raw=body.properties||{};
  if(Array.isArray(raw))return null;
  const safe={telemetry_version:'DT-TEL-V1',site_id:SITE_ID,page_type:classified.page_type,semantic_intent:classified.semantic_intent,source:'browser'};
+ if(body.event==='section_view' && body.properties?.section==='filosofia')safe.page_type='brand_identity';
+ if(body.event==='section_view' && ['coleccion','categorias'].includes(body.properties?.section))safe.page_type='product_collection';
+ if(body.event==='category_filter')safe.page_type='product_collection';
  const p=raw.product_id;
  if(p!==undefined){
   if(typeof p!=='string'||!knowledge.products.some(item=>item.id===p))return null;
   const item=knowledge.products.find(x=>x.id===p);
   safe.product_id=item.id;safe.category_id=item.categoryId;safe.commercial_status=item.commercialStatus;
+  if(['product_view','gallery_navigation','image_zoom','selection_add','selection_remove'].includes(body.event)){
+   safe.page_type='product_detail';
+   const intent=knowledge.intents.find(x=>x.productIds?.length===1&&x.productIds[0]===item.id);
+   safe.semantic_intent=intent?.id||null;
+  }
  }
  if(typeof raw.section==='string'&&/^[a-z0-9_-]{1,48}$/i.test(raw.section))safe.section=raw.section;
  if(typeof raw.filter==='string'&&/^(todos|soportes|encendedores|humidores|ceniceros|estuches)$/.test(raw.filter))safe.filter=raw.filter;

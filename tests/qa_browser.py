@@ -31,6 +31,8 @@ with sync_playwright() as p:
   page.add_script_tag(content=(PROJECT/'app.js').read_text())
   page.add_script_tag(content=(PROJECT/'premium.js').read_text())
   page.add_script_tag(content=(PROJECT/'gallery.js').read_text())
+  page.evaluate("window.__dtEvents=[];window.addEventListener('dt:interaction',e=>window.__dtEvents.push(e.detail))")
+  page.add_script_tag(content=(PROJECT/'telemetry-client.js').read_text())
   # Scripts de la app generan src relativos; en el entorno de pruebas se sustituyen por data URI.
   page.evaluate('''(assets)=>{window.fixAssets=()=>{document.querySelectorAll('img[src^="assets/"]').forEach(im=>{const src=im.getAttribute('src');if(assets[src]) im.src=assets[src]})};window.fixAssets();new MutationObserver(()=>window.fixAssets()).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['src']})}''',assets)
   page.locator('#age-yes').click()
@@ -44,6 +46,7 @@ with sync_playwright() as p:
   page.locator('.product-card[data-id="humidor-viaje-5-puros"] .product-image-trigger').focus()
   page.keyboard.press('Enter')
   assert page.locator('#product-modal-name').inner_text()=='Humidor de viaje para 5 puros', 'Abrir detalle de la foto con teclado'
+  assert page.evaluate("window.__dtEvents.some(e=>e.event==='product_view'&&e.product_id==='humidor-viaje-5-puros')"), 'Telemetry product view on actual open'
   page.locator('#product-modal-close').click()
   assert page.locator('.product-card[data-id="humidor-viaje-5-puros"]').count()==1, 'Humidor real agregado sin variar seis productos'
   assert page.locator('.dt-progress').count()==1, 'Línea de progreso'
@@ -51,9 +54,11 @@ with sync_playwright() as p:
   assert page.locator('.product-card.dt-enter').count()==6, 'Animación productos'
   page.locator('[data-filter="humidores"]').click()
   assert page.locator('.product-card').count()==1, 'Filtrado'
+  assert page.evaluate("window.__dtEvents.some(e=>e.event==='category_filter'&&e.filter==='humidores')"), 'Telemetry filter actual change'
   assert page.locator('.product-card').first.get_attribute('data-dt-enhanced')=='true', 'Animación tras filtro'
   page.locator('.product-card [data-add]').click()
   assert page.locator('#cart-count').inner_text()=='1', 'Contador selección'
+  assert page.evaluate("window.__dtEvents.some(e=>e.event==='selection_add'&&e.product_id==='humidor-viaje-5-puros')"), 'Telemetry selection add'
   page.locator('#open-selection').click()
   assert page.locator('.drawer-line').count()==1, 'Contenido selección'
   page.locator('[data-qty="1"]').click()
@@ -108,6 +113,7 @@ with sync_playwright() as p:
   page.locator('.travel-gallery-controls button[data-photo-index="2"]').click()
   assert 'en negro' in page.locator('.travel-photo-modal').get_attribute('alt'), 'Vista de la variante negra'
   assert page.locator('.travel-gallery-controls button[data-photo-index="2"]').get_attribute('aria-pressed')=='true', 'Selección accesible de variante'
+  assert page.evaluate("window.__dtEvents.some(e=>e.event==='gallery_navigation'&&e.product_id==='reposa-puros-plegable')"), 'Telemetry gallery change'
   page.locator('#product-modal-content [data-add]').click()
   assert page.locator('#cart-count').inner_text()=='2', 'Añadir soporte sin romper selección'
   page.locator('#product-modal-close').click()

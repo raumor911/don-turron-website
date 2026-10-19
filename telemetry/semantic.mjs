@@ -32,7 +32,7 @@ export function classifyPath(raw,knowledge){
  if(p==='/sitemap.xml')return {...base,page_type:'system_sitemap',resource_type:'sitemap',eligible:true}; // may be HTTP 404 in prelaunch
  if(p==='/llms.txt'||p==='/llms-full.txt')return {...base,page_type:'system_llms',resource_type:'llms',eligible:knowledge.manifest.files.includes(p.slice(1))};
  if(p.startsWith('/ai/')){
-  const inManifest=knowledge.manifest.files.includes(p.slice(1));
+  const inManifest=p==='/ai/content-manifest.json'||knowledge.manifest.files.includes(p.slice(1));
   return {...base,page_type:inManifest?'semantic_resource':'unmapped_resource',resource_type:inManifest?'ai_asset':null,eligible:inManifest};
  }
  const productId=p.match(/^\/productos\/([a-z0-9-]+)\/(?:index\.html)?$/)?.[1];

@@ -2,26 +2,31 @@ name: DT Telemetry V1 — isolated QA
 on:
   push:
     branches: [feat/dt-telemetry-v1]
-    paths: ['telemetry/**','knowledge/products.json','knowledge/intents.json','ai/content-manifest.json','.github/workflows/dt-telemetry.yml','app.js','gallery.js','index.html','telemetry-client.js']
+    paths: ['telemetry/**','knowledge/products.json','knowledge/intents.json','ai/content-manifest.json','.github/workflows/dt-telemetry.yml','app.js','gallery.js','index.html','telemetry-client.js','tests/qa_browser.py']
   pull_request:
-    paths: ['telemetry/**','knowledge/products.json','knowledge/intents.json','ai/content-manifest.json','.github/workflows/dt-telemetry.yml','app.js','gallery.js','index.html','telemetry-client.js']
+    paths: ['telemetry/**','knowledge/products.json','knowledge/intents.json','ai/content-manifest.json','.github/workflows/dt-telemetry.yml','app.js','gallery.js','index.html','telemetry-client.js','tests/qa_browser.py']
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   telemetry:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
-      - name: Node syntax and mock MySQL/HTTP tests
+      - name: Validate syntax and MySQL/HTTP simulation
         run: |
           node --check telemetry/receiver.mjs
           node --check telemetry/import-logs.mjs
-          node --test telemetry/tests.mjs telemetry/receiver.test.mjs
-      - name: Catalog and gallery syntax
-        run: |
+          node --check telemetry-client.js
           node --check app.js
           node --check gallery.js
+          node --test telemetry/tests.mjs telemetry/receiver.test.mjs
+      - name: Install browser
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify desktop, mobile, gallery and event hooks
+        run: python tests/qa_browser.py

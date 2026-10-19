@@ -36,6 +36,7 @@ test('Semantic Core manifest drives resources and product IDs',()=>{
  assert.equal(classifyPath('/llms.txt',knowledge).page_type,'system_llms');
  assert.equal(classifyPath('/ai/knowledge-graph.json',knowledge).page_type,'semantic_resource');
  assert.equal(classifyPath('/ai/brand.md',knowledge).eligible,true);
+ assert.equal(classifyPath('/ai/content-manifest.json',knowledge).eligible,true);
  assert.equal(classifyPath('/sitemap.xml',knowledge).page_type,'system_sitemap');
  assert.equal(classifyPath('/api/telemetry',knowledge).eligible,false);
  assert.equal(classifyPath('/assets/products/photo.webp',knowledge).eligible,false);
@@ -75,6 +76,8 @@ test('Site ID immutable; disabled and DB absent fail closed',()=>{
 test('Human event whitelist, scope and forbidden payload fields',()=>{
  const h=humanPayload({event:'product_view',visitor_id:v4,session_id:v4,path:'/?email=hidden',properties:{product_id:'reposa-puros-plegable',email:'private',token:'secret',name:'someone',quantity:3}},knowledge);
  assert.equal(h.properties.product_id,'reposa-puros-plegable');
+ assert.equal(h.properties.page_type,'product_detail');
+ assert.equal(h.properties.semantic_intent,'intent:soporte');
  assert.notEqual(h.visitor,v4);
  assert.equal(h.properties.site_id,SITE_ID);
  assert.equal(JSON.stringify(h).includes('private'),false);

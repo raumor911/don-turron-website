@@ -102,3 +102,14 @@ cd don-turron
 ## Atelier Motion V2 — experiencia premium
 
 La versión V2 incorpora `premium.css` y `premium.js` como mejora progresiva de la experiencia visual: animaciones editoriales, reflejos interactivos, microinteracciones de íconos y respuesta de selección. Respeta `prefers-reduced-motion` e incluye un control de movimiento en el pie. No activa compras ni modifica el catálogo conceptual. Documentación: [`docs/INTERACCIONES_PREMIUM_V2.md`](docs/INTERACCIONES_PREMIUM_V2.md). Pruebas: `python tests/qa_browser.py` (requiere Playwright y Chromium).
+
+
+## DT Telemetry V1 — rama de preparación
+
+La rama `feat/dt-telemetry-v1` añade la captura de crawlers **por importación de logs del hosting/CDN**, clasificadores semánticos alimentados por `knowledge/` y manifiesto `ai/` de DT Semantic Core, escritor MySQL protegido y receptor Node opcional para `POST /api/telemetry`. No modifica el diseño. La telemetría permanece desactivada y no instala ni arranca automáticamente procesos en el sitio.
+
+**Dependencia:** fusionar primero [DT Semantic Core PR #4](https://github.com/raumor911/don-turron-website/pull/4) y reconciliar el manifiesto exacto. Esta rama incluye copias byte-a-byte de tres fuentes semánticas del PR #4 únicamente para permitir pruebas antes de esa fusión; no deben mantenerse como catálogo separado.
+
+**Ejecución:** `node --test telemetry/tests.mjs telemetry/receiver.test.mjs`; `python tests/qa_browser.py` con Playwright/Chromium. Para desplegar el receptor opcional, instalar `mysql2` del paquete `telemetry/package.json` en el backend autorizado y revisar [despliegue](docs/DT_TELEMETRY_DEPLOYMENT.md), [contrato SQL](docs/DT_TELEMETRY_DB_CONTRACT.md), [eventos](docs/DT_TELEMETRY_EVENTS.md) y [pruebas](docs/DT_TELEMETRY_TESTS.md).
+
+**No operativa en MySQL real:** falta confirmar conexión, `SHOW COLUMNS`, `SHOW INDEX`, grants, retención y prueba controlada de persistencia. `TELEMETRY_ENABLED=false` y `TELEMETRY_WRITE_APPROVED=false` por defecto. Ni el cliente ni el importador realizan operaciones DDL.
