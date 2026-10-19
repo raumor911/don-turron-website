@@ -12,8 +12,8 @@ Estado: prelanzamiento; no se reciben pedidos, precios y existencias por confirm
 - [Estuche porta puros con humidificador](/productos/estuche-viaje/)
 - [Estuche portátil para 4 a 8 puros](/productos/estuche-kit-viaje/)
 - [Reposa puros plegable de acero inoxidable](/productos/reposa-puros-plegable/)
-- [Cortapuros en V de metal con acabado geométrico](/productos/cortador-v-geometrico/)
-- [Encendedor metálico Sarike de doble llama](/productos/encendedor-sarike-butano/)
+- [Cortapuros en V de metal con acabado geométrico](/productos/cortador-v-geometrico/) — Disponibilidad prevista: enero de 2027.
+- [Encendedor metálico Sarike de doble llama](/productos/encendedor-sarike-butano/) — Disponibilidad prevista: enero de 2027.
 
 ## Referencia conceptual
 - Encendedor de flama jet (sin oferta comercial).
