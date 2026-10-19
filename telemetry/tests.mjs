@@ -27,7 +27,7 @@ test('DT-TEL-001 known bots, claimed not verified, extended policy',()=>{
  }
  assert.equal(detectCrawler('Mozilla/5.0'),null);
  assert.equal(detectCrawler('Google-Extended'),null);
- assert.equal(detectCrawler('NotGooglebot'),null);
+ assert.equal(detectCrawler('NotGooglebot')?.crawler_name,'generic-crawler'); // not misidentified as Googlebot
 });
 test('Semantic Core manifest drives resources and product IDs',()=>{
  assert.equal(knowledge.products.length,6);
