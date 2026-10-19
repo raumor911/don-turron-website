@@ -148,7 +148,10 @@ with sync_playwright() as p:
    image=page.locator('.modal-art .dt-image-open img')
    assert image.count()==1, f'Imagen ampliable en {product_id}'
    assert image.evaluate('(img)=>getComputedStyle(img).objectFit')=='contain', f'Fotografía sin recorte {product_id}'
-   assert page.locator('.dt-gallery-status').is_visible(), f'Contador accesible {product_id}'
+   assert page.locator('.dt-gallery-status').count()==0, f'Sin contador superior duplicado {product_id}'
+   assert page.locator('.dt-image-hint').count()==0, f'Sin indicador visual superior redundante {product_id}'
+   assert page.locator('.travel-gallery-controls button').count()==(total if total>1 else 0), f'Conservar indicadores inferiores {product_id}'
+   assert page.locator('.dt-image-open').get_attribute('aria-label').startswith('Ampliar imagen:'), f'Imagen ampliable con etiqueta accesible {product_id}'
    if total > 1:
     assert page.locator('.dt-gallery-nav-anterior').count()==1, f'Flecha anterior {product_id}'
     assert page.locator('.dt-gallery-nav-siguiente').count()==1, f'Flecha siguiente {product_id}'
@@ -164,6 +167,7 @@ with sync_playwright() as p:
    page.locator('.dt-image-open').click()
    assert page.locator('#dt-photo-lightbox').is_visible(), f'Imagen ampliada {product_id}'
    assert page.locator('#dt-lightbox-image').get_attribute('alt'), f'Texto alternativo {product_id}'
+   assert page.locator('#dt-lightbox-counter').is_visible(), f'Indicador del visor ampliado preservado {product_id}'
    assert page.locator('#dt-lightbox-image').evaluate('(img)=>getComputedStyle(img).objectFit')=='contain', f'Ampliada sin recorte {product_id}'
    if total > 1:
     page.locator('#dt-lightbox-next').click()

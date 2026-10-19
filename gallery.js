@@ -1,4 +1,4 @@
-/* Don Turrón · Visor fotográfico V4. Mejora progresiva: no altera catálogo ni lógica comercial. */
+/* Don Turrón · Visor fotográfico V4.2. Sin cajas superiores duplicadas; zoom y navegación intactos. */
 (() => {
   'use strict';
   const modalContent = document.getElementById('product-modal-content');
@@ -85,14 +85,10 @@
     if (controls.length < 2) return;
     const next = (activeIndex() + direction + controls.length) % controls.length;
     controls[next].click(); // reutiliza la lógica existente de la galería
-    updateModalStatus();
+    updatePhotoLabel();
     if (!lightbox.hidden) syncLightbox();
   }
-  function updateModalStatus() {
-    const status = modalContent.querySelector('.dt-gallery-status');
-    if (!status) return;
-    const buttons = galleryButtons();
-    status.textContent = `${String(activeIndex() + 1).padStart(2, '0')} / ${String(buttons.length || 1).padStart(2, '0')}`;
+  function updatePhotoLabel() {
     const photo = currentModalPhoto();
     const opener = modalContent.querySelector('.dt-image-open');
     if (opener && photo) opener.setAttribute('aria-label', `Ampliar imagen: ${photo.alt || 'detalle del producto'}`);
@@ -126,11 +122,6 @@
     photo.parentNode.insertBefore(opener, photo);
     opener.appendChild(photo);
     opener.addEventListener('click', () => openLightbox(opener));
-    const help = document.createElement('span');
-    help.className = 'dt-image-hint';
-    help.textContent = '⌕  Ver en detalle';
-    opener.appendChild(help);
-
     const numbered = galleryButtons();
     if (numbered.length > 1) {
       for (const [direction, name, symbol] of [[-1, 'anterior', '‹'], [1, 'siguiente', '›']]) {
@@ -143,17 +134,13 @@
         art.appendChild(button);
       }
     }
-    const status = document.createElement('span');
-    status.className = 'dt-gallery-status';
-    status.setAttribute('aria-live', 'polite');
-    art.appendChild(status);
-    updateModalStatus();
+    updatePhotoLabel();
   }
 
   // openProduct reemplaza el contenido dinámicamente. Se mejora sin modificar su modelo.
   new MutationObserver(enhanceModal).observe(modalContent, {childList: true});
   modalContent.addEventListener('click', (event) => {
-    if (event.target.closest('[data-photo-index]')) queueMicrotask(updateModalStatus);
+    if (event.target.closest('[data-photo-index]')) queueMicrotask(updatePhotoLabel);
   });
   lightbox.querySelector('#dt-lightbox-close').addEventListener('click', closeLightbox);
   previousLightbox.addEventListener('click', () => navigate(-1));
