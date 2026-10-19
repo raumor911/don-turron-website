@@ -1,7 +1,7 @@
 {
   "name": "Don Turrón Semantic Knowledge Graph",
   "version": "1.0.0",
-  "fingerprint": "2186582ad857c4eab0dd835107151f571f1b1c0061c5fea5fe98632cda04d170",
+  "fingerprint": "c2c475778c3e2b28c8c81abb39e0afbaacac97a9ab7176a5ec4274b3f3402a26",
   "nodes": [
     {
       "id": "brand:don-turron",
@@ -47,30 +47,6 @@
       "id": "category:cortadores",
       "type": "Category",
       "name": "Cortadores"
-    },
-    {
-      "id": "encendedor-jet",
-      "type": "Product",
-      "name": "Encendedor de flama jet",
-      "status": "conceptual"
-    },
-    {
-      "id": "feature:encendedor-jet:1",
-      "type": "Feature",
-      "name": "Tipo de flama por confirmar",
-      "status": "supplier_declared"
-    },
-    {
-      "id": "feature:encendedor-jet:2",
-      "type": "Feature",
-      "name": "Material por confirmar",
-      "status": "supplier_declared"
-    },
-    {
-      "id": "feature:encendedor-jet:3",
-      "type": "Feature",
-      "name": "Ficha de seguridad pendiente",
-      "status": "supplier_declared"
     },
     {
       "id": "humidor-viaje-5-puros",
@@ -255,7 +231,7 @@
     {
       "id": "feature:encendedor-sarike-butano:2",
       "type": "Feature",
-      "name": "Mecanismo de llama tradicional y llama azul, según fotografías del proveedor",
+      "name": "Dos modos declarados: flama suave y flama jet (azul), con control lateral",
       "status": "supplier_declared"
     },
     {
@@ -477,7 +453,7 @@
     {
       "id": "claim:encendedor-sarike-butano-description",
       "type": "Claim",
-      "name": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Según la información del proveedor, su mecanismo permite alternar entre llama tradicional y llama azul concentrada mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el comportamiento de la llama y los materiales específicos requieren verificación independiente.",
+      "name": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Según la información proporcionada, permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el desempeño de ambos modos y los materiales específicos están pendientes de verificación independiente.",
       "status": "supplier_declared"
     }
   ],
@@ -521,26 +497,6 @@
       "source": "collection:accesorios-puros",
       "target": "category:cortadores",
       "type": "hasCategory"
-    },
-    {
-      "source": "category:encendedores",
-      "target": "encendedor-jet",
-      "type": "containsProduct"
-    },
-    {
-      "source": "encendedor-jet",
-      "target": "feature:encendedor-jet:1",
-      "type": "hasDeclaredFeature"
-    },
-    {
-      "source": "encendedor-jet",
-      "target": "feature:encendedor-jet:2",
-      "type": "hasDeclaredFeature"
-    },
-    {
-      "source": "encendedor-jet",
-      "target": "feature:encendedor-jet:3",
-      "type": "hasDeclaredFeature"
     },
     {
       "source": "category:humidores",
