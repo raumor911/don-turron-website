@@ -1,10 +1,10 @@
 # DT-CUTTER-V-001 — Fotografía / control de integración
 
-Estado: **BLOQUEADO: FALTAN CINCO ACTIVOS WEBP EN GITHUB**. La rama incluye la definición del producto y el Semantic Core actualizado, pero todavía no debe fusionarse ni desplegarse porque el repositorio remoto carece de los archivos binarios adjuntos por el usuario.
+Estado: **LOS CINCO WEBP ESTÁN SUBIDOS EN LA RAMA feat/dt-cortador-v-product**. Queda pendiente la compilación y validación integral antes de autorizar fusión. No hay despliegue a producción.
 
 Los siguientes archivos fueron preparados a 1080×1080 con ajuste `contain` y fondo exterior de la paleta Don Turrón; el contenido fotográfico original, mecanismo, dimensiones y texturas no se modificó. El fondo oscuro original de las vistas editoriales era adecuado y se conservó; la lámina técnica mantiene su contraste legible.
 
-Copiar los cinco archivos desde el archivo `Don-Turron-Cortador-V-Galeria.zip` de la entrega de ChatGPT a la carpeta `assets/products/` **de esta rama**, con exactamente estos nombres:
+Archivos verificados contra las fuentes locales y subidos a `assets/products/` en el commit [`a497eb5`](https://github.com/raumor911/don-turron-website/commit/a497eb546a2b83787a887352b83455d772701c89), con estos nombres:
 
 | Archivo | SHA-256 esperado |
 |---|---|
@@ -14,6 +14,6 @@ Copiar los cinco archivos desde el archivo `Don-Turron-Cortador-V-Galeria.zip` d
 | `cortador-v-mecanismo.webp` | `a79f270feb6e1f9870ad4f082978cda4617b7a047e4a9c695e3825a7550390ee` |
 | `cortador-v-uso.webp` | `1e9a657e8915469fa842745e5d6e08334b506afbe674a0eec224e541b70b48b4` |
 
-Tras confirmar los cinco archivos: `npm run build:semantic` para regenerar catálogo, grafo, JSON-LD, fichas estáticas y llms; comprobar siete tarjetas y seis fichas documentadas; ejecutar QA desktop/móvil y sin JavaScript. Revisar la dependencia de DT Telemetry PR #5 que contiene una validación de seis IDs y debe reconciliarse con siete antes de fusionar telemetría. Mantener `noindex`, `robots.txt`, sin precio/inventario y sin despliegue automático.
+Se verificó que los identificadores Git SHA-1 de los cinco blobs remotos coinciden con `git hash-object` de los archivos WebP locales. La comprobación de integridad SHA-256 sigue siendo la tabla precedente.
 
-No sustituir las fotos con imágenes sintéticas que modifiquen el cortador ni con fotos de productos distintos. No generar páginas adicionales aparte de las rutas individuales permitidas por Semantic Core.
+**Siguiente fase:** `npm run build:semantic` para actualizar catálogo, grafo, JSON-LD, fichas estáticas y recursos LLMO; ejecutar QA escritorio, móvil y sin JavaScript. El PR #5 de telemetría mantiene una validación de seis IDs y requiere reconciliación antes de ser fusionado. Conservar `noindex`, `robots.txt`, sin precios, stock ni despliegue automático.
