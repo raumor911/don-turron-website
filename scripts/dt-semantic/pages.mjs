@@ -74,7 +74,7 @@ function productPage(p,k){
     ${p.launchWindow?`<p class="dt-launch">${esc(p.launchWindow.label)}</p>`:''}
     <h2>Características descritas</h2><ul class="dt-features">${p.features.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
     ${p.variants.length?`<p>Acabados descritos: ${p.variants.map(v=>esc(v.label)).join(' y ')}. Las existencias por acabado están pendientes.</p>`:''}
-    <p class="dt-note">${p.launchWindow?'La disponibilidad está prevista para enero de 2027, sin día exacto confirmado y sujeta a cambios. Precios, existencias y envío pendientes de confirmación.':'Precio, disponibilidad y envío pendientes de confirmación.'} Esta página informa sobre el producto, no recibe pedidos. Algunas características proceden de la información del proveedor y no equivalen a comprobación técnica independiente.</p></div>
+    <p class="dt-note">${p.launchWindow?'Disponibilidad prevista para enero de 2027. Esta página presenta el producto y todavía no recibe pedidos.':'Precio, disponibilidad y envío pendientes de confirmación. Esta página informa sobre el producto, no recibe pedidos. Algunas características proceden de la información del proveedor.'}</p></div>
     <div class="dt-images" aria-label="Fotografías del producto">${images}</div></section>
     <section class="dt-related"><h2>También puedes conocer</h2><ul>${related.map(x=>`<li><a href="../${esc(x.id)}/">${esc(x.name)}</a></li>`).join('')||'<li><a href="../../index.html#coleccion">Explorar la colección</a></li>'}</ul><p><a href="../../index.html#coleccion">Volver a la colección</a> · <a href="../../guia/estuche-o-humidor/">Estuche o humidor: qué cambia</a></p></section>
   </main>`;
