@@ -14,6 +14,7 @@
       "contentStatus": "conceptual",
       "commercialStatus": "not_configured",
       "variants": [],
+      "launchWindow": null,
       "sourceIds": [
         "source:brand-home"
       ]
@@ -49,6 +50,7 @@
       "contentStatus": "documented",
       "commercialStatus": "pending_confirmation",
       "variants": [],
+      "launchWindow": null,
       "sourceIds": [
         "source:humidor-viaje-5-puros"
       ]
@@ -88,6 +90,7 @@
       "contentStatus": "documented",
       "commercialStatus": "pending_confirmation",
       "variants": [],
+      "launchWindow": null,
       "sourceIds": [
         "source:cenicero-mesa"
       ]
@@ -127,6 +130,7 @@
       "contentStatus": "documented",
       "commercialStatus": "pending_confirmation",
       "variants": [],
+      "launchWindow": null,
       "sourceIds": [
         "source:estuche-viaje"
       ]
@@ -154,6 +158,7 @@
       "contentStatus": "documented",
       "commercialStatus": "pending_confirmation",
       "variants": [],
+      "launchWindow": null,
       "sourceIds": [
         "source:estuche-kit-viaje"
       ]
@@ -194,6 +199,7 @@
           "status": "pending_confirmation"
         }
       ],
+      "launchWindow": null,
       "sourceIds": [
         "source:reposa-puros-plegable"
       ]
@@ -244,6 +250,12 @@
           "status": "pending_confirmation"
         }
       ],
+      "launchWindow": {
+        "status": "planned",
+        "month": "2027-01",
+        "label": "Disponibilidad prevista: enero de 2027",
+        "source": "brand_owner_statement"
+      },
       "sourceIds": [
         "source:cortador-v-geometrico"
       ]
@@ -287,6 +299,12 @@
           "status": "pending_confirmation"
         }
       ],
+      "launchWindow": {
+        "status": "planned",
+        "month": "2027-01",
+        "label": "Disponibilidad prevista: enero de 2027",
+        "source": "brand_owner_statement"
+      },
       "sourceIds": [
         "source:encendedor-sarike-butano"
       ]

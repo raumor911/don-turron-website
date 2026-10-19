@@ -1,6 +1,6 @@
 # Cortapuros en V de metal con acabado geométrico
 
-ID: `cortador-v-geometrico`; categoría: Cortadores; artículo documentado en **prelanzamiento**. Precio, inventario, disponibilidad por acabado y envío sin confirmar.
+ID: `cortador-v-geometrico`; categoría: Cortadores; artículo documentado en **prelanzamiento**. Disponibilidad prevista para enero de 2027 (sin día exacto; sujeta a cambios), según la planificación comunicada por el titular de la marca. Precios, inventario, existencias por acabado y envío aún sin confirmar.
 
 Cortapuros metálico de corte en V con una superficie de relieve geométrico tridimensional. Su mecanismo de accionamiento por pulsación permite preparar el corte con un solo movimiento. Formato compacto, disponible en acabados plateado y dorado; características y desempeño según descripción del proveedor, pendientes de verificación independiente.
 

@@ -1,6 +1,8 @@
 # Encendedor metálico Sarike de doble llama
 
-**Producto:** `encendedor-sarike-butano` · **Categoría:** Encendedores · **Estado:** artículo documentado en prelanzamiento, sin oferta habilitada.
+**Producto:** `encendedor-sarike-butano` · **Categoría:** Encendedores · **Estado:** próximo lanzamiento, sin oferta habilitada.
+
+**Disponibilidad prevista: enero de 2027.** Mes objetivo comunicado por el titular de la marca; no constituye confirmación de inventario, pedido, preventa ni fecha exacta de salida. El calendario puede cambiar.
 
 Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Según la información del proveedor, su mecanismo permite alternar entre llama tradicional y llama azul concentrada mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el comportamiento de la llama y los materiales específicos requieren verificación independiente.
 

@@ -22,6 +22,7 @@ function knowledgeGraph(k,fingerprint){
   for(const cat of k.categories.filter(publicItem)){node(cat.id,'Category',cat.name);edge(cat.collectionId,cat.id,'hasCategory');}
   for(const p of k.products.filter(publicItem)){
     node(p.id,'Product',p.name,p.contentStatus);
+    if(p.launchWindow)nodes[nodes.length-1].launchWindow={...p.launchWindow};
     edge(p.categoryId,p.id,'containsProduct');
     for(let i=0;i<p.features.length;i++){const id='feature:'+p.id+':'+(i+1);node(id,'Feature',p.features[i],'supplier_declared');edge(p.id,id,'hasDeclaredFeature');}
   }
@@ -44,16 +45,16 @@ const generalSchema=k=>({
    {'@type':'ItemList','@id':'#catalog-list',name:'Accesorios documentados',numberOfItems:k.products.filter(p=>p.contentStatus!=='conceptual').length,itemListElement:k.products.filter(p=>p.contentStatus!=='conceptual').map((p,i)=>({'@type':'ListItem',position:i+1,name:p.name}))}
   ]});
 function writeCatalog(k){
-  const products=k.products.map(p=>Object.fromEntries(['id','name','category','categoryLabel','subtitle','description','features','art','badge','images','variants','contentStatus','commercialStatus'].map(field=>[field,p[field]])));
+  const products=k.products.map(p=>Object.fromEntries(['id','name','category','categoryLabel','subtitle','description','features','art','badge','images','variants','contentStatus','commercialStatus','launchWindow'].map(field=>[field,p[field]])));
   out('catalog.js','/* AUTOGENERADO desde knowledge/products.json — editar solo el Semantic Core. */\nwindow.DON_TURRON_CATALOG = '+JSON.stringify(products,null,2)+';\n');
 }
 function writeAi(k,fingerprint,graph){
   const documented=k.products.filter(p=>p.contentStatus!=='conceptual'&&publicItem(p));
-  const publicProducts=k.products.filter(publicItem).map(p=>({id:p.id,name:p.name,description:p.description,features:p.features,images:p.images,category:p.category,contentStatus:p.contentStatus,commercialStatus:p.commercialStatus,variants:p.variants,sourceIds:p.sourceIds}));
+  const publicProducts=k.products.filter(publicItem).map(p=>({id:p.id,name:p.name,description:p.description,features:p.features,images:p.images,category:p.category,contentStatus:p.contentStatus,commercialStatus:p.commercialStatus,variants:p.variants,launchWindow:p.launchWindow??null,sourceIds:p.sourceIds}));
   const asMd=items=>items.map(x=>'## '+x.question+'\n\n'+x.answer+'\n\nFuentes: '+x.sourceIds.join(', ')).join('\n\n');
   const intro='# Don Turrón\n\n'+k.brand.description+'\n\nLema: '+k.brand.tagline+'\n\nEstado: prelanzamiento; no se reciben pedidos, precios y existencias por confirmar.\n';
-  const links=doc=>'- ['+doc.name+'](/productos/'+doc.id+'/)';
-  const brandMd=intro+'\nLos primeros cinco artículos cuentan con fichas descriptivas; el encendedor es conceptual.\n';
+  const links=doc=>'- ['+doc.name+'](/productos/'+doc.id+'/)'+(doc.launchWindow?' — '+doc.launchWindow.label+'.':'');
+  const brandMd=intro+'\n'+documented.length+' artículos tienen fichas descriptivas y el encendedor de flama jet permanece como referencia conceptual.\n';
   const catalogMd=intro+'\n## Accesorios documentados\n'+documented.map(links).join('\n')+'\n\n## Referencia conceptual\n- Encendedor de flama jet (sin oferta comercial).\n';
   const intentList=k.intents.filter(publicItem).map(i=>({...i,sourceType:'hypothesis_not_measured'}));
   const termMd='# Terminología\n\n'+k.terminology.filter(publicItem).map(x=>'## '+x.term+'\n\n'+x.definition).join('\n\n')+'\n';

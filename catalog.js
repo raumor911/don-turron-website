@@ -219,7 +219,7 @@ window.DON_TURRON_CATALOG = [
       "Dimensiones de referencia del proveedor: 50.5 × 42 × 14.5 mm"
     ],
     "art": "cutter",
-    "badge": "NUEVA PIEZA",
+    "badge": "PRÓXIMAMENTE",
     "images": [
       {
         "src": "assets/products/cortador-v-plateado.webp",
@@ -253,7 +253,13 @@ window.DON_TURRON_CATALOG = [
       }
     ],
     "contentStatus": "documented",
-    "commercialStatus": "pending_confirmation"
+    "commercialStatus": "pending_confirmation",
+    "launchWindow": {
+      "status": "planned",
+      "month": "2027-01",
+      "label": "Disponibilidad prevista: enero de 2027",
+      "source": "brand_owner_statement"
+    }
   },
   {
     "id": "encendedor-sarike-butano",
@@ -271,7 +277,7 @@ window.DON_TURRON_CATALOG = [
       "Resistencia al viento y desempeño sin validación técnica independiente"
     ],
     "art": "lighter",
-    "badge": "NUEVA PIEZA",
+    "badge": "PRÓXIMAMENTE",
     "images": [
       {
         "src": "assets/products/encendedor-sarike-plata.webp",
@@ -297,6 +303,12 @@ window.DON_TURRON_CATALOG = [
       }
     ],
     "contentStatus": "documented",
-    "commercialStatus": "pending_confirmation"
+    "commercialStatus": "pending_confirmation",
+    "launchWindow": {
+      "status": "planned",
+      "month": "2027-01",
+      "label": "Disponibilidad prevista: enero de 2027",
+      "source": "brand_owner_statement"
+    }
   }
 ];

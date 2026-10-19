@@ -34,6 +34,12 @@ export function validate(data=load()){
     if(p.id==='reposa-puros-plegable')check(p.variants.map(x=>x.label).join('|')==='Plata|Negro' && p.variants.every(x=>!x.sku&&!x.stock), 'unconfirmed variants');
     if(p.id==='cortador-v-geometrico')check(p.variants.map(x=>x.label).join('|')==='Plateado|Dorado' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed cortador variants');
     if(p.id==='encendedor-sarike-butano')check(p.variants.map(x=>x.label).join('|')==='Plata|Dorado' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed Sarike variants');
+    // Planned launch months never constitute stock confirmation or a commercial Offer.
+    if(['cortador-v-geometrico','encendedor-sarike-butano'].includes(p.id)){
+      check(p.badge==='PRÓXIMAMENTE',p.id+': unexpected upcoming badge');
+      check(p.launchWindow?.status==='planned' && p.launchWindow.month==='2027-01' && p.launchWindow.label==='Disponibilidad prevista: enero de 2027' && p.launchWindow.source==='brand_owner_statement',p.id+': invalid planned month');
+      check(p.commercialStatus==='pending_confirmation',p.id+': release plan cannot activate commerce');
+    } else check(p.launchWindow===undefined,p.id+': unexpected launch window');
   }
   check(data.products.length===8,'exactly eight products expected');
   check(data.products.filter(p=>p.contentStatus==='documented').length===7,'seven documented products expected');

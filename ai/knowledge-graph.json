@@ -1,7 +1,7 @@
 {
   "name": "Don Turrón Semantic Knowledge Graph",
   "version": "1.0.0",
-  "fingerprint": "7d29a4688938e52eb6a47df581440c33e670dfbb09e9f22b61c7f216cff134c2",
+  "fingerprint": "2186582ad857c4eab0dd835107151f571f1b1c0061c5fea5fe98632cda04d170",
   "nodes": [
     {
       "id": "brand:don-turron",
@@ -196,7 +196,13 @@
       "id": "cortador-v-geometrico",
       "type": "Product",
       "name": "Cortapuros en V de metal con acabado geométrico",
-      "status": "documented"
+      "status": "documented",
+      "launchWindow": {
+        "status": "planned",
+        "month": "2027-01",
+        "label": "Disponibilidad prevista: enero de 2027",
+        "source": "brand_owner_statement"
+      }
     },
     {
       "id": "feature:cortador-v-geometrico:1",
@@ -232,7 +238,13 @@
       "id": "encendedor-sarike-butano",
       "type": "Product",
       "name": "Encendedor metálico Sarike de doble llama",
-      "status": "documented"
+      "status": "documented",
+      "launchWindow": {
+        "status": "planned",
+        "month": "2027-01",
+        "label": "Disponibilidad prevista: enero de 2027",
+        "source": "brand_owner_statement"
+      }
     },
     {
       "id": "feature:encendedor-sarike-butano:1",

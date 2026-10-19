@@ -39,6 +39,8 @@ with sync_playwright() as p:
   page.wait_for_timeout(350)
   page.screenshot(path=str(PROJECT/f'tests/{name}.png'),full_page=True)
   assert page.locator('.product-card').count()==8, 'Producto inicial'
+  assert page.locator('.product-card .product-badge').filter(has_text='PRÓXIMAMENTE').count()==2, 'Exclusivamente dos etiquetas Próximamente'
+  assert page.locator('.product-card .product-availability').count()==2, 'Solo dos lanzamientos con mes definido'
   assert page.locator('.product-card .product-image-trigger').count()==8, 'Imagen clicable en las ocho tarjetas'
   page.locator('.product-card[data-id="encendedor-jet"] .product-image-trigger').click()
   assert page.locator('#product-modal-name').inner_text()=='Encendedor de flama jet', 'Abrir detalle al pulsar la foto conceptual'
@@ -55,15 +57,21 @@ with sync_playwright() as p:
   page.locator('[data-filter="encendedores"]').click()
   assert page.locator('.product-card').count()==2, 'Encendedores incluye referencia conceptual y producto Sarike'
   assert page.locator('.product-card[data-id="encendedor-sarike-butano"]').count()==1, 'Tarjeta Sarike añadida'
+  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-badge').inner_text()=='PRÓXIMAMENTE', 'Encendedor Sarike: nueva etiqueta'
+  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Sarike: mes previsto'
   page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-image-trigger').click()
   assert page.locator('#product-modal-name').inner_text()=='Encendedor metálico Sarike de doble llama', 'Ficha Sarike'
+  assert page.locator('.modal-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Sarike: fecha en modal'
   assert page.locator('.travel-gallery-controls button').count()==3, 'Galería Sarike con tres fotos'
   page.locator('#product-modal-close').click()
   page.locator('[data-filter="cortadores"]').click()
   assert page.locator('.product-card').count()==1, 'Nueva categoría cortadores'
-  assert page.locator('.product-card[data-id="cortador-v-geometrico"]').count()==1, 'Nueva pieza mantiene tarjeta existente'
+  assert page.locator('.product-card[data-id="cortador-v-geometrico"]').count()==1, 'El cortapuros conserva la tarjeta actual'
+  assert page.locator('.product-card[data-id="cortador-v-geometrico"] .product-badge').inner_text()=='PRÓXIMAMENTE', 'Cortapuros: etiqueta próxima'
+  assert page.locator('.product-card[data-id="cortador-v-geometrico"] .product-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Cortapuros: mes previsto'
   page.locator('.product-card[data-id="cortador-v-geometrico"] [data-detail]').click()
   assert page.locator('#product-modal-name').inner_text()=='Cortapuros en V de metal con acabado geométrico', 'Detalle cortapuros'
+  assert page.locator('.modal-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Cortapuros: fecha en modal'
   assert page.locator('.travel-gallery-controls button').count()==5, 'Cinco vistas cortapuros'
   page.locator('#product-modal-close').click()
   page.locator('[data-filter="humidores"]').click()
