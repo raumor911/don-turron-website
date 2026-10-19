@@ -1,0 +1,20 @@
+name: DT Telemetry V1 — isolated QA
+on:
+  push:
+    branches: [feat/dt-telemetry-v1]
+    paths: ['telemetry/**','knowledge/products.json','knowledge/intents.json','ai/content-manifest.json','.github/workflows/dt-telemetry.yml','app.js','gallery.js','index.html','telemetry-client.js']
+  pull_request:
+    paths: ['telemetry/**','knowledge/products.json','knowledge/intents.json','ai/content-manifest.json','.github/workflows/dt-telemetry.yml','app.js','gallery.js','index.html','telemetry-client.js']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  telemetry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test telemetry/tests.mjs
