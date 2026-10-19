@@ -56,7 +56,7 @@
           <button type="button" class="product-quick" data-detail="${html(p.id)}" aria-label="Ver detalles de ${html(p.name)}">↗</button>
         </div>
         <div class="product-details"><div class="product-category">${html(p.categoryLabel.toUpperCase())}</div>
-          <h3>${html(p.name)}</h3><p class="product-subtitle">${html(p.subtitle)}</p>
+          <h3>${html(p.name)}</h3><p class="product-subtitle">${html(p.subtitle)}</p>${p.launchWindow ? `<p class="product-availability">${html(p.launchWindow.label)}</p>` : ''}
           <div class="product-buy"><span class="product-price">Precio por confirmar</span><button type="button" class="add-product" data-add="${html(p.id)}">Seleccionar <span>＋</span></button></div>
         </div>
       </article>`).join('');
@@ -156,7 +156,7 @@
   function openProduct(id, trigger) {
     const p = productById(id);
     if (!p) return;
-    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p><ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul><p class="modal-caption">Precio y disponibilidad por confirmar. Las características se muestran según la información disponible.</p><button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
+    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p>${p.launchWindow ? `<p class="modal-availability">${html(p.launchWindow.label)}</p>` : ''}<ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul><p class="modal-caption">${p.launchWindow ? 'Fecha prevista, sujeta a cambios; precio y existencias por confirmar.' : 'Precio y disponibilidad por confirmar.'} Las características se muestran según la información disponible.</p><button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
     openDialog($('product-modal'), $('product-modal-backdrop'), trigger);
     emit('product_view',{product_id:id});
   }

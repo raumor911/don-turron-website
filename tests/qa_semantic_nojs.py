@@ -20,11 +20,21 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
         assert response.status==200
         assert page.locator('.product-card').count()==8,'Catálogo estático recuperable sin JS'
         assert 'noindex' in page.locator('meta[name=robots]').get_attribute('content')
+        for item in ('cortador-v-geometrico','encendedor-sarike-butano'):
+            card=page.locator(f'.product-card[data-id="{item}"]')
+            assert card.locator('.product-badge').inner_text()=='PRÓXIMAMENTE',item
+            assert card.locator('.product-availability').inner_text()=='Disponibilidad prevista: enero de 2027',item
+        assert page.locator('.product-availability').count()==2,'Only two future availability dates'
         product_ids=['humidor-viaje-5-puros','cenicero-mesa','estuche-viaje','estuche-kit-viaje','reposa-puros-plegable','cortador-v-geometrico','encendedor-sarike-butano']
         for product_id in product_ids:
             response=page.goto(base+'/productos/'+product_id+'/',wait_until='domcontentloaded')
             assert response.status==200,f'Acceso directo {product_id}'
             assert page.locator('h1').count()==1,f'H1 ausente {product_id}'
+            if product_id in ('cortador-v-geometrico','encendedor-sarike-butano'):
+                assert page.locator('.dt-launch').inner_text()=='Disponibilidad prevista: enero de 2027',product_id
+                assert '"offers"' not in page.locator('script[type="application/ld+json"]').inner_text().lower(),'No commercial offer permitted'
+            else:
+                assert page.locator('.dt-launch').count()==0,product_id
             assert page.locator('.dt-images img').count()>=2,f'Fotografías {product_id}'
             assert page.locator('meta[name=robots]').get_attribute('content')=='noindex, nofollow'
             assert page.locator('script[type="application/ld+json"]').count()==1
