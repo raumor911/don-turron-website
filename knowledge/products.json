@@ -240,12 +240,12 @@
     "category": "cortadores",
     "categoryLabel": "Cortadores",
     "subtitle": "Una pieza compacta para preparar el corte.",
-    "description": "Cortapuros metálico de corte en V con una superficie de relieve geométrico tridimensional. Su mecanismo de accionamiento por pulsación permite preparar el corte con un solo movimiento. Formato compacto, disponible en acabados plateado y dorado; características y desempeño según descripción del proveedor, pendientes de verificación independiente.",
+    "description": "Cortapuros metálico de corte en V con superficie de relieve geométrico tridimensional. Su mecanismo de accionamiento por pulsación permite preparar el corte con un solo movimiento. Diseño compacto disponible en acabados plateado y dorado.",
     "features": [
-      "Cuchilla de corte en V; desempeño pendiente de verificación",
+      "Cuchilla para corte en V",
       "Mecanismo accionado mediante pulsación",
       "Cuerpo metálico con relieve geométrico tridimensional",
-      "Acabados: plateado y dorado (existencias por confirmar)",
+      "Acabados: plateado y dorado",
       "Dimensiones de referencia del proveedor: 50.5 × 42 × 14.5 mm"
     ],
     "art": "cutter",
@@ -307,14 +307,13 @@
     "category": "encendedores",
     "categoryLabel": "Encendedores",
     "subtitle": "Flama suave y jet en una sola pieza.",
-    "description": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Según la información proporcionada, permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el desempeño de ambos modos y los materiales específicos están pendientes de verificación independiente.",
+    "description": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado.",
     "features": [
-      "Combustible declarado por el proveedor: gas butano",
-      "Dos modos declarados: flama suave y flama jet (azul), con control lateral",
+      "Combustible: gas butano",
+      "Dos modos de flama: suave y jet (azul), con control lateral",
       "Carcasa metálica con acabado texturizado",
       "Dimensiones anunciadas: 61 × 38 × 13 mm; peso anunciado: 89 g",
-      "Acabados plata y dorado; existencias por confirmar",
-      "Resistencia al viento y desempeño sin validación técnica independiente"
+      "Acabados: plata y dorado"
     ],
     "art": "lighter",
     "badge": "PRÓXIMAMENTE",
