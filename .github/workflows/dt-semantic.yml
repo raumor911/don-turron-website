@@ -40,9 +40,10 @@ jobs:
           python tests/qa_browser.py
           python tests/qa_semantic_nojs.py
           python tests/qa_favicon.py
+          python tests/qa_rauvia_footer.py
           node scripts/dt-semantic/observability.test.mjs
       - name: Registrar solo artefactos generados en la rama de desarrollo
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/feat/dt-semantic-core-v1' || github.ref == 'refs/heads/feat/dt-cortador-v-product')
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/feat/dt-semantic-core-v1' || github.ref == 'refs/heads/feat/dt-cortador-v-product' || github.ref == 'refs/heads/feat/dt-rauvia-footer-sarike-lighter')
         shell: bash
         run: |
           set -euo pipefail

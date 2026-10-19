@@ -321,5 +321,59 @@
       }
     ],
     "sortOrder": 7
+  },
+  {
+    "id": "encendedor-sarike-butano",
+    "name": "Encendedor metálico Sarike de doble llama",
+    "category": "encendedores",
+    "categoryLabel": "Encendedores",
+    "subtitle": "Dos estilos de llama en una pieza compacta.",
+    "description": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Según la información del proveedor, su mecanismo permite alternar entre llama tradicional y llama azul concentrada mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el comportamiento de la llama y los materiales específicos requieren verificación independiente.",
+    "features": [
+      "Combustible declarado por el proveedor: gas butano",
+      "Mecanismo de llama tradicional y llama azul, según fotografías del proveedor",
+      "Carcasa metálica con acabado texturizado",
+      "Dimensiones anunciadas: 61 × 38 × 13 mm; peso anunciado: 89 g",
+      "Acabados plata y dorado; existencias por confirmar",
+      "Resistencia al viento y desempeño sin validación técnica independiente"
+    ],
+    "art": "lighter",
+    "badge": "NUEVA PIEZA",
+    "collectionId": "collection:accesorios-puros",
+    "categoryId": "category:encendedores",
+    "contentStatus": "documented",
+    "commercialStatus": "pending_confirmation",
+    "visibility": "public_preview",
+    "sourceIds": [
+      "source:encendedor-sarike-butano"
+    ],
+    "claimIds": [
+      "claim:encendedor-sarike-butano-description"
+    ],
+    "images": [
+      {
+        "src": "assets/products/encendedor-sarike-plata.webp",
+        "label": "Encendedor Sarike con acabado plateado, vista frontal"
+      },
+      {
+        "src": "assets/products/encendedor-sarike-dorado.webp",
+        "label": "Encendedor Sarike con acabado dorado, vista frontal"
+      },
+      {
+        "src": "assets/products/encendedor-sarike-modos-llama.webp",
+        "label": "Demostración ilustrativa del mecanismo de llama tradicional y llama azul"
+      }
+    ],
+    "variants": [
+      {
+        "label": "Plata",
+        "status": "pending_confirmation"
+      },
+      {
+        "label": "Dorado",
+        "status": "pending_confirmation"
+      }
+    ],
+    "sortOrder": 8
   }
 ]

@@ -38,8 +38,8 @@ with sync_playwright() as p:
   page.locator('#age-yes').click()
   page.wait_for_timeout(350)
   page.screenshot(path=str(PROJECT/f'tests/{name}.png'),full_page=True)
-  assert page.locator('.product-card').count()==7, 'Producto inicial'
-  assert page.locator('.product-card .product-image-trigger').count()==7, 'Imagen clicable en las siete tarjetas'
+  assert page.locator('.product-card').count()==8, 'Producto inicial'
+  assert page.locator('.product-card .product-image-trigger').count()==8, 'Imagen clicable en las ocho tarjetas'
   page.locator('.product-card[data-id="encendedor-jet"] .product-image-trigger').click()
   assert page.locator('#product-modal-name').inner_text()=='Encendedor de flama jet', 'Abrir detalle al pulsar la foto conceptual'
   page.locator('#product-modal-close').click()
@@ -51,7 +51,14 @@ with sync_playwright() as p:
   assert page.locator('.product-card[data-id="humidor-viaje-5-puros"]').count()==1, 'Humidor real agregado sin modificar la estructura de las tarjetas'
   assert page.locator('.dt-progress').count()==1, 'Línea de progreso'
   assert page.locator('.dt-motion-toggle').count()==1, 'Control de movimiento'
-  assert page.locator('.product-card.dt-enter').count()==7, 'Animación productos'
+  assert page.locator('.product-card.dt-enter').count()==8, 'Animación productos'
+  page.locator('[data-filter="encendedores"]').click()
+  assert page.locator('.product-card').count()==2, 'Encendedores incluye referencia conceptual y producto Sarike'
+  assert page.locator('.product-card[data-id="encendedor-sarike-butano"]').count()==1, 'Tarjeta Sarike añadida'
+  page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-image-trigger').click()
+  assert page.locator('#product-modal-name').inner_text()=='Encendedor metálico Sarike de doble llama', 'Ficha Sarike'
+  assert page.locator('.travel-gallery-controls button').count()==3, 'Galería Sarike con tres fotos'
+  page.locator('#product-modal-close').click()
   page.locator('[data-filter="cortadores"]').click()
   assert page.locator('.product-card').count()==1, 'Nueva categoría cortadores'
   assert page.locator('.product-card[data-id="cortador-v-geometrico"]').count()==1, 'Nueva pieza mantiene tarjeta existente'
@@ -93,7 +100,7 @@ with sync_playwright() as p:
   page.locator('[data-filter="estuches"]').click()
   assert page.locator('.product-card').count()==2, 'Dos estuches en la misma categoría'
   assert page.locator('.product-card[data-id="estuche-viaje"]').count()==1, 'Tercer producto preservado'
-  assert page.locator('.product-card[data-id="estuche-kit-viaje"]').count()==1, 'Cuarto producto sin ampliar las siete tarjetas'
+  assert page.locator('.product-card[data-id="estuche-kit-viaje"]').count()==1, 'Cuarto producto sin ampliar las ocho tarjetas'
   page.locator('.product-card[data-id="estuche-viaje"] [data-detail]').click()
   assert page.locator('#product-modal-name').inner_text()=='Estuche porta puros con humidificador', 'Título del tercer producto'
   assert page.locator('.travel-gallery-controls button').count()==5, 'Cinco vistas del tercer producto'

@@ -50,5 +50,14 @@
       "estuche-viaje"
     ],
     "visibility": "public_preview"
+  },
+  {
+    "id": "usecase:encendido",
+    "name": "Encender un puro",
+    "description": "Explorar accesorios de encendido según tipo de llama, sin atribuir prestaciones verificadas.",
+    "productIds": [
+      "encendedor-sarike-butano"
+    ],
+    "visibility": "public_preview"
   }
 ]
