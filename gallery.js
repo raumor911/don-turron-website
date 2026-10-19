@@ -39,6 +39,8 @@
   const previousLightbox = lightbox.querySelector('#dt-lightbox-prev');
   const nextLightbox = lightbox.querySelector('#dt-lightbox-next');
   let returnFocus = null;
+  const emit = (event, properties={}) => { try { window.dispatchEvent(new CustomEvent('dt:interaction',{detail:{event,...properties}})); } catch {} };
+  const currentProductId = () => modalContent.querySelector('img.travel-photo-modal')?.dataset.productId || null;
 
   function galleryButtons() {
     return [...modalContent.querySelectorAll('.travel-gallery-controls [data-photo-index]')];
@@ -103,6 +105,7 @@
     lightbox.classList.add('dt-lightbox-visible');
     syncLightbox();
     lightbox.focus();
+    if(currentProductId())emit('image_zoom',{product_id:currentProductId(),zoomed:true});
   }
   function closeLightbox() {
     if (lightbox.hidden) return;
@@ -155,8 +158,13 @@
   lightbox.querySelector('#dt-lightbox-close').addEventListener('click', closeLightbox);
   previousLightbox.addEventListener('click', () => navigate(-1));
   nextLightbox.addEventListener('click', () => navigate(1));
-  zoomButton.addEventListener('click', () => setZoom(!lightbox.classList.contains('dt-zoomed')));
-  largeImage.addEventListener('click', () => setZoom(!lightbox.classList.contains('dt-zoomed')));
+  function userZoom() {
+    const next = !lightbox.classList.contains('dt-zoomed');
+    setZoom(next);
+    if(currentProductId())emit('image_zoom',{product_id:currentProductId(),zoomed:next});
+  }
+  zoomButton.addEventListener('click', userZoom);
+  largeImage.addEventListener('click', userZoom);
   lightbox.addEventListener('click', (event) => { if (event.target === lightbox) closeLightbox(); });
 
   document.addEventListener('keydown', (event) => {
