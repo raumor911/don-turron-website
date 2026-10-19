@@ -51,6 +51,8 @@ with sync_playwright() as p:
   assert page.locator('.product-card[data-id="humidor-viaje-5-puros"]').count()==1, 'Humidor real agregado sin modificar la estructura de las tarjetas'
   assert page.locator('.dt-progress').count()==1, 'Línea de progreso'
   assert page.locator('.dt-motion-toggle').count()==0, 'No se muestra control de movimiento'
+  assert page.locator('#dt-edge-bronze').count()==1, 'Filtro tonal sobre emblema de esencia'
+  assert page.locator('.philosophy-frame img').evaluate("el => getComputedStyle(el).filter.includes('dt-edge-bronze')"), 'Emblema aplica filtro café claro'
   assert page.locator('.product-card.dt-enter').count()==7, 'Animación de siete productos'
   page.locator('[data-filter="encendedores"]').click()
   assert page.locator('.product-card').count()==1, 'Solo el encendedor Sarike tiene ficha verificada documentalmente'
@@ -62,6 +64,10 @@ with sync_playwright() as p:
   assert page.locator('#product-modal-name').inner_text()=='Encendedor metálico Sarike de doble llama', 'Ficha Sarike'
   assert page.locator('.modal-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Sarike: fecha en modal'
   assert page.locator('.travel-gallery-controls button').count()==3, 'Galería Sarike con tres fotos'
+  assert 'pendientes de verificación independiente' not in page.locator('#product-modal-content').inner_text().lower(), 'No verificación en ficha Sarike'
+  assert 'declarado por el proveedor' not in page.locator('#product-modal-content').inner_text().lower(), 'Combustible sin expresión redundante'
+  assert 'existencias por confirmar' not in page.locator('#product-modal-content').inner_text().lower(), 'Sin frases de existencias Sarike'
+  assert 'Las características se muestran según la información disponible' not in page.locator('#product-modal-content').inner_text(), 'Sin aviso genérico en Sarike'
   page.locator('#product-modal-close').click()
   page.locator('[data-filter="cortadores"]').click()
   assert page.locator('.product-card').count()==1, 'Nueva categoría cortadores'
@@ -72,6 +78,10 @@ with sync_playwright() as p:
   assert page.locator('#product-modal-name').inner_text()=='Cortapuros en V de metal con acabado geométrico', 'Detalle cortapuros'
   assert page.locator('.modal-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Cortapuros: fecha en modal'
   assert page.locator('.travel-gallery-controls button').count()==5, 'Cinco vistas cortapuros'
+  assert 'pendientes de verificación independiente' not in page.locator('#product-modal-content').inner_text().lower(), 'Sin verificación en ficha del cortador'
+  assert 'desempeño pendiente de verificación' not in page.locator('#product-modal-content').inner_text().lower(), 'Sin desempeño no verificado en cortador'
+  assert '(existencias por confirmar)' not in page.locator('#product-modal-content').inner_text().lower(), 'Sin existencias entre paréntesis'
+  assert 'Las características se muestran según la información disponible' not in page.locator('#product-modal-content').inner_text(), 'Sin aviso genérico en cortador'
   page.locator('#product-modal-close').click()
   page.locator('[data-filter="humidores"]').click()
   assert page.locator('.product-card').count()==1, 'Filtrado'

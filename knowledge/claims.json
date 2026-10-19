@@ -68,7 +68,7 @@
   {
     "id": "claim:cortador-v-geometrico-description",
     "subjectId": "cortador-v-geometrico",
-    "statement": "Cortapuros metálico de corte en V con una superficie de relieve geométrico tridimensional. Su mecanismo de accionamiento por pulsación permite preparar el corte con un solo movimiento. Formato compacto, disponible en acabados plateado y dorado; características y desempeño según descripción del proveedor, pendientes de verificación independiente.",
+    "statement": "Cortapuros metálico de corte en V con superficie de relieve geométrico tridimensional. Su mecanismo de accionamiento por pulsación permite preparar el corte con un solo movimiento. Diseño compacto disponible en acabados plateado y dorado.",
     "status": "supplier_declared",
     "sourceIds": [
       "source:cortador-v-geometrico"
@@ -79,7 +79,7 @@
   {
     "id": "claim:encendedor-sarike-butano-description",
     "subjectId": "encendedor-sarike-butano",
-    "statement": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Según la información proporcionada, permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el desempeño de ambos modos y los materiales específicos están pendientes de verificación independiente.",
+    "statement": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado.",
     "status": "supplier_declared",
     "sourceIds": [
       "source:encendedor-sarike-butano"

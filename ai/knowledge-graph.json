@@ -1,7 +1,7 @@
 {
   "name": "Don Turrón Semantic Knowledge Graph",
   "version": "1.0.0",
-  "fingerprint": "c2c475778c3e2b28c8c81abb39e0afbaacac97a9ab7176a5ec4274b3f3402a26",
+  "fingerprint": "a06d23c14601023b9ca917e82f084b0d7529ec9eda01cf814850ee6267e65fe6",
   "nodes": [
     {
       "id": "brand:don-turron",
@@ -183,7 +183,7 @@
     {
       "id": "feature:cortador-v-geometrico:1",
       "type": "Feature",
-      "name": "Cuchilla de corte en V; desempeño pendiente de verificación",
+      "name": "Cuchilla para corte en V",
       "status": "supplier_declared"
     },
     {
@@ -201,7 +201,7 @@
     {
       "id": "feature:cortador-v-geometrico:4",
       "type": "Feature",
-      "name": "Acabados: plateado y dorado (existencias por confirmar)",
+      "name": "Acabados: plateado y dorado",
       "status": "supplier_declared"
     },
     {
@@ -225,13 +225,13 @@
     {
       "id": "feature:encendedor-sarike-butano:1",
       "type": "Feature",
-      "name": "Combustible declarado por el proveedor: gas butano",
+      "name": "Combustible: gas butano",
       "status": "supplier_declared"
     },
     {
       "id": "feature:encendedor-sarike-butano:2",
       "type": "Feature",
-      "name": "Dos modos declarados: flama suave y flama jet (azul), con control lateral",
+      "name": "Dos modos de flama: suave y jet (azul), con control lateral",
       "status": "supplier_declared"
     },
     {
@@ -249,13 +249,7 @@
     {
       "id": "feature:encendedor-sarike-butano:5",
       "type": "Feature",
-      "name": "Acabados plata y dorado; existencias por confirmar",
-      "status": "supplier_declared"
-    },
-    {
-      "id": "feature:encendedor-sarike-butano:6",
-      "type": "Feature",
-      "name": "Resistencia al viento y desempeño sin validación técnica independiente",
+      "name": "Acabados: plata y dorado",
       "status": "supplier_declared"
     },
     {
@@ -447,13 +441,13 @@
     {
       "id": "claim:cortador-v-geometrico-description",
       "type": "Claim",
-      "name": "Cortapuros metálico de corte en V con una superficie de relieve geométrico tridimensional. Su mecanismo de accionamiento por pulsación permite preparar el corte con un solo movimiento. Formato compacto, disponible en acabados plateado y dorado; características y desempeño según descripción del proveedor, pendientes de verificación independiente.",
+      "name": "Cortapuros metálico de corte en V con superficie de relieve geométrico tridimensional. Su mecanismo de accionamiento por pulsación permite preparar el corte con un solo movimiento. Diseño compacto disponible en acabados plateado y dorado.",
       "status": "supplier_declared"
     },
     {
       "id": "claim:encendedor-sarike-butano-description",
       "type": "Claim",
-      "name": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Según la información proporcionada, permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el desempeño de ambos modos y los materiales específicos están pendientes de verificación independiente.",
+      "name": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado.",
       "status": "supplier_declared"
     }
   ],
@@ -656,11 +650,6 @@
     {
       "source": "encendedor-sarike-butano",
       "target": "feature:encendedor-sarike-butano:5",
-      "type": "hasDeclaredFeature"
-    },
-    {
-      "source": "encendedor-sarike-butano",
-      "target": "feature:encendedor-sarike-butano:6",
       "type": "hasDeclaredFeature"
     },
     {

@@ -35,3 +35,8 @@
 
 /* Keep the development credit right-aligned even when the mobile footer stacks. */
 @media(max-width:580px){.footer-bottom .footer-credit{align-self:flex-end;margin-left:auto;text-align:right}}
+
+/* Nuestra esencia: suavizar únicamente los reflejos casi blancos del bisel.
+   El filtro SVG preserva los negros y el monograma dorado original. */
+.dt-bronze-filter{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
+.philosophy-frame img{filter:url("#dt-edge-bronze")}
