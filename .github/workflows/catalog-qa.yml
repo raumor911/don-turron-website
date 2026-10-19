@@ -5,6 +5,8 @@ on:
     paths:
       - 'catalog.js'
       - 'app.js'
+      - 'gallery.js'
+      - 'gallery.css'
       - 'premium.css'
       - 'index.html'
       - 'tests/qa_browser.py'

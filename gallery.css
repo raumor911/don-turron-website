@@ -1,0 +1,48 @@
+/* Don Turrón · Galería V4: vista completa y visor ampliado. */
+.product-art .travel-photo-card,.drawer-art img.travel-photo{object-fit:contain;object-position:center;transform:none!important}
+.product-art .travel-photo-card{padding:10px;background:#241c16}
+.product-card:hover .travel-photo-card{filter:brightness(1.035)}
+.modal-art{position:relative;overflow:hidden;min-width:0;background:#18130f}
+.modal-art .dt-image-open{position:absolute;z-index:1;inset:12px 8px 78px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:0;background:transparent;padding:6px;color:#ead1a8;cursor:zoom-in;min-width:0}
+.modal-art .dt-image-open:focus-visible{outline:2px solid #e4bd84;outline-offset:-4px}
+.modal-art .dt-image-open img,.modal-art .dt-image-open img.travel-photo-modal{position:static;inset:auto;display:block;width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;object-position:center;transform:none!important;filter:none}
+.modal-art .dt-image-open img:not(.travel-photo-modal){width:92%;height:92%}
+.modal-art .dt-image-hint{position:absolute;right:6px;top:8px;padding:7px 11px;background:rgba(19,14,10,.82);border:1px solid rgba(199,160,106,.45);font:600 10px/1.3 var(--sans);letter-spacing:.08em;pointer-events:none}
+.dt-gallery-nav{position:absolute;z-index:4;top:44%;transform:translateY(-50%);width:44px;height:52px;border:1px solid #b58c5a9c;background:rgba(19,14,10,.82);color:#f3d7ac;display:grid;place-items:center;font:normal 37px/1 var(--serif);cursor:pointer;transition:background .2s}
+.dt-gallery-nav:hover,.dt-gallery-nav:focus-visible{background:#d4aa73;color:#17130e;outline-offset:2px}
+.dt-gallery-nav-anterior{left:8px}.dt-gallery-nav-siguiente{right:8px}
+.dt-gallery-status{position:absolute;z-index:2;left:16px;top:15px;color:#f0d9af;background:#17110dcc;border:1px solid #c7a57455;padding:7px 9px;font:600 10px var(--sans);letter-spacing:.13em}
+.modal-art .travel-gallery-controls{z-index:5;bottom:16px;flex-wrap:wrap}
+.dt-photo-lightbox[hidden]{display:none!important}
+.dt-photo-lightbox{position:fixed;z-index:90;inset:0;background:rgba(15,11,8,.985);color:#e9d8c3;display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:max(14px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));gap:12px}
+.dt-lightbox-top,.dt-lightbox-footer{display:flex;align-items:center;gap:16px;min-width:0}
+.dt-lightbox-brand{font:600 10px var(--sans);letter-spacing:.22em;color:#cba877;white-space:nowrap}
+.dt-lightbox-brand span{padding:0 8px}
+.dt-lightbox-counter{margin-left:auto;color:#f6d9ad;font:500 12px var(--sans);letter-spacing:.14em}
+.dt-lightbox-close,.dt-lightbox-arrow,.dt-lightbox-zoom{color:#e9d8c3;background:transparent;border:1px solid #66513a;padding:12px 15px;min-height:44px;cursor:pointer;font:600 11px var(--sans);letter-spacing:.07em;transition:border-color .2s,background .2s}
+.dt-lightbox-close span{font-size:22px;line-height:0;margin-left:10px}
+.dt-lightbox-close:hover,.dt-lightbox-arrow:hover,.dt-lightbox-zoom:hover,.dt-lightbox-close:focus-visible,.dt-lightbox-arrow:focus-visible,.dt-lightbox-zoom:focus-visible{border-color:#efc48e;background:#3a2b1f}
+.dt-lightbox-stage{min-height:0;min-width:0;display:flex;align-items:center;justify-content:center;overflow:auto;background:#241b15}
+.dt-lightbox-image{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;cursor:zoom-in;margin:auto}
+.dt-photo-lightbox.dt-zoomed .dt-lightbox-stage{display:block}
+.dt-photo-lightbox.dt-zoomed .dt-lightbox-image{width:160%;height:auto;max-width:none;max-height:none;cursor:zoom-out}
+.dt-lightbox-footer{justify-content:space-between;flex-wrap:wrap}
+.dt-lightbox-caption{flex:1;min-width:160px;margin:0;text-align:center;color:#d1baa0;font:500 12px/1.5 var(--sans)}
+.dt-lightbox-zoom[aria-pressed="true"]{border-color:#edc58f;color:#f7d8aa}
+@media(max-width:580px){
+ .modal-art{height:clamp(320px,95vw,450px)}
+ .modal-art .dt-image-open{inset:10px 8px 70px}
+ .modal-art .travel-gallery-controls{bottom:8px;left:8px;right:8px;gap:5px}
+ .modal-art .travel-gallery-controls button{width:40px;height:40px}
+ .dt-gallery-nav{width:40px;height:48px;top:42%;font-size:30px}
+ .dt-gallery-nav-anterior{left:3px}.dt-gallery-nav-siguiente{right:3px}
+ .dt-image-hint{font-size:9px!important}
+ .dt-photo-lightbox{padding:12px;gap:8px}
+ .dt-lightbox-brand{font-size:9px;letter-spacing:.1em}
+ .dt-lightbox-footer{gap:8px}
+ .dt-lightbox-caption{order:-1;flex:1 1 100%;font-size:10px}
+ .dt-lightbox-arrow{flex:1;text-align:center}
+ .dt-lightbox-arrow span{display:none}
+ .dt-lightbox-zoom{flex:1}
+}
+@media(prefers-reduced-motion:reduce){.dt-gallery-nav,.dt-lightbox-zoom,.dt-lightbox-arrow{transition:none!important}}
