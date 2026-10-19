@@ -140,3 +140,11 @@ Se añadió la ficha `cortador-v-geometrico` con acabados plateado y dorado; los
 ## Favicon monograma DT
 
 Los íconos proceden de la silueta original del monograma, extraída con **transparencia real**. `favicon.ico` multirresolución es el respaldo; existen PNG de 16/32 px, variantes negra para tema claro y oro cálido para tema oscuro, y `apple-touch-icon` 180 px. La portada usa rutas relativas y las fichas de `productos/` y `guia/` usan `../../`. El generador `scripts/dt-semantic/pages.mjs` mantiene el favicon al regenerar fichas. Validación: `python tests/qa_favicon.py`. El emblema comercial y las fotografías no se han alterado.
+
+## RAUVIA Consulting y encendedor Sarike — ficha nueva
+
+El pie de página acredita el desarrollo con la frase **«Experiencia digital desarrollada por [RAUVIA Consulting](https://rauvia.com.mx/)»**. Se integra en `index.html` y en la plantilla `scripts/dt-semantic/pages.mjs`, con prueba de enlaces accesibles en las páginas prerenderizadas (`python tests/qa_rauvia_footer.py`).
+
+Se incorpora como octava tarjeta `encendedor-sarike-butano` (encendedor metálico de butano con acabado plata/dorado y modos de llama descritos por el proveedor). Su ficha, tres imágenes WebP y atributos semánticos proceden de `knowledge/products.json` y `docs/ENCENDEDOR_SARIKE_BUTANO.md`. El anterior `encendedor-jet` permanece como referencia conceptual; ninguno está marcado como disponible para compra. No se publican precios, existencias ni garantías sin verificación.
+
+Los pipelines semántico y de telemetría compilan el catálogo vigente antes de comprobar las interacciones de navegador. No modificar `catalog.js`, `ai/` ni las fichas prerenderizadas manualmente: ejecutar `npm run build:semantic` para actualizarlas. El estado de prelanzamiento y `noindex` siguen activos.
