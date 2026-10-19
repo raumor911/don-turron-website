@@ -18,7 +18,8 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
         page=context.new_page()
         response=page.goto(base+'/',wait_until='domcontentloaded')
         assert response.status==200
-        assert page.locator('.product-card').count()==8,'Catálogo estático recuperable sin JS'
+        assert page.locator('.product-card').count()==7,'Siete productos reales sin JS'
+        assert page.locator('.product-card[data-id="encendedor-jet"]').count()==0,'Sin ficha ficticia'
         assert 'noindex' in page.locator('meta[name=robots]').get_attribute('content')
         for item in ('cortador-v-geometrico','encendedor-sarike-butano'):
             card=page.locator(f'.product-card[data-id="{item}"]')
@@ -54,6 +55,6 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
         response=page.goto(base+'/guia/estuche-o-humidor/',wait_until='domcontentloaded')
         assert response.status==200 and page.locator('h1').count()==1
         assert page.locator('meta[name=robots]').get_attribute('content')=='noindex, nofollow'
-        print('DT static no-JS: 8 cards, 7 product routes, 1 guide, noindex OK')
+        print('DT static no-JS: 7 cards, 7 product routes, 1 guide, noindex OK')
         context.close();browser.close()
     server.shutdown()

@@ -52,8 +52,8 @@ const frame=(title,body,description,ld)=>`<!doctype html>
 .dt-related{margin-top:65px;padding-top:25px;border-top:1px solid #cdbda7}
 .dt-related h2{font:500 32px Georgia,serif}
 .dt-related ul{line-height:2.3}
-.dt-footer{background:#18130f;color:#d6ba90;padding:25px;text-align:center;font-size:12px}
-.dt-credit{display:inline-block;margin-top:12px;color:#baa78e;font-size:11px}
+.dt-footer{background:#18130f;color:#d6ba90;padding:25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;text-align:left;font-size:12px}
+.dt-credit{display:inline-block;margin-left:auto;color:#baa78e;font-size:11px;text-align:right}
 .dt-credit a{color:#e5c38d;text-decoration:underline;text-underline-offset:3px}
 .dt-credit a:hover{color:#fff0d6}
 :focus-visible{outline:3px solid #b38650;outline-offset:3px}
@@ -63,7 +63,7 @@ const frame=(title,body,description,ld)=>`<!doctype html>
 </head><body class="dt-page">
 <header class="dt-bar"><a class="dt-logo" href="../../index.html">DON TURRÓN</a><span>El arte está en los detalles.</span></header>
 ${body}
-<footer class="dt-footer">Don Turrón · Catálogo en prelanzamiento · Sin compras habilitadas<br><span class="dt-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="RAUVIA Consulting (abre en otra pestaña)"><strong>RAUVIA Consulting</strong></a></span></footer>
+<footer class="dt-footer"><span>Don Turrón · Catálogo en prelanzamiento · Sin compras habilitadas</span><span class="dt-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="RAUVIA Consulting (abre en otra pestaña)"><strong>RAUVIA Consulting</strong></a></span></footer>
 </body></html>`;
 function productPage(p,k){
   const images=p.images.map((x,i)=>`<figure><img src="../../${esc(x.src)}" alt="${esc(x.label)}" width="620" height="620" loading="${i?'lazy':'eager'}"><figcaption>${esc(x.label)}</figcaption></figure>`).join('');

@@ -23,7 +23,7 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition-duration:.01ms!important;animation-duration:.01ms!important}}
 
 /* Crédito editorial de desarrollo. Integrado sin alterar el grid previo. */
-.footer-credit{display:inline-flex;align-items:center;gap:.28em;flex-wrap:wrap;color:#bba58a;font-size:10px;letter-spacing:.015em;line-height:1.6}
+.footer-credit{display:inline-flex;align-items:center;justify-content:flex-end;gap:.28em;flex-wrap:wrap;margin-left:auto;text-align:right;color:#bba58a;font-size:10px;letter-spacing:.015em;line-height:1.6}
 .footer-credit a{color:#e6c18d;text-decoration:underline;text-decoration-color:#93724a;text-underline-offset:3px;transition:color .2s ease,text-decoration-color .2s ease}
 .footer-credit a:hover{color:#fff0ce;text-decoration-color:currentColor}
 .footer-credit a:focus-visible{outline:2px solid #e6c18d;outline-offset:4px}
@@ -32,3 +32,6 @@
 .product-availability{margin:-8px 0 15px;color:#896037;font-size:10px;letter-spacing:.018em;line-height:1.55;font-weight:700}
 .modal-text .modal-availability{margin:0 0 18px;padding-left:12px;border-left:2px solid #c7a06a;color:#8b6036;font-size:12px;line-height:1.6;font-weight:700}
 @media(max-width:580px){.product-availability{font-size:9px;margin:-3px 0 13px}.modal-text .modal-availability{font-size:11px}}
+
+/* Keep the development credit right-aligned even when the mobile footer stacks. */
+@media(max-width:580px){.footer-bottom .footer-credit{align-self:flex-end;margin-left:auto;text-align:right}}

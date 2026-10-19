@@ -1,7 +1,7 @@
 name: DT Semantic Core — Validación y build
 on:
   push:
-    branches: [feat/dt-semantic-core-v1, feat/dt-cortador-v-product, feat/dt-transparent-favicon, feat/dt-rauvia-footer-sarike-lighter, feat/dt-availability-jan-2027]
+    branches: [feat/dt-semantic-core-v1, feat/dt-cortador-v-product, feat/dt-transparent-favicon, feat/dt-rauvia-footer-sarike-lighter, feat/dt-availability-jan-2027, fix/dt-remove-jet-reference-footer-motion]
     paths: ['favicon.ico','assets/favicon*','assets/apple-touch-icon.png','assets/products/**','knowledge/**','scripts/dt-semantic/**','package.json','semantic-release.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
   pull_request:
     paths: ['favicon.ico','assets/favicon*','assets/apple-touch-icon.png','assets/products/**','knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
@@ -43,7 +43,7 @@ jobs:
           python tests/qa_rauvia_footer.py
           node scripts/dt-semantic/observability.test.mjs
       - name: Registrar solo artefactos generados en la rama de desarrollo
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/feat/dt-semantic-core-v1' || github.ref == 'refs/heads/feat/dt-cortador-v-product' || github.ref == 'refs/heads/feat/dt-rauvia-footer-sarike-lighter' || github.ref == 'refs/heads/feat/dt-availability-jan-2027')
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/feat/dt-semantic-core-v1' || github.ref == 'refs/heads/feat/dt-cortador-v-product' || github.ref == 'refs/heads/feat/dt-rauvia-footer-sarike-lighter' || github.ref == 'refs/heads/feat/dt-availability-jan-2027' || github.ref == 'refs/heads/fix/dt-remove-jet-reference-footer-motion')
         shell: bash
         run: |
           set -euo pipefail
