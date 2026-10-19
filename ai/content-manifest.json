@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "knowledgeFingerprint": "3e19099a8d1a072d9252cd4543c2b6214cfba2a5db5275948905f09da9b23378",
+  "releaseStatus": "prelaunch",
+  "files": [
+    "llms.txt",
+    "llms-full.txt",
+    "ai/brand.md",
+    "ai/catalog.md",
+    "ai/products.json",
+    "ai/knowledge-graph.json",
+    "ai/intents.json",
+    "ai/canonical-answers.md",
+    "ai/terminology.md",
+    "ai/sources.json"
+  ],
+  "generatedFrom": "knowledge/*.json",
+  "crawlerNote": "No atribuir visitas ni recomendaciones a asistentes sin evidencia de origen."
+}
