@@ -12,7 +12,7 @@ Cortapuros metálico de corte en V con una superficie de relieve geométrico tri
 - Los puros, manos y elementos ambientales de las fotografías son ilustrativos y no están incluidos.
 
 ## Galería
-Los cinco archivos `assets/products/cortador-v-*.webp` conservan la herramienta original de las fotografías aportadas, su color, relieve y mecanismo. El ZIP de imágenes preparado para integración forma parte del entregable de la conversación y requiere adjuntarse al repositorio; sin dichos binarios **no debe fusionarse ni publicarse esta rama**.
+Los cinco archivos `assets/products/cortador-v-*.webp` conservan la herramienta original de las fotografías aportadas, su color, relieve y mecanismo. Las cinco imágenes ya están almacenadas como archivos WebP binarios en `assets/products/` de esta rama; sus hashes SHA-256 y su commit de incorporación se encuentran en `docs/DT_CORTADOR_V_ASSETS.md`. No fueron alteradas durante la transferencia.
 
 ## Evidencia y gobernanza
 Fuente: ficha descriptiva e imágenes compartidas por el solicitante. Claims etiquetados `supplier_declared`, sin ensayos de precisión ni certificado de materiales. No crear `Offer`, precios, inventario ni reviews sintéticas.
