@@ -1,7 +1,7 @@
 name: Don Turrón — catálogo y navegación
 on:
   push:
-    branches: [main]
+    branches: [main, fix/click-foto-abre-detalle]
     paths:
       - 'catalog.js'
       - 'app.js'
