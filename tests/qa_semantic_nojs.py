@@ -18,9 +18,9 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
         page=context.new_page()
         response=page.goto(base+'/',wait_until='domcontentloaded')
         assert response.status==200
-        assert page.locator('.product-card').count()==7,'Catálogo estático recuperable sin JS'
+        assert page.locator('.product-card').count()==8,'Catálogo estático recuperable sin JS'
         assert 'noindex' in page.locator('meta[name=robots]').get_attribute('content')
-        product_ids=['humidor-viaje-5-puros','cenicero-mesa','estuche-viaje','estuche-kit-viaje','reposa-puros-plegable','cortador-v-geometrico']
+        product_ids=['humidor-viaje-5-puros','cenicero-mesa','estuche-viaje','estuche-kit-viaje','reposa-puros-plegable','cortador-v-geometrico','encendedor-sarike-butano']
         for product_id in product_ids:
             response=page.goto(base+'/productos/'+product_id+'/',wait_until='domcontentloaded')
             assert response.status==200,f'Acceso directo {product_id}'
@@ -33,6 +33,6 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
         response=page.goto(base+'/guia/estuche-o-humidor/',wait_until='domcontentloaded')
         assert response.status==200 and page.locator('h1').count()==1
         assert page.locator('meta[name=robots]').get_attribute('content')=='noindex, nofollow'
-        print('DT static no-JS: 7 cards, 6 product routes, 1 guide, noindex OK')
+        print('DT static no-JS: 8 cards, 7 product routes, 1 guide, noindex OK')
         context.close();browser.close()
     server.shutdown()

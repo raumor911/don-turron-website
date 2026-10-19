@@ -9,7 +9,7 @@ const cat=read('catalog.js'),home=read('index.html');
 const json=JSON.parse(read('ai/products.json')),kg=JSON.parse(read('ai/knowledge-graph.json'));
 const ids=k.products.map(p=>p.id);
 if(!ids.every(id=>cat.includes('"id": "'+id+'"')))throw new Error('Catalog diverges from knowledge');
-if(json.products.length!==7||kg.nodes.filter(n=>n.type==='Product').length!==7)throw new Error('Graph/catalog count mismatch');
+if(json.products.length!==k.products.length||kg.nodes.filter(n=>n.type==='Product').length!==k.products.length)throw new Error('Graph/catalog count mismatch');
 if(!home.includes('noindex, nofollow')||!read('robots.txt').includes('Disallow: /'))throw new Error('Index gate lost');
 if(!home.includes('DT-JSONLD-START'))throw new Error('Homepage JSON-LD missing');
 const schema=JSON.parse(home.match(/<!-- DT-JSONLD-START -->\s*<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
@@ -31,9 +31,9 @@ for(const p of documented){
   if(nodes.some(x=>x['@type']==='Offer'||x['@type']==='Review'))throw new Error('Unsupported Product Offer '+route);
 }
 if(fs.existsSync(path.join(ROOT,'productos/encendedor-jet/index.html')))throw new Error('Conceptual product published with product page');
-if(!read('index.html').includes('DT-CATALOG-START')||(home.match(/class="product-card"/g)||[]).length!==7)throw new Error('Home not prerendered with seven cards');
+if(!read('index.html').includes('DT-CATALOG-START')||(home.match(/class="product-card"/g)||[]).length!==k.products.length)throw new Error('Home not prerendered with seven cards');
 if(!read('guia/estuche-o-humidor/index.html').includes('noindex, nofollow'))throw new Error('Guide not gated');
 const gate=JSON.parse(read('semantic-release.json'));
 if(gate.mode!=='prelaunch'||gate.enableIndexing!==false||gate.enableCommerce!==false||gate.verifiedDomain!==null)throw new Error('Invalid release gate');
 if(fs.existsSync(path.join(ROOT,'sitemap.xml')))throw new Error('Sitemap prohibited before domain verified');
-console.log('DT semantic artifacts VALID: '+publicFiles.length+' AI outputs, 7 IDs, 6 documented');
+console.log('DT semantic artifacts VALID: '+publicFiles.length+' AI outputs, '+k.products.length+' IDs, '+documented.length+' documented');

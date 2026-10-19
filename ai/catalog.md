@@ -13,6 +13,7 @@ Estado: prelanzamiento; no se reciben pedidos, precios y existencias por confirm
 - [Estuche portátil para 4 a 8 puros](/productos/estuche-kit-viaje/)
 - [Reposa puros plegable de acero inoxidable](/productos/reposa-puros-plegable/)
 - [Cortapuros en V de metal con acabado geométrico](/productos/cortador-v-geometrico/)
+- [Encendedor metálico Sarike de doble llama](/productos/encendedor-sarike-butano/)
 
 ## Referencia conceptual
 - Encendedor de flama jet (sin oferta comercial).
