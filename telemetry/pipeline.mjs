@@ -49,7 +49,7 @@ export function crawlerRow(row,knowledge){
  const elapsed=Number.isFinite(duration)&&duration>=0&&duration<=300000?Math.round(duration):null;
  const properties={telemetry_version:'DT-TEL-V1',site_id:SITE_ID,page_type:path.page_type,semantic_intent:path.semantic_intent,
   product_id:path.product_id,category_id:path.category_id,resource_type:path.resource_type,crawler_purpose:bot.crawler_purpose,
-  detection_method:bot.detection_method,verification_status:'claimed',source:'hosting_log',test_run:row.test_run===true};
+  detection_method:bot.detection_method,verification_status:'claimed',source:row.source==='cdn_log'?'cdn_log':'hosting_log',test_run:row.test_run===true};
  return {method,path:path.path,ua,code,when,elapsed,properties,bot};
 }
 export function createPipeline(db,knowledge,{max=30}={}){

@@ -15,6 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - run: node --test telemetry/tests.mjs
+        with: {node-version: '22'}
+      - name: Node syntax and mock MySQL/HTTP tests
+        run: |
+          node --check telemetry/receiver.mjs
+          node --check telemetry/import-logs.mjs
+          node --test telemetry/tests.mjs telemetry/receiver.test.mjs
+      - name: Catalog and gallery syntax
+        run: |
+          node --check app.js
+          node --check gallery.js

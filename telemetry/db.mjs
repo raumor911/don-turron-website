@@ -7,7 +7,7 @@ export class TelemetryDatabase{
   this.nextRetry=0;this.checking=null;
  }
  get writable(){return this.config.enabled&&this.config.writeApproved&&this.config.dbConfigured&&this.state.schema_verified&&this.state.permissions_verified;}
- failure(){this.state.db_connected=false;this.state.events_failed++;this.state.last_error_at=new Date().toISOString();this.nextRetry=Date.now()+this.config.backoffMs;}
+ failure(){this.state.db_connected=false;this.state.last_error_at=new Date().toISOString();this.nextRetry=Date.now()+this.config.backoffMs;}
  async connect(){
   if(!this.config.enabled||!this.config.writeApproved||!this.config.dbConfigured||Date.now()<this.nextRetry)return false;
   if(this.checking)return this.checking;
