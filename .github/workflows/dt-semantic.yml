@@ -1,7 +1,7 @@
 name: DT Semantic Core — Validación y build
 on:
   push:
-    branches: [feat/dt-semantic-core-v1, feat/dt-cortador-v-product, feat/dt-transparent-favicon]
+    branches: [feat/dt-semantic-core-v1, feat/dt-cortador-v-product, feat/dt-transparent-favicon, feat/dt-rauvia-footer-sarike-lighter]
     paths: ['favicon.ico','assets/favicon*','assets/apple-touch-icon.png','assets/products/**','knowledge/**','scripts/dt-semantic/**','package.json','semantic-release.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
   pull_request:
     paths: ['favicon.ico','assets/favicon*','assets/apple-touch-icon.png','assets/products/**','knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
