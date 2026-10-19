@@ -1,0 +1,194 @@
+{
+  "notice": "Ejemplos hipotéticos sin volúmenes de búsqueda comprobados",
+  "intents": [
+    {
+      "id": "intent:accesorios-puros",
+      "name": "Accesorios para puros",
+      "description": "Explorar la colección y sus categorías.",
+      "exampleExpressions": [
+        "accesorios para puros",
+        "qué accesorios para puros hay"
+      ],
+      "transactionStage": "discovery",
+      "productIds": [
+        "humidor-viaje-5-puros",
+        "cenicero-mesa",
+        "estuche-viaje",
+        "estuche-kit-viaje",
+        "reposa-puros-plegable"
+      ],
+      "useCaseIds": [
+        "usecase:guardar-viaje",
+        "usecase:corte",
+        "usecase:apoyo"
+      ],
+      "status": "hypothesis",
+      "visibility": "public_preview",
+      "searchVolumeEvidence": false,
+      "sourceType": "hypothesis_not_measured"
+    },
+    {
+      "id": "intent:humidor-viaje",
+      "name": "Humidor de viaje para cinco puros",
+      "description": "Informarse sobre el humidor compacto.",
+      "exampleExpressions": [
+        "humidor para cinco puros",
+        "humidor portátil"
+      ],
+      "transactionStage": "exploration",
+      "productIds": [
+        "humidor-viaje-5-puros"
+      ],
+      "useCaseIds": [
+        "usecase:conservar-humedad"
+      ],
+      "status": "hypothesis",
+      "visibility": "public_preview",
+      "searchVolumeEvidence": false,
+      "sourceType": "hypothesis_not_measured"
+    },
+    {
+      "id": "intent:estuche-transporte",
+      "name": "Estuche para transportar puros",
+      "description": "Comparar estuches de viaje.",
+      "exampleExpressions": [
+        "estuche porta puros",
+        "estuche para viajar"
+      ],
+      "transactionStage": "comparison",
+      "productIds": [
+        "estuche-viaje",
+        "estuche-kit-viaje"
+      ],
+      "useCaseIds": [
+        "usecase:guardar-viaje"
+      ],
+      "status": "hypothesis",
+      "visibility": "public_preview",
+      "searchVolumeEvidence": false,
+      "sourceType": "hypothesis_not_measured"
+    },
+    {
+      "id": "intent:cenicero-cortadores",
+      "name": "Cenicero con cortadores",
+      "description": "Conocer un conjunto de herramientas de corte.",
+      "exampleExpressions": [
+        "cenicero con cortador V",
+        "set cenicero guillotina punch"
+      ],
+      "transactionStage": "exploration",
+      "productIds": [
+        "cenicero-mesa"
+      ],
+      "useCaseIds": [
+        "usecase:corte"
+      ],
+      "status": "hypothesis",
+      "visibility": "public_preview",
+      "searchVolumeEvidence": false,
+      "sourceType": "hypothesis_not_measured"
+    },
+    {
+      "id": "intent:soporte",
+      "name": "Reposa puros portátil",
+      "description": "Buscar soporte para apoyar puros.",
+      "exampleExpressions": [
+        "reposa puros portátil",
+        "soporte plegable de puros"
+      ],
+      "transactionStage": "exploration",
+      "productIds": [
+        "reposa-puros-plegable"
+      ],
+      "useCaseIds": [
+        "usecase:apoyo"
+      ],
+      "status": "hypothesis",
+      "visibility": "public_preview",
+      "searchVolumeEvidence": false,
+      "sourceType": "hypothesis_not_measured"
+    },
+    {
+      "id": "intent:comparar-estuche-humidor",
+      "name": "Comparación entre estuche y humidor",
+      "description": "Distinguir usos y humidificación declarada.",
+      "exampleExpressions": [
+        "diferencia estuche y humidor",
+        "qué usar en viaje"
+      ],
+      "transactionStage": "comparison",
+      "productIds": [
+        "humidor-viaje-5-puros",
+        "estuche-viaje",
+        "estuche-kit-viaje"
+      ],
+      "useCaseIds": [
+        "usecase:conservar-humedad",
+        "usecase:guardar-viaje"
+      ],
+      "status": "hypothesis",
+      "visibility": "public_preview",
+      "searchVolumeEvidence": false,
+      "sourceType": "hypothesis_not_measured"
+    },
+    {
+      "id": "intent:viaje",
+      "name": "Accesorios para viajar",
+      "description": "Encontrar opciones portátiles.",
+      "exampleExpressions": [
+        "accesorios de puros para viaje"
+      ],
+      "transactionStage": "discovery",
+      "productIds": [
+        "humidor-viaje-5-puros",
+        "estuche-viaje",
+        "estuche-kit-viaje",
+        "reposa-puros-plegable"
+      ],
+      "useCaseIds": [
+        "usecase:guardar-viaje"
+      ],
+      "status": "hypothesis",
+      "visibility": "public_preview",
+      "searchVolumeEvidence": false,
+      "sourceType": "hypothesis_not_measured"
+    },
+    {
+      "id": "intent:regalar",
+      "name": "Accesorios para regalar",
+      "description": "Explorar opciones por función.",
+      "exampleExpressions": [
+        "accesorios de puros para regalo"
+      ],
+      "transactionStage": "discovery",
+      "productIds": [
+        "cenicero-mesa",
+        "reposa-puros-plegable",
+        "estuche-viaje"
+      ],
+      "useCaseIds": [
+        "usecase:regalo"
+      ],
+      "status": "hypothesis",
+      "visibility": "public_preview",
+      "searchVolumeEvidence": false,
+      "sourceType": "hypothesis_not_measured"
+    },
+    {
+      "id": "intent:marca",
+      "name": "Información sobre Don Turrón",
+      "description": "Conocer marca y estado de la colección.",
+      "exampleExpressions": [
+        "qué es don turrón",
+        "don turrón accesorios"
+      ],
+      "transactionStage": "information",
+      "productIds": [],
+      "useCaseIds": [],
+      "status": "hypothesis",
+      "visibility": "public_preview",
+      "searchVolumeEvidence": false,
+      "sourceType": "hypothesis_not_measured"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "title": "Don Turrón Crawler Observability Event v1",
+  "version": "1.0.0",
+  "events": [
+    "crawler_request",
+    "crawler_verified",
+    "crawler_unverified",
+    "semantic_asset_request",
+    "product_page_request",
+    "crawler_http_error",
+    "search_referral",
+    "product_interaction"
+  ],
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Normalized Don Turrón Event",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "eventType",
+      "occurredAt",
+      "path",
+      "verification",
+      "source",
+      "httpStatus"
+    ],
+    "properties": {
+      "eventType": {
+        "type": "string",
+        "enum": [
+          "crawler_request",
+          "crawler_verified",
+          "crawler_unverified",
+          "semantic_asset_request",
+          "product_page_request",
+          "crawler_http_error",
+          "search_referral",
+          "product_interaction"
+        ]
+      },
+      "occurredAt": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "date-time"
+      },
+      "path": {
+        "type": "string",
+        "pattern": "^/"
+      },
+      "verification": {
+        "type": "string",
+        "enum": [
+          "verified",
+          "unverified",
+          "not_applicable"
+        ]
+      },
+      "source": {
+        "type": "string",
+        "enum": [
+          "hosting_log",
+          "cdn_log",
+          "site_integration"
+        ]
+      },
+      "httpStatus": {
+        "type": [
+          "integer",
+          "null"
+        ],
+        "minimum": 100,
+        "maximum": 599
+      },
+      "actorFamily": {
+        "type": "string",
+        "enum": [
+          "generic_bot",
+          "search_bot",
+          "ai_bot",
+          "browser",
+          "unknown"
+        ]
+      },
+      "evidence": {
+        "type": "string",
+        "enum": [
+          "none",
+          "independently_confirmed",
+          "not_applicable"
+        ]
+      },
+      "searchEngine": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "productId": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "interaction": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  }
+}

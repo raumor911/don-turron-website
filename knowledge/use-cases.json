@@ -1,0 +1,53 @@
+[
+  {
+    "id": "usecase:guardar-viaje",
+    "name": "Guardar puros al viajar",
+    "description": "Transportar puros en un estuche o humidor compacto.",
+    "productIds": [
+      "humidor-viaje-5-puros",
+      "estuche-viaje",
+      "estuche-kit-viaje"
+    ],
+    "visibility": "public_preview"
+  },
+  {
+    "id": "usecase:conservar-humedad",
+    "name": "Conservar humedad durante el traslado",
+    "description": "Valorar un accesorio con humidificador sin asumir un nivel de humedad garantizado.",
+    "productIds": [
+      "humidor-viaje-5-puros",
+      "estuche-viaje"
+    ],
+    "visibility": "public_preview"
+  },
+  {
+    "id": "usecase:corte",
+    "name": "Preparar el corte",
+    "description": "Contar con herramientas de corte para puros.",
+    "productIds": [
+      "cenicero-mesa"
+    ],
+    "visibility": "public_preview"
+  },
+  {
+    "id": "usecase:apoyo",
+    "name": "Apoyar un puro",
+    "description": "Utilizar soporte plegable o cenicero en un espacio de descanso.",
+    "productIds": [
+      "reposa-puros-plegable",
+      "cenicero-mesa"
+    ],
+    "visibility": "public_preview"
+  },
+  {
+    "id": "usecase:regalo",
+    "name": "Explorar accesorios para regalar",
+    "description": "Comparar accesorios según uso, sin prometer disponibilidad.",
+    "productIds": [
+      "cenicero-mesa",
+      "reposa-puros-plegable",
+      "estuche-viaje"
+    ],
+    "visibility": "public_preview"
+  }
+]

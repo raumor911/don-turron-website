@@ -1,0 +1,41 @@
+[
+  {
+    "id": "answer:marca",
+    "intentId": "intent:marca",
+    "question": "¿Qué es Don Turrón?",
+    "answer": "Don Turrón es una marca mexicana de accesorios y estilo de vida que comienza con una colección de accesorios para puros.",
+    "claimIds": [
+      "claim:brand-mexico"
+    ],
+    "sourceIds": [
+      "source:brand-home"
+    ],
+    "visibility": "public_preview"
+  },
+  {
+    "id": "answer:comprar",
+    "intentId": "intent:accesorios-puros",
+    "question": "¿Se puede comprar?",
+    "answer": "No. El catálogo está en prelanzamiento. Precios, existencias y envíos aún no están confirmados.",
+    "claimIds": [],
+    "sourceIds": [
+      "source:brand-home"
+    ],
+    "visibility": "public_preview"
+  },
+  {
+    "id": "answer:humidor-estuche",
+    "intentId": "intent:comparar-estuche-humidor",
+    "question": "¿Cuál es la diferencia entre estuche y humidor de viaje?",
+    "answer": "Las fichas del humidor de cinco puros y del estuche de seis puros describen humidificador incorporado; el estuche para cuatro a ocho puros no tiene esa característica confirmada. No se garantiza un nivel de humedad.",
+    "claimIds": [
+      "claim:humidor-viaje-5-puros-description",
+      "claim:estuche-viaje-description"
+    ],
+    "sourceIds": [
+      "source:humidor-viaje-5-puros",
+      "source:estuche-viaje"
+    ],
+    "visibility": "public_preview"
+  }
+]

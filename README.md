@@ -102,3 +102,23 @@ cd don-turron
 ## Atelier Motion V2 — experiencia premium
 
 La versión V2 incorpora `premium.css` y `premium.js` como mejora progresiva de la experiencia visual: animaciones editoriales, reflejos interactivos, microinteracciones de íconos y respuesta de selección. Respeta `prefers-reduced-motion` e incluye un control de movimiento en el pie. No activa compras ni modifica el catálogo conceptual. Documentación: [`docs/INTERACCIONES_PREMIUM_V2.md`](docs/INTERACCIONES_PREMIUM_V2.md). Pruebas: `python tests/qa_browser.py` (requiere Playwright y Chromium).
+
+
+## DT Semantic Intelligence Layer V1 (rama de desarrollo)
+
+El catálogo actual ahora procede de `knowledge/products.json`. Editar `catalog.js` manualmente ya no es el flujo de mantenimiento: el compilador lo genera junto con los 11 recursos AI/LLMO y el marcado de la portada.
+
+Ejecutar en Node.js 20 o superior:
+
+```bash
+npm run validate:knowledge
+npm run build:semantic
+npm run test:observability
+npm run test:nojs # requiere Playwright y Chromium
+```
+
+La compilación crea seis tarjetas estáticas en `index.html`, cinco fichas en `productos/<id>/index.html` y una guía en `guia/estuche-o-humidor/index.html`. Las galerías y la selección siguen en JavaScript, usando las mismas imágenes de `knowledge/products.json`.
+
+**Release gate:** `semantic-release.json` exige modo `prelaunch`, sin dominio, indexación, ventas ni IndexNow. `noindex` y `robots.txt` siguen activos. Este flujo no despliega a producción.
+
+**Fuentes y gobierno:** [Arquitectura](docs/DT_SEMANTIC_ARCHITECTURE.md), [Contrato](docs/DT_KNOWLEDGE_CONTRACT.md), [Claims](docs/DT_CLAIMS_GOVERNANCE.md), [Relevancia](docs/DT_RELEVANCE_LAYER.md), [SEO gates](docs/DT_SEO_RELEASE_GATES.md), [Observabilidad](docs/DT_CRAWLER_OBSERVABILITY.md), [Cambios](docs/DT_SEMANTIC_CHANGELOG.md).
