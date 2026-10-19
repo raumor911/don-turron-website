@@ -140,7 +140,7 @@
   // openProduct reemplaza el contenido dinámicamente. Se mejora sin modificar su modelo.
   new MutationObserver(enhanceModal).observe(modalContent, {childList: true});
   modalContent.addEventListener('click', (event) => {
-    if (event.target.closest('[data-photo-index]')) queueMicrotask(updateModalStatus);
+    if (event.target.closest('[data-photo-index]')) queueMicrotask(updatePhotoLabel);
   });
   lightbox.querySelector('#dt-lightbox-close').addEventListener('click', closeLightbox);
   previousLightbox.addEventListener('click', () => navigate(-1));
