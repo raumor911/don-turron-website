@@ -6,7 +6,9 @@
   const KEY = 'dt-selection-v1';
   const AGE_KEY = 'dt-age-confirmed-v1';
   const MAX_QUANTITY = 20;
-  // Las imágenes proceden exclusivamente de knowledge/products.json (catálogo generado).\n  const photosOf = p => Array.isArray(p.images) && p.images.length ? p.images : null;\n  function productPicture(p, placement) {
+  // Las imágenes proceden exclusivamente de knowledge/products.json (catálogo generado).
+  const photosOf = p => Array.isArray(p.images) && p.images.length ? p.images : null;
+  function productPicture(p, placement) {
     if (!photosOf(p)) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" loading="lazy" />`;
     return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${photosOf(p)[0].src}" alt="Fotografía de ${html(p.name)}; ${photosOf(p)[0].label}" loading="lazy" width="620" height="620" />`;
   }
