@@ -17,6 +17,7 @@ for name,uri in assets.items():
  premium_css=premium_css.replace(name,uri)
 html=html.replace('<link rel="stylesheet" href="styles.css" />','<style>'+css+'</style>')
 html=html.replace('<link rel="stylesheet" href="premium.css" />','<style>'+premium_css+'</style>')
+html=html.replace('<link rel="stylesheet" href="gallery.css" />','<style>'+(PROJECT/'gallery.css').read_text()+'</style>')
 html=re.sub(r'<script defer src="[^\"]+"></script>', '', html)
 with sync_playwright() as p:
  browser=p.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
@@ -29,6 +30,7 @@ with sync_playwright() as p:
   page.add_script_tag(content=(PROJECT/'catalog.js').read_text())
   page.add_script_tag(content=(PROJECT/'app.js').read_text())
   page.add_script_tag(content=(PROJECT/'premium.js').read_text())
+  page.add_script_tag(content=(PROJECT/'gallery.js').read_text())
   # Scripts de la app generan src relativos; en el entorno de pruebas se sustituyen por data URI.
   page.evaluate('''(assets)=>{window.fixAssets=()=>{document.querySelectorAll('img[src^="assets/"]').forEach(im=>{const src=im.getAttribute('src');if(assets[src]) im.src=assets[src]})};window.fixAssets();new MutationObserver(()=>window.fixAssets()).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['src']})}''',assets)
   page.locator('#age-yes').click()
@@ -103,6 +105,49 @@ with sync_playwright() as p:
   page.locator('#product-modal-close').click()
   for asset in ['reposa-puros-dos-acabados.webp','reposa-puros-plata.webp','reposa-puros-negro.webp']:
    assert (PROJECT/'assets/products'/asset).is_file(), f'Falta imagen {asset}'
+  # Galería V4: validar imágenes completas, navegación y ampliación en todos los artículos.
+  page.locator('[data-filter="todos"]').click()
+  cases = [
+   ('humidor-viaje-5-puros',4),
+   ('cenicero-mesa',5),
+   ('estuche-viaje',5),
+   ('estuche-kit-viaje',2),
+   ('reposa-puros-plegable',3),
+   ('encendedor-jet',1)
+  ]
+  for product_id,total in cases:
+   page.locator(f'.product-card[data-id="{product_id}"] [data-detail]').click()
+   image=page.locator('.modal-art .dt-image-open img')
+   assert image.count()==1, f'Imagen ampliable en {product_id}'
+   assert image.evaluate('(img)=>getComputedStyle(img).objectFit')=='contain', f'Fotografía sin recorte {product_id}'
+   assert page.locator('.dt-gallery-status').is_visible(), f'Contador accesible {product_id}'
+   if total > 1:
+    assert page.locator('.dt-gallery-nav-anterior').count()==1, f'Flecha anterior {product_id}'
+    assert page.locator('.dt-gallery-nav-siguiente').count()==1, f'Flecha siguiente {product_id}'
+    assert page.locator('.travel-gallery-controls button').count()==total, f'Número de vistas {product_id}'
+    page.locator('.dt-gallery-nav-siguiente').click()
+    assert page.locator('.travel-gallery-controls button[data-photo-index="1"]').get_attribute('aria-pressed')=='true', f'Siguiente {product_id}'
+    page.locator('.dt-gallery-nav-anterior').click()
+    assert page.locator('.travel-gallery-controls button[data-photo-index="0"]').get_attribute('aria-pressed')=='true', f'Anterior {product_id}'
+    page.keyboard.press('ArrowLeft')
+    assert page.locator(f'.travel-gallery-controls button[data-photo-index="{total-1}"]').get_attribute('aria-pressed')=='true', f'Circular teclado {product_id}'
+   else:
+    assert page.locator('.dt-gallery-nav-siguiente').count()==0, 'No mostrar flechas con una imagen'
+   page.locator('.dt-image-open').click()
+   assert page.locator('#dt-photo-lightbox').is_visible(), f'Imagen ampliada {product_id}'
+   assert page.locator('#dt-lightbox-image').get_attribute('alt'), f'Texto alternativo {product_id}'
+   assert page.locator('#dt-lightbox-image').evaluate('(img)=>getComputedStyle(img).objectFit')=='contain', f'Ampliada sin recorte {product_id}'
+   if total > 1:
+    page.locator('#dt-lightbox-next').click()
+    assert page.locator('.travel-gallery-controls button').filter(has=page.locator('[aria-pressed="true"]')).count() >= 0
+   page.locator('#dt-lightbox-zoom').click()
+   assert page.locator('#dt-photo-lightbox').get_attribute('class').find('dt-zoomed')>=0, f'Zoom {product_id}'
+   page.locator('#dt-lightbox-zoom').click()
+   assert 'dt-zoomed' not in page.locator('#dt-photo-lightbox').get_attribute('class'), f'Reducir zoom {product_id}'
+   page.keyboard.press('Escape')
+   assert not page.locator('#dt-photo-lightbox').is_visible(), f'Cerrar ampliación {product_id}'
+   assert page.locator('#product-modal').get_attribute('aria-hidden')=='false', f'Conservar ficha abierta {product_id}'
+   page.locator('#product-modal-close').click()
   if name=='mobile':
    page.locator('#menu-toggle').click()
    assert page.locator('#mobile-nav').is_visible(),'menú móvil'
