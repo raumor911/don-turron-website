@@ -13,7 +13,8 @@
       "cenicero-mesa",
       "estuche-viaje",
       "estuche-kit-viaje",
-      "reposa-puros-plegable"
+      "reposa-puros-plegable",
+      "cortador-v-geometrico"
     ],
     "useCaseIds": [
       "usecase:guardar-viaje",
@@ -175,6 +176,26 @@
     "transactionStage": "information",
     "productIds": [],
     "useCaseIds": [],
+    "status": "hypothesis",
+    "visibility": "public_preview",
+    "searchVolumeEvidence": false
+  },
+  {
+    "id": "intent:cortador-v-puros",
+    "name": "Cortapuros con corte en V",
+    "description": "Explorar accesorios de corte en V y acabados.",
+    "exampleExpressions": [
+      "cortapuros en V de metal",
+      "cortador de puros en V dorado",
+      "cortapuros V plateado"
+    ],
+    "transactionStage": "exploration",
+    "productIds": [
+      "cortador-v-geometrico"
+    ],
+    "useCaseIds": [
+      "usecase:corte"
+    ],
     "status": "hypothesis",
     "visibility": "public_preview",
     "searchVolumeEvidence": false

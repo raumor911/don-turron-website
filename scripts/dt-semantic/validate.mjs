@@ -32,11 +32,12 @@ export function validate(data=load()){
       check(fs.existsSync(path.join(ROOT,image.src)),p.id+': missing image '+image.src);
     }
     if(p.id==='reposa-puros-plegable')check(p.variants.map(x=>x.label).join('|')==='Plata|Negro' && p.variants.every(x=>!x.sku&&!x.stock), 'unconfirmed variants');
+    if(p.id==='cortador-v-geometrico')check(p.variants.map(x=>x.label).join('|')==='Plateado|Dorado' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed cortador variants');
   }
-  check(data.products.length===6,'exactly six products expected');
-  check(data.products.filter(p=>p.contentStatus==='documented').length===5,'five documented products expected');
+  check(data.products.length===7,'exactly seven products expected');
+  check(data.products.filter(p=>p.contentStatus==='documented').length===6,'six documented products expected');
   check(data.products.some(p=>p.id==='encendedor-jet'&&p.contentStatus==='conceptual'),'encendedor conceptual missing');
-  const known=['encendedor-jet','humidor-viaje-5-puros','cenicero-mesa','estuche-viaje','estuche-kit-viaje','reposa-puros-plegable'];
+  const known=['encendedor-jet','humidor-viaje-5-puros','cenicero-mesa','estuche-viaje','estuche-kit-viaje','reposa-puros-plegable','cortador-v-geometrico'];
   check(data.products.map(p=>p.id).join('|')===known.join('|'),'product IDs/order changed');
   for(const claim of data.claims){
     check(enums.claimStatus.includes(claim.status),'invalid claim status '+claim.id);

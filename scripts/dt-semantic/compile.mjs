@@ -41,7 +41,7 @@ const generalSchema=k=>({
    {'@type':'Organization','@id':'#organization',name:k.organization.name,description:k.organization.description,brand:{'@id':'#brand'}},
    {'@type':'WebSite','@id':'#website',name:k.brand.name,inLanguage:'es-MX',description:k.brand.description},
    {'@type':'CollectionPage','@id':'#collection',name:'La colección de Don Turrón',description:k.collections[0].description,isPartOf:{'@id':'#website'},mainEntity:{'@id':'#catalog-list'}},
-   {'@type':'ItemList','@id':'#catalog-list',name:'Accesorios documentados',numberOfItems:5,itemListElement:k.products.filter(p=>p.contentStatus!=='conceptual').map((p,i)=>({'@type':'ListItem',position:i+1,name:p.name}))}
+   {'@type':'ItemList','@id':'#catalog-list',name:'Accesorios documentados',numberOfItems:k.products.filter(p=>p.contentStatus!=='conceptual').length,itemListElement:k.products.filter(p=>p.contentStatus!=='conceptual').map((p,i)=>({'@type':'ListItem',position:i+1,name:p.name}))}
   ]});
 function writeCatalog(k){
   const products=k.products.map(p=>Object.fromEntries(['id','name','category','categoryLabel','subtitle','description','features','art','badge','images','variants','contentStatus','commercialStatus'].map(field=>[field,p[field]])));

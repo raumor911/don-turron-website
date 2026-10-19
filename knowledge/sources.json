@@ -47,5 +47,12 @@
     "type": "supplier_material",
     "path": "docs/REPOSA_PUROS_PLEGABLE.md",
     "visibility": "public_preview"
+  },
+  {
+    "id": "source:cortador-v-geometrico",
+    "name": "Ficha descriptiva e imágenes aportadas para cortapuros en V",
+    "type": "supplier_material",
+    "path": "docs/CORTADOR_V_GEOMETRICO.md",
+    "visibility": "public_preview"
   }
 ]
