@@ -1,0 +1,57 @@
+name: DT Semantic Core — Validación y build
+on:
+  push:
+    branches: [feat/dt-semantic-core-v1]
+    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','semantic-release.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
+  pull_request:
+    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  semantic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Compilar y validar
+        run: |
+          npm run build:semantic
+          node --check catalog.js
+          node --check app.js
+      - name: Confirmar salida determinista
+        shell: bash
+        run: |
+          set -euo pipefail
+          find ai productos guia -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/semantic-before
+          sha256sum catalog.js index.html llms.txt llms-full.txt >> /tmp/semantic-before
+          npm run build:semantic
+          find ai productos guia -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/semantic-after
+          sha256sum catalog.js index.html llms.txt llms-full.txt >> /tmp/semantic-after
+          diff -u /tmp/semantic-before /tmp/semantic-after
+      - name: Probar navegación y galerías existentes
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+          python tests/qa_browser.py
+          python tests/qa_semantic_nojs.py
+          node scripts/dt-semantic/observability.test.mjs
+      - name: Registrar solo artefactos generados en la rama de desarrollo
+        if: github.event_name == 'push' && github.ref == 'refs/heads/feat/dt-semantic-core-v1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add catalog.js index.html ai/ llms.txt llms-full.txt
+          if [ -d productos ]; then git add productos/; fi
+          if [ -d guia ]; then git add guia/; fi
+          if [ -f sitemap.xml ]; then exit 1; fi
+          if ! git diff --cached --quiet; then
+            git commit -m 'build: generate deterministic Don Turrón semantic assets'
+            git push origin HEAD:feat/dt-semantic-core-v1
+          fi

@@ -1,0 +1,51 @@
+[
+  {
+    "id": "source:brand-home",
+    "name": "Identidad y prelanzamiento de Don Turrón",
+    "type": "site_copy",
+    "path": "index.html",
+    "visibility": "public"
+  },
+  {
+    "id": "source:design",
+    "name": "Emblema y monograma aportados",
+    "type": "visual_assets",
+    "path": "assets/don-turron-emblema.jpg",
+    "visibility": "public"
+  },
+  {
+    "id": "source:humidor-viaje-5-puros",
+    "name": "Descripción documental de humidor-viaje-5-puros",
+    "type": "supplier_material",
+    "path": "docs/HUMIDOR_VIAJE_5_PUROS.md",
+    "visibility": "public_preview"
+  },
+  {
+    "id": "source:cenicero-mesa",
+    "name": "Descripción documental de cenicero-mesa",
+    "type": "supplier_material",
+    "path": "docs/SET_CENICERO_PORTATIL.md",
+    "visibility": "public_preview"
+  },
+  {
+    "id": "source:estuche-viaje",
+    "name": "Descripción documental de estuche-viaje",
+    "type": "supplier_material",
+    "path": "docs/ESTUCHE_VIAJE_6_PUROS.md",
+    "visibility": "public_preview"
+  },
+  {
+    "id": "source:estuche-kit-viaje",
+    "name": "Descripción documental de estuche-kit-viaje",
+    "type": "supplier_material",
+    "path": "docs/ESTUCHE_PORTATIL_4_A_8_PUROS.md",
+    "visibility": "public_preview"
+  },
+  {
+    "id": "source:reposa-puros-plegable",
+    "name": "Descripción documental de reposa-puros-plegable",
+    "type": "supplier_material",
+    "path": "docs/REPOSA_PUROS_PLEGABLE.md",
+    "visibility": "public_preview"
+  }
+]

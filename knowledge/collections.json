@@ -1,0 +1,17 @@
+[
+  {
+    "id": "collection:accesorios-puros",
+    "name": "Primera selección de accesorios para puros",
+    "description": "Accesorios presentados en el catálogo de prelanzamiento.",
+    "status": "documented",
+    "visibility": "public_preview",
+    "categoryIds": [
+      "category:soportes",
+      "category:encendedores",
+      "category:humidores",
+      "category:ceniceros",
+      "category:estuches"
+    ],
+    "brandId": "brand:don-turron"
+  }
+]

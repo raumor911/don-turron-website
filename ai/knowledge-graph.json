@@ -1,0 +1,775 @@
+{
+  "name": "Don Turrón Semantic Knowledge Graph",
+  "version": "1.0.0",
+  "fingerprint": "3e19099a8d1a072d9252cd4543c2b6214cfba2a5db5275948905f09da9b23378",
+  "nodes": [
+    {
+      "id": "brand:don-turron",
+      "type": "Brand",
+      "name": "Don Turrón"
+    },
+    {
+      "id": "org:don-turron",
+      "type": "Organization",
+      "name": "Don Turrón"
+    },
+    {
+      "id": "collection:accesorios-puros",
+      "type": "Collection",
+      "name": "Primera selección de accesorios para puros"
+    },
+    {
+      "id": "category:soportes",
+      "type": "Category",
+      "name": "Soportes"
+    },
+    {
+      "id": "category:encendedores",
+      "type": "Category",
+      "name": "Encendedores"
+    },
+    {
+      "id": "category:humidores",
+      "type": "Category",
+      "name": "Humidores"
+    },
+    {
+      "id": "category:ceniceros",
+      "type": "Category",
+      "name": "Ceniceros"
+    },
+    {
+      "id": "category:estuches",
+      "type": "Category",
+      "name": "Estuches"
+    },
+    {
+      "id": "encendedor-jet",
+      "type": "Product",
+      "name": "Encendedor de flama jet",
+      "status": "conceptual"
+    },
+    {
+      "id": "feature:encendedor-jet:1",
+      "type": "Feature",
+      "name": "Tipo de flama por confirmar",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-jet:2",
+      "type": "Feature",
+      "name": "Material por confirmar",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-jet:3",
+      "type": "Feature",
+      "name": "Ficha de seguridad pendiente",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "humidor-viaje-5-puros",
+      "type": "Product",
+      "name": "Humidor de viaje para 5 puros",
+      "status": "documented"
+    },
+    {
+      "id": "feature:humidor-viaje-5-puros:1",
+      "type": "Feature",
+      "name": "Capacidad anunciada: hasta 5 puros",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:humidor-viaje-5-puros:2",
+      "type": "Feature",
+      "name": "Humidificador incorporado",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:humidor-viaje-5-puros:3",
+      "type": "Feature",
+      "name": "Caja de plástico duradero",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "cenicero-mesa",
+      "type": "Product",
+      "name": "Set portátil de cenicero y cortadores",
+      "status": "documented"
+    },
+    {
+      "id": "feature:cenicero-mesa:1",
+      "type": "Feature",
+      "name": "Cenicero portátil de cerámica",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:cenicero-mesa:2",
+      "type": "Feature",
+      "name": "Guillotina y cortador en V con componentes de acero inoxidable",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:cenicero-mesa:3",
+      "type": "Feature",
+      "name": "Punzón (punch) para puros",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "estuche-viaje",
+      "type": "Product",
+      "name": "Estuche porta puros con humidificador",
+      "status": "documented"
+    },
+    {
+      "id": "feature:estuche-viaje:1",
+      "type": "Feature",
+      "name": "Capacidad anunciada: hasta 6 puros",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:estuche-viaje:2",
+      "type": "Feature",
+      "name": "Humidificador con esponja incluida",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:estuche-viaje:3",
+      "type": "Feature",
+      "name": "Estuche descrito como impermeable; clasificación no verificada",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "estuche-kit-viaje",
+      "type": "Product",
+      "name": "Estuche portátil para 4 a 8 puros",
+      "status": "documented"
+    },
+    {
+      "id": "feature:estuche-kit-viaje:1",
+      "type": "Feature",
+      "name": "Capacidad anunciada: entre 4 y 8 puros, según formato",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:estuche-kit-viaje:2",
+      "type": "Feature",
+      "name": "Estuche con cierre de cremallera",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:estuche-kit-viaje:3",
+      "type": "Feature",
+      "name": "Espacio para organizar accesorios; contenido incluido por confirmar",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "reposa-puros-plegable",
+      "type": "Product",
+      "name": "Reposa puros plegable de acero inoxidable",
+      "status": "documented"
+    },
+    {
+      "id": "feature:reposa-puros-plegable:1",
+      "type": "Feature",
+      "name": "Fabricado en acero inoxidable",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:reposa-puros-plegable:2",
+      "type": "Feature",
+      "name": "Diseño portátil y plegable",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:reposa-puros-plegable:3",
+      "type": "Feature",
+      "name": "Acabados disponibles: plata y negro",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "usecase:guardar-viaje",
+      "type": "UseCase",
+      "name": "Guardar puros al viajar"
+    },
+    {
+      "id": "usecase:conservar-humedad",
+      "type": "UseCase",
+      "name": "Conservar humedad durante el traslado"
+    },
+    {
+      "id": "usecase:corte",
+      "type": "UseCase",
+      "name": "Preparar el corte"
+    },
+    {
+      "id": "usecase:apoyo",
+      "type": "UseCase",
+      "name": "Apoyar un puro"
+    },
+    {
+      "id": "usecase:regalo",
+      "type": "UseCase",
+      "name": "Explorar accesorios para regalar"
+    },
+    {
+      "id": "intent:accesorios-puros",
+      "type": "Intent",
+      "name": "Accesorios para puros",
+      "status": "hypothesis"
+    },
+    {
+      "id": "intent:humidor-viaje",
+      "type": "Intent",
+      "name": "Humidor de viaje para cinco puros",
+      "status": "hypothesis"
+    },
+    {
+      "id": "intent:estuche-transporte",
+      "type": "Intent",
+      "name": "Estuche para transportar puros",
+      "status": "hypothesis"
+    },
+    {
+      "id": "intent:cenicero-cortadores",
+      "type": "Intent",
+      "name": "Cenicero con cortadores",
+      "status": "hypothesis"
+    },
+    {
+      "id": "intent:soporte",
+      "type": "Intent",
+      "name": "Reposa puros portátil",
+      "status": "hypothesis"
+    },
+    {
+      "id": "intent:comparar-estuche-humidor",
+      "type": "Intent",
+      "name": "Comparación entre estuche y humidor",
+      "status": "hypothesis"
+    },
+    {
+      "id": "intent:viaje",
+      "type": "Intent",
+      "name": "Accesorios para viajar",
+      "status": "hypothesis"
+    },
+    {
+      "id": "intent:regalar",
+      "type": "Intent",
+      "name": "Accesorios para regalar",
+      "status": "hypothesis"
+    },
+    {
+      "id": "intent:marca",
+      "type": "Intent",
+      "name": "Información sobre Don Turrón",
+      "status": "hypothesis"
+    },
+    {
+      "id": "source:brand-home",
+      "type": "Source",
+      "name": "Identidad y prelanzamiento de Don Turrón",
+      "status": "site_copy"
+    },
+    {
+      "id": "source:design",
+      "type": "Source",
+      "name": "Emblema y monograma aportados",
+      "status": "visual_assets"
+    },
+    {
+      "id": "source:humidor-viaje-5-puros",
+      "type": "Source",
+      "name": "Descripción documental de humidor-viaje-5-puros",
+      "status": "supplier_material"
+    },
+    {
+      "id": "source:cenicero-mesa",
+      "type": "Source",
+      "name": "Descripción documental de cenicero-mesa",
+      "status": "supplier_material"
+    },
+    {
+      "id": "source:estuche-viaje",
+      "type": "Source",
+      "name": "Descripción documental de estuche-viaje",
+      "status": "supplier_material"
+    },
+    {
+      "id": "source:estuche-kit-viaje",
+      "type": "Source",
+      "name": "Descripción documental de estuche-kit-viaje",
+      "status": "supplier_material"
+    },
+    {
+      "id": "source:reposa-puros-plegable",
+      "type": "Source",
+      "name": "Descripción documental de reposa-puros-plegable",
+      "status": "supplier_material"
+    },
+    {
+      "id": "claim:brand-mexico",
+      "type": "Claim",
+      "name": "Don Turrón se presenta como marca mexicana en prelanzamiento.",
+      "status": "verified"
+    },
+    {
+      "id": "claim:humidor-viaje-5-puros-description",
+      "type": "Claim",
+      "name": "Este humidor de viaje guarda hasta cinco puros. Su caja de plástico duradero tiene un humidificador incorporado y un interior acolchado para llevarlos organizados. Los puros y accesorios de ambientación de las fotografías no están incluidos.",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "claim:cenicero-mesa-description",
+      "type": "Claim",
+      "name": "Este set incluye un cenicero portátil de cerámica, una guillotina, un cortador en V y un punzón (punch). Las herramientas de corte tienen componentes de acero inoxidable. El puro de las fotografías se muestra como ejemplo y no está incluido.",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "claim:estuche-viaje-description",
+      "type": "Claim",
+      "name": "Este estuche con cremallera permite llevar hasta seis puros. Incluye un humidificador con esponja para ayudar a conservar la humedad. El proveedor lo describe como impermeable, pero todavía no contamos con una clasificación verificada de resistencia al agua. Los puros de las fotos no están incluidos.",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "claim:estuche-kit-viaje-description",
+      "type": "Claim",
+      "name": "Estuche portátil con acabado negro texturizado y cierre de cremallera. Tiene espacio para llevar entre cuatro y ocho puros, según su tamaño, y organizar accesorios. Los elementos de las fotografías son ilustrativos; aún falta confirmar cuáles accesorios, si los hay, se incluyen con el estuche.",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "claim:reposa-puros-plegable-description",
+      "type": "Claim",
+      "name": "Este soporte de acero inoxidable permite apoyar el puro mientras haces una pausa. Su diseño plegable en forma de X facilita guardarlo y llevarlo contigo. Está disponible en dos acabados: plata y negro.",
+      "status": "supplier_declared"
+    }
+  ],
+  "edges": [
+    {
+      "source": "org:don-turron",
+      "target": "brand:don-turron",
+      "type": "operatesBrand"
+    },
+    {
+      "source": "brand:don-turron",
+      "target": "collection:accesorios-puros",
+      "type": "hasCollection"
+    },
+    {
+      "source": "collection:accesorios-puros",
+      "target": "category:soportes",
+      "type": "hasCategory"
+    },
+    {
+      "source": "collection:accesorios-puros",
+      "target": "category:encendedores",
+      "type": "hasCategory"
+    },
+    {
+      "source": "collection:accesorios-puros",
+      "target": "category:humidores",
+      "type": "hasCategory"
+    },
+    {
+      "source": "collection:accesorios-puros",
+      "target": "category:ceniceros",
+      "type": "hasCategory"
+    },
+    {
+      "source": "collection:accesorios-puros",
+      "target": "category:estuches",
+      "type": "hasCategory"
+    },
+    {
+      "source": "category:encendedores",
+      "target": "encendedor-jet",
+      "type": "containsProduct"
+    },
+    {
+      "source": "encendedor-jet",
+      "target": "feature:encendedor-jet:1",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-jet",
+      "target": "feature:encendedor-jet:2",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-jet",
+      "target": "feature:encendedor-jet:3",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "category:humidores",
+      "target": "humidor-viaje-5-puros",
+      "type": "containsProduct"
+    },
+    {
+      "source": "humidor-viaje-5-puros",
+      "target": "feature:humidor-viaje-5-puros:1",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "humidor-viaje-5-puros",
+      "target": "feature:humidor-viaje-5-puros:2",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "humidor-viaje-5-puros",
+      "target": "feature:humidor-viaje-5-puros:3",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "category:ceniceros",
+      "target": "cenicero-mesa",
+      "type": "containsProduct"
+    },
+    {
+      "source": "cenicero-mesa",
+      "target": "feature:cenicero-mesa:1",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "cenicero-mesa",
+      "target": "feature:cenicero-mesa:2",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "cenicero-mesa",
+      "target": "feature:cenicero-mesa:3",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "category:estuches",
+      "target": "estuche-viaje",
+      "type": "containsProduct"
+    },
+    {
+      "source": "estuche-viaje",
+      "target": "feature:estuche-viaje:1",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "estuche-viaje",
+      "target": "feature:estuche-viaje:2",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "estuche-viaje",
+      "target": "feature:estuche-viaje:3",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "category:estuches",
+      "target": "estuche-kit-viaje",
+      "type": "containsProduct"
+    },
+    {
+      "source": "estuche-kit-viaje",
+      "target": "feature:estuche-kit-viaje:1",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "estuche-kit-viaje",
+      "target": "feature:estuche-kit-viaje:2",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "estuche-kit-viaje",
+      "target": "feature:estuche-kit-viaje:3",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "category:soportes",
+      "target": "reposa-puros-plegable",
+      "type": "containsProduct"
+    },
+    {
+      "source": "reposa-puros-plegable",
+      "target": "feature:reposa-puros-plegable:1",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "reposa-puros-plegable",
+      "target": "feature:reposa-puros-plegable:2",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "reposa-puros-plegable",
+      "target": "feature:reposa-puros-plegable:3",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "usecase:guardar-viaje",
+      "target": "humidor-viaje-5-puros",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "usecase:guardar-viaje",
+      "target": "estuche-viaje",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "usecase:guardar-viaje",
+      "target": "estuche-kit-viaje",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "usecase:conservar-humedad",
+      "target": "humidor-viaje-5-puros",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "usecase:conservar-humedad",
+      "target": "estuche-viaje",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "usecase:corte",
+      "target": "cenicero-mesa",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "usecase:apoyo",
+      "target": "reposa-puros-plegable",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "usecase:apoyo",
+      "target": "cenicero-mesa",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "usecase:regalo",
+      "target": "cenicero-mesa",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "usecase:regalo",
+      "target": "reposa-puros-plegable",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "usecase:regalo",
+      "target": "estuche-viaje",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "intent:accesorios-puros",
+      "target": "humidor-viaje-5-puros",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:accesorios-puros",
+      "target": "cenicero-mesa",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:accesorios-puros",
+      "target": "estuche-viaje",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:accesorios-puros",
+      "target": "estuche-kit-viaje",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:accesorios-puros",
+      "target": "reposa-puros-plegable",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:accesorios-puros",
+      "target": "usecase:guardar-viaje",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "intent:accesorios-puros",
+      "target": "usecase:corte",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "intent:accesorios-puros",
+      "target": "usecase:apoyo",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "intent:humidor-viaje",
+      "target": "humidor-viaje-5-puros",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:humidor-viaje",
+      "target": "usecase:conservar-humedad",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "intent:estuche-transporte",
+      "target": "estuche-viaje",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:estuche-transporte",
+      "target": "estuche-kit-viaje",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:estuche-transporte",
+      "target": "usecase:guardar-viaje",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "intent:cenicero-cortadores",
+      "target": "cenicero-mesa",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:cenicero-cortadores",
+      "target": "usecase:corte",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "intent:soporte",
+      "target": "reposa-puros-plegable",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:soporte",
+      "target": "usecase:apoyo",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "intent:comparar-estuche-humidor",
+      "target": "humidor-viaje-5-puros",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:comparar-estuche-humidor",
+      "target": "estuche-viaje",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:comparar-estuche-humidor",
+      "target": "estuche-kit-viaje",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:comparar-estuche-humidor",
+      "target": "usecase:conservar-humedad",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "intent:comparar-estuche-humidor",
+      "target": "usecase:guardar-viaje",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "intent:viaje",
+      "target": "humidor-viaje-5-puros",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:viaje",
+      "target": "estuche-viaje",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:viaje",
+      "target": "estuche-kit-viaje",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:viaje",
+      "target": "reposa-puros-plegable",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:viaje",
+      "target": "usecase:guardar-viaje",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "intent:regalar",
+      "target": "cenicero-mesa",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:regalar",
+      "target": "reposa-puros-plegable",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:regalar",
+      "target": "estuche-viaje",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:regalar",
+      "target": "usecase:regalo",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "claim:brand-mexico",
+      "target": "brand:don-turron",
+      "type": "about"
+    },
+    {
+      "source": "claim:brand-mexico",
+      "target": "source:brand-home",
+      "type": "supportedBy"
+    },
+    {
+      "source": "claim:humidor-viaje-5-puros-description",
+      "target": "humidor-viaje-5-puros",
+      "type": "about"
+    },
+    {
+      "source": "claim:humidor-viaje-5-puros-description",
+      "target": "source:humidor-viaje-5-puros",
+      "type": "supportedBy"
+    },
+    {
+      "source": "claim:cenicero-mesa-description",
+      "target": "cenicero-mesa",
+      "type": "about"
+    },
+    {
+      "source": "claim:cenicero-mesa-description",
+      "target": "source:cenicero-mesa",
+      "type": "supportedBy"
+    },
+    {
+      "source": "claim:estuche-viaje-description",
+      "target": "estuche-viaje",
+      "type": "about"
+    },
+    {
+      "source": "claim:estuche-viaje-description",
+      "target": "source:estuche-viaje",
+      "type": "supportedBy"
+    },
+    {
+      "source": "claim:estuche-kit-viaje-description",
+      "target": "estuche-kit-viaje",
+      "type": "about"
+    },
+    {
+      "source": "claim:estuche-kit-viaje-description",
+      "target": "source:estuche-kit-viaje",
+      "type": "supportedBy"
+    },
+    {
+      "source": "claim:reposa-puros-plegable-description",
+      "target": "reposa-puros-plegable",
+      "type": "about"
+    },
+    {
+      "source": "claim:reposa-puros-plegable-description",
+      "target": "source:reposa-puros-plegable",
+      "type": "supportedBy"
+    }
+  ]
+}

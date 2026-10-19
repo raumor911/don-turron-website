@@ -1,0 +1,42 @@
+[
+  {
+    "id": "category:soportes",
+    "name": "Soportes",
+    "slug": "soportes",
+    "collectionId": "collection:accesorios-puros",
+    "visibility": "public_preview",
+    "displayOrder": 1
+  },
+  {
+    "id": "category:encendedores",
+    "name": "Encendedores",
+    "slug": "encendedores",
+    "collectionId": "collection:accesorios-puros",
+    "visibility": "public_preview",
+    "displayOrder": 2
+  },
+  {
+    "id": "category:humidores",
+    "name": "Humidores",
+    "slug": "humidores",
+    "collectionId": "collection:accesorios-puros",
+    "visibility": "public_preview",
+    "displayOrder": 3
+  },
+  {
+    "id": "category:ceniceros",
+    "name": "Ceniceros",
+    "slug": "ceniceros",
+    "collectionId": "collection:accesorios-puros",
+    "visibility": "public_preview",
+    "displayOrder": 4
+  },
+  {
+    "id": "category:estuches",
+    "name": "Estuches",
+    "slug": "estuches",
+    "collectionId": "collection:accesorios-puros",
+    "visibility": "public_preview",
+    "displayOrder": 5
+  }
+]

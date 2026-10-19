@@ -1,0 +1,21 @@
+{
+  "id": "brand:don-turron",
+  "name": "Don Turrón",
+  "country": "México",
+  "tagline": "El arte está en los detalles.",
+  "description": "Don Turrón es una marca mexicana de accesorios y estilo de vida que comienza con una colección de accesorios para puros.",
+  "personality": [
+    "cercana",
+    "sobria",
+    "natural"
+  ],
+  "organizationId": "org:don-turron",
+  "collectionIds": [
+    "collection:accesorios-puros"
+  ],
+  "status": "documented",
+  "visibility": "public_preview",
+  "sourceIds": [
+    "source:brand-home"
+  ]
+}

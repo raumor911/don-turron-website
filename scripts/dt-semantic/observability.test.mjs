@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import { normalizeLogRow } from './observability.mjs';
+const events=normalizeLogRow({path:'/ai/products.json?session=secret',userAgent:'GPTBot/1.0',status:404,timestamp:'2026-10-18T12:00:00Z',ip:'10.1.2.3',token:'private'});
+assert.deepEqual(events.map(x=>x.eventType),['crawler_request','crawler_unverified','semantic_asset_request','crawler_http_error']);
+assert.ok(events.every(x=>!JSON.stringify(x).includes('secret')&&!JSON.stringify(x).includes('10.1.2.3')&&!JSON.stringify(x).includes('private')));
+assert.ok(!events.some(x=>x.eventType==='crawler_verified'));
+const product=normalizeLogRow({path:'/productos/humidor-viaje-5-puros/',status:200,userAgent:'Mozilla/5.0'});
+assert.equal(product[0].eventType,'product_page_request');
+assert.equal(product[0].productId,'humidor-viaje-5-puros');
+const spoof=normalizeLogRow({path:'/',userAgent:'Googlebot',status:200});
+assert.ok(spoof.some(x=>x.eventType==='crawler_unverified'));
+const interaction=normalizeLogRow({eventType:'product_interaction',productId:'reposa-puros-plegable',interaction:'view_details'});
+assert.equal(interaction.length,1);
+const invalid=normalizeLogRow({eventType:'product_interaction',productId:'unknown',interaction:'view_details'});
+assert.equal(invalid.length,0);
+console.log('DT-SC-004 normalized events OK');

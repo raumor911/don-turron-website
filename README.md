@@ -104,11 +104,30 @@ cd don-turron
 La versión V2 incorpora `premium.css` y `premium.js` como mejora progresiva de la experiencia visual: animaciones editoriales, reflejos interactivos, microinteracciones de íconos y respuesta de selección. Respeta `prefers-reduced-motion` e incluye un control de movimiento en el pie. No activa compras ni modifica el catálogo conceptual. Documentación: [`docs/INTERACCIONES_PREMIUM_V2.md`](docs/INTERACCIONES_PREMIUM_V2.md). Pruebas: `python tests/qa_browser.py` (requiere Playwright y Chromium).
 
 
+## DT Semantic Intelligence Layer V1 (integrado en main)
+
+El catálogo actual ahora procede de `knowledge/products.json`. Editar `catalog.js` manualmente ya no es el flujo de mantenimiento: el compilador lo genera junto con los 11 recursos AI/LLMO y el marcado de la portada.
+
+Ejecutar en Node.js 20 o superior:
+
+```bash
+npm run validate:knowledge
+npm run build:semantic
+npm run test:observability
+npm run test:nojs # requiere Playwright y Chromium
+```
+
+La compilación crea seis tarjetas estáticas en `index.html`, cinco fichas en `productos/<id>/index.html` y una guía en `guia/estuche-o-humidor/index.html`. Las galerías y la selección siguen en JavaScript, usando las mismas imágenes de `knowledge/products.json`.
+
+**Release gate:** `semantic-release.json` exige modo `prelaunch`, sin dominio, indexación, ventas ni IndexNow. `noindex` y `robots.txt` siguen activos. Este flujo no despliega a producción.
+
+**Fuentes y gobierno:** [Arquitectura](docs/DT_SEMANTIC_ARCHITECTURE.md), [Contrato](docs/DT_KNOWLEDGE_CONTRACT.md), [Claims](docs/DT_CLAIMS_GOVERNANCE.md), [Relevancia](docs/DT_RELEVANCE_LAYER.md), [SEO gates](docs/DT_SEO_RELEASE_GATES.md), [Observabilidad](docs/DT_CRAWLER_OBSERVABILITY.md), [Cambios](docs/DT_SEMANTIC_CHANGELOG.md).
+
 ## DT Telemetry V1 — rama de preparación
 
 La rama `feat/dt-telemetry-v1` añade la captura de crawlers **por importación de logs del hosting/CDN**, clasificadores semánticos alimentados por `knowledge/` y manifiesto `ai/` de DT Semantic Core, escritor MySQL protegido y receptor Node opcional para `POST /api/telemetry`. No modifica el diseño. La telemetría permanece desactivada y no instala ni arranca automáticamente procesos en el sitio.
 
-**Dependencia:** fusionar primero [DT Semantic Core PR #4](https://github.com/raumor911/don-turron-website/pull/4) y reconciliar el manifiesto exacto. Esta rama incluye copias byte-a-byte de tres fuentes semánticas del PR #4 únicamente para permitir pruebas antes de esa fusión; no deben mantenerse como catálogo separado.
+**Integración semántica:** DT Semantic Core PR #4 ya está fusionado en `main`; la telemetría reutiliza los archivos de `knowledge/` y el manifiesto `ai/` existentes, sin mantener un catálogo independiente.
 
 **Ejecución:** `node --test telemetry/tests.mjs telemetry/receiver.test.mjs`; `python tests/qa_browser.py` con Playwright/Chromium. Para desplegar el receptor opcional, instalar `mysql2` del paquete `telemetry/package.json` en el backend autorizado y revisar [despliegue](docs/DT_TELEMETRY_DEPLOYMENT.md), [contrato SQL](docs/DT_TELEMETRY_DB_CONTRACT.md), [eventos](docs/DT_TELEMETRY_EVENTS.md) y [pruebas](docs/DT_TELEMETRY_TESTS.md).
 

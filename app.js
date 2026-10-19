@@ -7,37 +7,8 @@
   const KEY = 'dt-selection-v1';
   const AGE_KEY = 'dt-age-confirmed-v1';
   const MAX_QUANTITY = 20;
-  const REAL_HUMIDOR_ID = 'humidor-viaje-5-puros';
-  const PHOTO_VIEWS = [
-    {src:'assets/products/humidor-viaje-interior.webp', label:'Interior abierto'},
-    {src:'assets/products/humidor-viaje-medidas.webp', label:'Estuche cerrado y medidas ilustrativas'},
-    {src:'assets/products/humidor-viaje-detalles.webp', label:'Cierres y humidificador'},
-    {src:'assets/products/humidor-viaje-ambientado.webp', label:'Vista ambientada'}
-  ];
-  const CENICERO_VIEWS = [
-    {src:'assets/products/set-portatil-conjunto.webp', label:'Vista del conjunto completo'},
-    {src:'assets/products/set-portatil-herramientas.webp', label:'Guillotina, cortador en V y punzón'},
-    {src:'assets/products/set-portatil-cenicero.webp', label:'Cenicero portátil de cerámica en uso; puro no incluido'},
-    {src:'assets/products/set-portatil-punzon.webp', label:'Detalle del punzón (punch)'},
-    {src:'assets/products/set-portatil-cortador-v.webp', label:'Detalle del cortador en V'}
-  ];
-  const ESTUCHE_VIEWS = [
-    {src:'assets/products/estuche-6-interior.webp',label:'Interior con separador y humidificador; puros no incluidos'},
-    {src:'assets/products/estuche-6-cerrado.webp',label:'Estuche cerrado y disco humidificador'},
-    {src:'assets/products/estuche-6-humidificador.webp',label:'Vista explicativa del humidificador'},
-    {src:'assets/products/estuche-6-cuidado.webp',label:'Recomendación visual para humedecer la esponja'},
-    {src:'assets/products/estuche-6-cierre.webp',label:'Detalle del cierre de cremallera'}
-  ];
-  const KIT_VIAJE_VIEWS = [
-    {src:'assets/products/estuche-set-lounge.webp',label:'Estuche portátil y accesorios en cigar lounge; composición ilustrativa'},
-    {src:'assets/products/estuche-set-medidas.webp',label:'Lámina técnica con medidas indicativas de estuche y accesorios'}
-  ];
-  const REPOSA_PUROS_VIEWS = [
-    {src:'assets/products/reposa-puros-dos-acabados.webp',label:'Versiones plata y negro sobre fondo mineral oscuro'},
-    {src:'assets/products/reposa-puros-plata.webp',label:'Reposa puros plegable de acero inoxidable en plata'},
-    {src:'assets/products/reposa-puros-negro.webp',label:'Reposa puros plegable de acero inoxidable en negro'}
-  ];
-  const photosOf = p => p.id === REAL_HUMIDOR_ID ? PHOTO_VIEWS : p.id === 'cenicero-mesa' ? CENICERO_VIEWS : p.id === 'estuche-viaje' ? ESTUCHE_VIEWS : p.id === 'estuche-kit-viaje' ? KIT_VIAJE_VIEWS : p.id === 'reposa-puros-plegable' ? REPOSA_PUROS_VIEWS : null;
+  // Las imágenes proceden exclusivamente de knowledge/products.json (catálogo generado).
+  const photosOf = p => Array.isArray(p.images) && p.images.length ? p.images : null;
   function productPicture(p, placement) {
     if (!photosOf(p)) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" loading="lazy" />`;
     return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${photosOf(p)[0].src}" alt="Fotografía de ${html(p.name)}; ${photosOf(p)[0].label}" loading="lazy" width="620" height="620" />`;
