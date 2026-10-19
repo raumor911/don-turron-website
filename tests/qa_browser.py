@@ -37,7 +37,7 @@ with sync_playwright() as p:
   page.wait_for_timeout(350)
   page.screenshot(path=str(PROJECT/f'tests/{name}.png'),full_page=True)
   assert page.locator('.product-card').count()==7, 'Producto inicial'
-  assert page.locator('.product-card .product-image-trigger').count()==6, 'Imagen clicable en las siete tarjetas'
+  assert page.locator('.product-card .product-image-trigger').count()==7, 'Imagen clicable en las siete tarjetas'
   page.locator('.product-card[data-id="encendedor-jet"] .product-image-trigger').click()
   assert page.locator('#product-modal-name').inner_text()=='Encendedor de flama jet', 'Abrir detalle al pulsar la foto conceptual'
   page.locator('#product-modal-close').click()
@@ -45,7 +45,7 @@ with sync_playwright() as p:
   page.keyboard.press('Enter')
   assert page.locator('#product-modal-name').inner_text()=='Humidor de viaje para 5 puros', 'Abrir detalle de la foto con teclado'
   page.locator('#product-modal-close').click()
-  assert page.locator('.product-card[data-id="humidor-viaje-5-puros"]').count()==1, 'Humidor real agregado sin variar seis productos'
+  assert page.locator('.product-card[data-id="humidor-viaje-5-puros"]').count()==1, 'Humidor real agregado sin modificar la estructura de las tarjetas'
   assert page.locator('.dt-progress').count()==1, 'Línea de progreso'
   assert page.locator('.dt-motion-toggle').count()==1, 'Control de movimiento'
   assert page.locator('.product-card.dt-enter').count()==7, 'Animación productos'
@@ -77,7 +77,7 @@ with sync_playwright() as p:
   page.locator('#product-modal-close').click()
   page.locator('[data-filter="ceniceros"]').click()
   assert page.locator('.product-card').count()==1, 'Filtro de ceniceros preservado'
-  assert page.locator('.product-card[data-id="cenicero-mesa"]').count()==1, 'Misma estructura de seis fichas'
+  assert page.locator('.product-card[data-id="cenicero-mesa"]').count()==1, 'Misma estructura de las fichas'
   page.locator('.product-card [data-detail]').click()
   assert page.locator('#product-modal-name').inner_text()=='Set portátil de cenicero y cortadores', 'Ficha del nuevo set'
   assert page.locator('.travel-gallery-controls button').count()==5, 'Cinco fotografías del set'
