@@ -2,7 +2,7 @@ name: DT Semantic Core — Validación y build
 on:
   push:
     branches: [feat/dt-semantic-core-v1]
-    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
+    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','semantic-release.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
   pull_request:
     paths: ['knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
   workflow_dispatch:
@@ -38,6 +38,8 @@ jobs:
           python -m pip install playwright
           python -m playwright install --with-deps chromium
           python tests/qa_browser.py
+          python tests/qa_semantic_nojs.py
+          node scripts/dt-semantic/observability.test.mjs
       - name: Registrar solo artefactos generados en la rama de desarrollo
         if: github.event_name == 'push' && github.ref == 'refs/heads/feat/dt-semantic-core-v1'
         shell: bash

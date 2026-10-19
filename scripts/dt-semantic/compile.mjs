@@ -4,6 +4,8 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { load, validate } from './validate.mjs';
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
+const release=JSON.parse(fs.readFileSync(path.join(ROOT,'semantic-release.json'),'utf8'));
+if(release.mode!=='prelaunch'||release.enableIndexing!==false||release.enableCommerce!==false||release.publishOffers!==false||release.indexNow!==false||release.verifiedDomain!==null)throw new Error('Release gate: only prelaunch without domain or commerce is authorized in V1');
 const out=(rel,data)=>{const file=path.join(ROOT,rel);fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,typeof data==='string'?data:JSON.stringify(data,null,2)+'\n','utf8');};
 const stable=o=>Array.isArray(o)?o.map(stable):o&&typeof o==='object'?Object.fromEntries(Object.keys(o).sort().map(k=>[k,stable(o[k])])):o;
 const hash=o=>crypto.createHash('sha256').update(JSON.stringify(stable(o))).digest('hex');

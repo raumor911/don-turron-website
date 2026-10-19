@@ -33,5 +33,7 @@ for(const p of documented){
 if(fs.existsSync(path.join(ROOT,'productos/encendedor-jet/index.html')))throw new Error('Conceptual product published with product page');
 if(!read('index.html').includes('DT-CATALOG-START')||(home.match(/class="product-card"/g)||[]).length!==6)throw new Error('Home not prerendered with six cards');
 if(!read('guia/estuche-o-humidor/index.html').includes('noindex, nofollow'))throw new Error('Guide not gated');
+const gate=JSON.parse(read('semantic-release.json'));
+if(gate.mode!=='prelaunch'||gate.enableIndexing!==false||gate.enableCommerce!==false||gate.verifiedDomain!==null)throw new Error('Invalid release gate');
 if(fs.existsSync(path.join(ROOT,'sitemap.xml')))throw new Error('Sitemap prohibited before domain verified');
 console.log('DT semantic artifacts VALID: '+publicFiles.length+' AI outputs, 6 IDs, 5 documented');
