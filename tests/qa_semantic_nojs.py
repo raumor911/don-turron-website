@@ -25,6 +25,17 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
             assert card.locator('.product-badge').inner_text()=='PRÓXIMAMENTE',item
             assert card.locator('.product-availability').inner_text()=='Disponibilidad prevista: enero de 2027',item
         assert page.locator('.product-availability').count()==2,'Only two future availability dates'
+        # El dato semántico y el gráfico deben conservar el mes objetivo, sin publicar oferta.
+        api_products=page.request.get(base+'/ai/products.json').json()['products']
+        graph=page.request.get(base+'/ai/knowledge-graph.json').json()['nodes']
+        for item in ('cortador-v-geometrico','encendedor-sarike-butano'):
+            api=next(p for p in api_products if p['id']==item)
+            node=next(n for n in graph if n['id']==item)
+            assert api['launchWindow']['month']=='2027-01'
+            assert api['launchWindow']['status']=='planned'
+            assert node['launchWindow']['month']=='2027-01'
+            assert api['commercialStatus']=='pending_confirmation'
+        assert sum(bool(p.get('launchWindow')) for p in api_products)==2,'Only two planned launches in AI contract'
         product_ids=['humidor-viaje-5-puros','cenicero-mesa','estuche-viaje','estuche-kit-viaje','reposa-puros-plegable','cortador-v-geometrico','encendedor-sarike-butano']
         for product_id in product_ids:
             response=page.goto(base+'/productos/'+product_id+'/',wait_until='domcontentloaded')
