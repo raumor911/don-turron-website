@@ -136,3 +136,7 @@ La rama `feat/dt-telemetry-v1` añade la captura de crawlers **por importación 
 ## Cortapuros en V — Galería verificada
 
 Se añadió la ficha `cortador-v-geometrico` con acabados plateado y dorado; los cinco archivos WebP originales están versionados en `assets/products/` con hashes documentados en [el control de activos](docs/DT_CORTADOR_V_ASSETS.md). Se mantiene el estado de prelanzamiento y no se registran precios ni existencias.
+
+## Favicon monograma DT
+
+Los íconos proceden de la silueta original del monograma, extraída con **transparencia real**. `favicon.ico` multirresolución es el respaldo; existen PNG de 16/32 px, variantes negra para tema claro y oro cálido para tema oscuro, y `apple-touch-icon` 180 px. La portada usa rutas relativas y las fichas de `productos/` y `guia/` usan `../../`. El generador `scripts/dt-semantic/pages.mjs` mantiene el favicon al regenerar fichas. Validación: `python tests/qa_favicon.py`. El emblema comercial y las fotografías no se han alterado.
