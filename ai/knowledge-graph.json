@@ -1,7 +1,7 @@
 {
   "name": "Don Turrón Semantic Knowledge Graph",
   "version": "1.0.0",
-  "fingerprint": "3e19099a8d1a072d9252cd4543c2b6214cfba2a5db5275948905f09da9b23378",
+  "fingerprint": "efdd77de0ba4a64884086b4c3f6b40dba096ea88cb00c2dc5869ace66fa1b69a",
   "nodes": [
     {
       "id": "brand:don-turron",
@@ -42,6 +42,11 @@
       "id": "category:estuches",
       "type": "Category",
       "name": "Estuches"
+    },
+    {
+      "id": "category:cortadores",
+      "type": "Category",
+      "name": "Cortadores"
     },
     {
       "id": "encendedor-jet",
@@ -188,6 +193,42 @@
       "status": "supplier_declared"
     },
     {
+      "id": "cortador-v-geometrico",
+      "type": "Product",
+      "name": "Cortapuros en V de metal con acabado geométrico",
+      "status": "documented"
+    },
+    {
+      "id": "feature:cortador-v-geometrico:1",
+      "type": "Feature",
+      "name": "Cuchilla de corte en V; desempeño pendiente de verificación",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:cortador-v-geometrico:2",
+      "type": "Feature",
+      "name": "Mecanismo accionado mediante pulsación",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:cortador-v-geometrico:3",
+      "type": "Feature",
+      "name": "Cuerpo metálico con relieve geométrico tridimensional",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:cortador-v-geometrico:4",
+      "type": "Feature",
+      "name": "Acabados: plateado y dorado (existencias por confirmar)",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:cortador-v-geometrico:5",
+      "type": "Feature",
+      "name": "Dimensiones de referencia del proveedor: 50.5 × 42 × 14.5 mm",
+      "status": "supplier_declared"
+    },
+    {
       "id": "usecase:guardar-viaje",
       "type": "UseCase",
       "name": "Guardar puros al viajar"
@@ -267,6 +308,12 @@
       "status": "hypothesis"
     },
     {
+      "id": "intent:cortador-v-puros",
+      "type": "Intent",
+      "name": "Cortapuros con corte en V",
+      "status": "hypothesis"
+    },
+    {
       "id": "source:brand-home",
       "type": "Source",
       "name": "Identidad y prelanzamiento de Don Turrón",
@@ -309,6 +356,12 @@
       "status": "supplier_material"
     },
     {
+      "id": "source:cortador-v-geometrico",
+      "type": "Source",
+      "name": "Ficha descriptiva e imágenes aportadas para cortapuros en V",
+      "status": "supplier_material"
+    },
+    {
       "id": "claim:brand-mexico",
       "type": "Claim",
       "name": "Don Turrón se presenta como marca mexicana en prelanzamiento.",
@@ -342,6 +395,12 @@
       "id": "claim:reposa-puros-plegable-description",
       "type": "Claim",
       "name": "Este soporte de acero inoxidable permite apoyar el puro mientras haces una pausa. Su diseño plegable en forma de X facilita guardarlo y llevarlo contigo. Está disponible en dos acabados: plata y negro.",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "claim:cortador-v-geometrico-description",
+      "type": "Claim",
+      "name": "Cortapuros metálico de corte en V con una superficie de relieve geométrico tridimensional. Su mecanismo de accionamiento por pulsación permite preparar el corte con un solo movimiento. Formato compacto, disponible en acabados plateado y dorado; características y desempeño según descripción del proveedor, pendientes de verificación independiente.",
       "status": "supplier_declared"
     }
   ],
@@ -379,6 +438,11 @@
     {
       "source": "collection:accesorios-puros",
       "target": "category:estuches",
+      "type": "hasCategory"
+    },
+    {
+      "source": "collection:accesorios-puros",
+      "target": "category:cortadores",
       "type": "hasCategory"
     },
     {
@@ -502,6 +566,36 @@
       "type": "hasDeclaredFeature"
     },
     {
+      "source": "category:cortadores",
+      "target": "cortador-v-geometrico",
+      "type": "containsProduct"
+    },
+    {
+      "source": "cortador-v-geometrico",
+      "target": "feature:cortador-v-geometrico:1",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "cortador-v-geometrico",
+      "target": "feature:cortador-v-geometrico:2",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "cortador-v-geometrico",
+      "target": "feature:cortador-v-geometrico:3",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "cortador-v-geometrico",
+      "target": "feature:cortador-v-geometrico:4",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "cortador-v-geometrico",
+      "target": "feature:cortador-v-geometrico:5",
+      "type": "hasDeclaredFeature"
+    },
+    {
       "source": "usecase:guardar-viaje",
       "target": "humidor-viaje-5-puros",
       "type": "mayBeAddressedBy"
@@ -532,6 +626,11 @@
       "type": "mayBeAddressedBy"
     },
     {
+      "source": "usecase:corte",
+      "target": "cortador-v-geometrico",
+      "type": "mayBeAddressedBy"
+    },
+    {
       "source": "usecase:apoyo",
       "target": "reposa-puros-plegable",
       "type": "mayBeAddressedBy"
@@ -579,6 +678,11 @@
     {
       "source": "intent:accesorios-puros",
       "target": "reposa-puros-plegable",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:accesorios-puros",
+      "target": "cortador-v-geometrico",
       "type": "suggestsProduct"
     },
     {
@@ -712,6 +816,16 @@
       "type": "addressesUseCase"
     },
     {
+      "source": "intent:cortador-v-puros",
+      "target": "cortador-v-geometrico",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:cortador-v-puros",
+      "target": "usecase:corte",
+      "type": "addressesUseCase"
+    },
+    {
       "source": "claim:brand-mexico",
       "target": "brand:don-turron",
       "type": "about"
@@ -769,6 +883,16 @@
     {
       "source": "claim:reposa-puros-plegable-description",
       "target": "source:reposa-puros-plegable",
+      "type": "supportedBy"
+    },
+    {
+      "source": "claim:cortador-v-geometrico-description",
+      "target": "cortador-v-geometrico",
+      "type": "about"
+    },
+    {
+      "source": "claim:cortador-v-geometrico-description",
+      "target": "source:cortador-v-geometrico",
       "type": "supportedBy"
     }
   ]
