@@ -16,6 +16,15 @@ export function validateSchema(metadata){
    if(!col){errors.push(table+':missing:'+field);continue;}
    if(!typeOk(String(col.Type||'').toLowerCase(),t))errors.push(table+':incompatible_type:'+field);
   }
+  // These columns are intentionally written as NULL when unavailable.
+  const nullable={ai_crawler_visits:['referer','ip_hash','response_time_ms'],sessions:['referrer','utm_source','utm_medium','utm_campaign']};
+  for(const name of nullable[table]||[])if(fields.has(name)&&fields.get(name).Null!=='YES')errors.push(table+':nullable_required:'+name);
+  const minimum={site_id:10,visitor_id:36,session_id:36,request_path:255};
+  for(const [name,length]of Object.entries(minimum)){
+   const col=fields.get(name);
+   const m=col&&String(col.Type).match(/^(?:var)?char\((\d+)\)/i);
+   if(m&&Number(m[1])<length)errors.push(table+':too_short:'+name);
+  }
   const site=fields.get('site_id');
   if(site && site.Null==='YES') errors.push(table+':nullable_site_id');
   if(table==='ai_crawler_visits'&&fields.get('ip_hash')?.Null!=='YES')errors.push(table+':ip_hash_requires_nullable');

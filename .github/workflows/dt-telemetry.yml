@@ -23,7 +23,7 @@ jobs:
           node --check telemetry-client.js
           node --check app.js
           node --check gallery.js
-          node --test telemetry/tests.mjs telemetry/receiver.test.mjs
+          node --test telemetry/tests.mjs telemetry/receiver.test.mjs telemetry/client.test.mjs
       - name: Install browser
         run: |
           python -m pip install playwright

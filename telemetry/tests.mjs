@@ -11,7 +11,7 @@ const v4='123e4567-e89b-42d3-a456-426614174000';
 const validMeta=()=>{
  const meta={};
  for(const [table,fields]of Object.entries(REQUIRED)){
-  const cols=Object.entries(fields).map(([Field,type])=>({Field,Type:type==='integer'?'int(11)':type==='date'?'datetime':type==='json'?'json':'varchar(255)',Null:Field==='ip_hash'||['referer','referrer','utm_source','utm_medium','utm_campaign','properties'].includes(Field)?'YES':'NO',Default:null,Extra:''}));
+  const cols=Object.entries(fields).map(([Field,type])=>({Field,Type:type==='integer'?'int(11)':type==='date'?'datetime':type==='json'?'json':'varchar(255)',Null:Field==='ip_hash'||['referer','referrer','utm_source','utm_medium','utm_campaign','properties','response_time_ms'].includes(Field)?'YES':'NO',Default:null,Extra:''}));
   const indices=[{Key_name:'by_site',Non_unique:1,Column_name:'site_id',Seq_in_index:1}];
   if(table==='visitors'||table==='sessions'){
    const id=table==='visitors'?'visitor_id':'session_id';

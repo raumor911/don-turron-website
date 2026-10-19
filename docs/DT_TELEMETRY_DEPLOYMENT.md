@@ -35,6 +35,8 @@ Si falta una columna, índice, tipo, permiso o credencial: **dejar escritura des
 ## Operación de logs
 ```bash
 cat exportacion-hosting.ndjson | node telemetry/import-logs.mjs
+# Prueba controlada y autorizada únicamente: --test-run añade properties.test_run=true
+cat exportacion-sintetica.ndjson | node telemetry/import-logs.mjs --test-run
 ```
 Escribir un adaptador nuevo si el proveedor entrega Apache/Nginx combined u otro formato; **no asumir que NDJSON genérico incluye status verdadero**. El normalizador descarta URLs con consultas, IP, referers y cabeceras innecesarias. No se deduplican solicitudes por intervalo. En fallas, la cola de 30 eventos pierde registros controladamente y cuenta drops.
 

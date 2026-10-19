@@ -16,13 +16,14 @@ export function normalizeHostLog(row){
  const duration_ms=row.duration_ms??row.response_time_ms;
  return {method,path:uri,status,user_agent:ua,timestamp,duration_ms,source:row.source==='cdn_log'?'cdn_log':'hosting_log'};
 }
-export async function importLines(lines,pipeline,db){
+export async function importLines(lines,pipeline,db,{testRun=false}={}){
  let parsed=0,rejected=0,accepted=0;
  for await(const line of lines){
   if(!line.trim())continue;
   parsed++;
   let row;try{row=normalizeHostLog(JSON.parse(line));}catch{rejected++;continue;}
   if(!row){rejected++;continue;}
+  row.test_run=testRun===true; // Trusted CLI option only, never a field from HTTP logs.
   if(pipeline.crawler(row))accepted++;
   if(parsed%20===0)await pipeline.flush(); // bounded upstream backpressure
  }
@@ -32,7 +33,7 @@ export async function importLines(lines,pipeline,db){
 if(process.argv[1]&&import.meta.url===new URL('file://'+process.argv[1]).href){
  const cfg=settings();const db=new TelemetryDatabase(cfg);const pipeline=createPipeline(db,loadSemantic());
  const input=readline.createInterface({input:stdin,crlfDelay:Infinity});
- const result=await importLines(input,pipeline,db);
+ const result=await importLines(input,pipeline,db,{testRun:process.argv.includes('--test-run')});
  await db.close();
  process.stdout.write(JSON.stringify(result)+'\n');
  if(!cfg.enabled||!cfg.writeApproved||!cfg.dbConfigured)process.stderr.write('Telemetry disabled/unconfigured: no database writes performed.\n');

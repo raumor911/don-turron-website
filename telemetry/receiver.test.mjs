@@ -14,8 +14,8 @@ function stub(){
 test('DT-TEL-002 log adapter retains observed status, method and excludes sensitive fields',()=>{
  const d=normalizeHostLog({ClientRequestMethod:'HEAD',ClientRequestURI:'/ai/knowledge-graph.json?token=x',EdgeResponseStatus:500,ClientRequestUserAgent:'GPTBot/1',timestamp:'2026-10-18T10:00:00Z',source:'cdn_log',CFConnectingIP:'203.0.113.2'});
  assert.equal(d.method,'HEAD');assert.equal(d.status,500);
- const db=stub();const pipeline={crawler:x=>{assert.equal(x.source,'cdn_log');assert.equal(x.path,d.path);return true;},flush:async()=>{}};
- return importLines([JSON.stringify(d),'not-json'],pipeline,db).then(v=>{assert.equal(v.parsed,2);assert.equal(v.accepted,1);assert.equal(v.rejected,1)});
+ const db=stub();const pipeline={crawler:x=>{assert.equal(x.source,'cdn_log');assert.equal(x.path,d.path);assert.equal(x.test_run,true);return true;},flush:async()=>{}};
+ return importLines([JSON.stringify(d),'not-json'],pipeline,db,{testRun:true}).then(v=>{assert.equal(v.parsed,2);assert.equal(v.accepted,1);assert.equal(v.rejected,1)});
 });
 test('DT-TEL-002 secure optional HTTP receiver; site scope, validation and disabled privacy',async()=>{
  const db=stub(),config={enabled:true,writeApproved:true,dbConfigured:true,host:'dt.test'};
