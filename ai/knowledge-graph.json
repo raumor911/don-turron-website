@@ -1,7 +1,7 @@
 {
   "name": "Don Turrón Semantic Knowledge Graph",
   "version": "1.0.0",
-  "fingerprint": "efdd77de0ba4a64884086b4c3f6b40dba096ea88cb00c2dc5869ace66fa1b69a",
+  "fingerprint": "7d29a4688938e52eb6a47df581440c33e670dfbb09e9f22b61c7f216cff134c2",
   "nodes": [
     {
       "id": "brand:don-turron",
@@ -229,6 +229,48 @@
       "status": "supplier_declared"
     },
     {
+      "id": "encendedor-sarike-butano",
+      "type": "Product",
+      "name": "Encendedor metálico Sarike de doble llama",
+      "status": "documented"
+    },
+    {
+      "id": "feature:encendedor-sarike-butano:1",
+      "type": "Feature",
+      "name": "Combustible declarado por el proveedor: gas butano",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-sarike-butano:2",
+      "type": "Feature",
+      "name": "Mecanismo de llama tradicional y llama azul, según fotografías del proveedor",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-sarike-butano:3",
+      "type": "Feature",
+      "name": "Carcasa metálica con acabado texturizado",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-sarike-butano:4",
+      "type": "Feature",
+      "name": "Dimensiones anunciadas: 61 × 38 × 13 mm; peso anunciado: 89 g",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-sarike-butano:5",
+      "type": "Feature",
+      "name": "Acabados plata y dorado; existencias por confirmar",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-sarike-butano:6",
+      "type": "Feature",
+      "name": "Resistencia al viento y desempeño sin validación técnica independiente",
+      "status": "supplier_declared"
+    },
+    {
       "id": "usecase:guardar-viaje",
       "type": "UseCase",
       "name": "Guardar puros al viajar"
@@ -252,6 +294,11 @@
       "id": "usecase:regalo",
       "type": "UseCase",
       "name": "Explorar accesorios para regalar"
+    },
+    {
+      "id": "usecase:encendido",
+      "type": "UseCase",
+      "name": "Encender un puro"
     },
     {
       "id": "intent:accesorios-puros",
@@ -314,6 +361,12 @@
       "status": "hypothesis"
     },
     {
+      "id": "intent:encendedor-sarike-butano",
+      "type": "Intent",
+      "name": "Encendedor de butano con modos de llama",
+      "status": "hypothesis"
+    },
+    {
       "id": "source:brand-home",
       "type": "Source",
       "name": "Identidad y prelanzamiento de Don Turrón",
@@ -362,6 +415,12 @@
       "status": "supplier_material"
     },
     {
+      "id": "source:encendedor-sarike-butano",
+      "type": "Source",
+      "name": "Ficha proporcionada e imágenes de encendedor Sarike de butano",
+      "status": "supplier_material"
+    },
+    {
       "id": "claim:brand-mexico",
       "type": "Claim",
       "name": "Don Turrón se presenta como marca mexicana en prelanzamiento.",
@@ -401,6 +460,12 @@
       "id": "claim:cortador-v-geometrico-description",
       "type": "Claim",
       "name": "Cortapuros metálico de corte en V con una superficie de relieve geométrico tridimensional. Su mecanismo de accionamiento por pulsación permite preparar el corte con un solo movimiento. Formato compacto, disponible en acabados plateado y dorado; características y desempeño según descripción del proveedor, pendientes de verificación independiente.",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "claim:encendedor-sarike-butano-description",
+      "type": "Claim",
+      "name": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Según la información del proveedor, su mecanismo permite alternar entre llama tradicional y llama azul concentrada mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el comportamiento de la llama y los materiales específicos requieren verificación independiente.",
       "status": "supplier_declared"
     }
   ],
@@ -596,6 +661,41 @@
       "type": "hasDeclaredFeature"
     },
     {
+      "source": "category:encendedores",
+      "target": "encendedor-sarike-butano",
+      "type": "containsProduct"
+    },
+    {
+      "source": "encendedor-sarike-butano",
+      "target": "feature:encendedor-sarike-butano:1",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-sarike-butano",
+      "target": "feature:encendedor-sarike-butano:2",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-sarike-butano",
+      "target": "feature:encendedor-sarike-butano:3",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-sarike-butano",
+      "target": "feature:encendedor-sarike-butano:4",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-sarike-butano",
+      "target": "feature:encendedor-sarike-butano:5",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-sarike-butano",
+      "target": "feature:encendedor-sarike-butano:6",
+      "type": "hasDeclaredFeature"
+    },
+    {
       "source": "usecase:guardar-viaje",
       "target": "humidor-viaje-5-puros",
       "type": "mayBeAddressedBy"
@@ -656,6 +756,11 @@
       "type": "mayBeAddressedBy"
     },
     {
+      "source": "usecase:encendido",
+      "target": "encendedor-sarike-butano",
+      "type": "mayBeAddressedBy"
+    },
+    {
       "source": "intent:accesorios-puros",
       "target": "humidor-viaje-5-puros",
       "type": "suggestsProduct"
@@ -683,6 +788,11 @@
     {
       "source": "intent:accesorios-puros",
       "target": "cortador-v-geometrico",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:accesorios-puros",
+      "target": "encendedor-sarike-butano",
       "type": "suggestsProduct"
     },
     {
@@ -826,6 +936,16 @@
       "type": "addressesUseCase"
     },
     {
+      "source": "intent:encendedor-sarike-butano",
+      "target": "encendedor-sarike-butano",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:encendedor-sarike-butano",
+      "target": "usecase:encendido",
+      "type": "addressesUseCase"
+    },
+    {
       "source": "claim:brand-mexico",
       "target": "brand:don-turron",
       "type": "about"
@@ -893,6 +1013,16 @@
     {
       "source": "claim:cortador-v-geometrico-description",
       "target": "source:cortador-v-geometrico",
+      "type": "supportedBy"
+    },
+    {
+      "source": "claim:encendedor-sarike-butano-description",
+      "target": "encendedor-sarike-butano",
+      "type": "about"
+    },
+    {
+      "source": "claim:encendedor-sarike-butano-description",
+      "target": "source:encendedor-sarike-butano",
       "type": "supportedBy"
     }
   ]
