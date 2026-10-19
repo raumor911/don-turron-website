@@ -2,9 +2,9 @@ name: DT Semantic Core — Validación y build
 on:
   push:
     branches: [feat/dt-semantic-core-v1]
-    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
+    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
   pull_request:
-    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
+    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
   workflow_dispatch:
 permissions:
   contents: write
