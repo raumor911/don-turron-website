@@ -1,0 +1,42 @@
+[
+  {
+    "id": "faq:compra",
+    "question": "¿Ya puedo comprar directamente en el sitio?",
+    "answer": "No. El catálogo está en prelanzamiento; todavía no se aceptan pagos ni pedidos.",
+    "status": "documented",
+    "visibility": "public_preview",
+    "sourceIds": [
+      "source:brand-home"
+    ]
+  },
+  {
+    "id": "faq:existencias",
+    "question": "¿Los precios y productos son definitivos?",
+    "answer": "No. Hay cinco fichas documentadas y una referencia conceptual de encendedor. Precios y existencias están pendientes.",
+    "status": "documented",
+    "visibility": "public_preview",
+    "sourceIds": [
+      "source:brand-home"
+    ]
+  },
+  {
+    "id": "faq:envios",
+    "question": "¿Cómo se definirá el envío?",
+    "answer": "Las condiciones, cobertura y costos de envío todavía no están confirmados.",
+    "status": "documented",
+    "visibility": "public_preview",
+    "sourceIds": [
+      "source:brand-home"
+    ]
+  },
+  {
+    "id": "faq:puros",
+    "question": "¿Don Turrón vende puros?",
+    "answer": "Este catálogo presenta accesorios para puros; no ofrece puros ni tabaco.",
+    "status": "documented",
+    "visibility": "public_preview",
+    "sourceIds": [
+      "source:brand-home"
+    ]
+  }
+]

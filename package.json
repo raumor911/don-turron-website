@@ -1,0 +1,15 @@
+{
+  "name": "don-turron-semantic",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "validate:knowledge": "node scripts/dt-semantic/validate.mjs",
+    "compile:knowledge": "node scripts/dt-semantic/compile.mjs",
+    "validate:artifacts": "node scripts/dt-semantic/verify.mjs",
+    "build:semantic": "npm run validate:knowledge && npm run compile:knowledge && npm run validate:artifacts"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

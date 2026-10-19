@@ -1,0 +1,68 @@
+[
+  {
+    "id": "claim:brand-mexico",
+    "subjectId": "brand:don-turron",
+    "statement": "Don Turrón se presenta como marca mexicana en prelanzamiento.",
+    "status": "verified",
+    "sourceIds": [
+      "source:brand-home"
+    ],
+    "visibility": "public_preview",
+    "volatility": "stable"
+  },
+  {
+    "id": "claim:humidor-viaje-5-puros-description",
+    "subjectId": "humidor-viaje-5-puros",
+    "statement": "Este humidor de viaje guarda hasta cinco puros. Su caja de plástico duradero tiene un humidificador incorporado y un interior acolchado para llevarlos organizados. Los puros y accesorios de ambientación de las fotografías no están incluidos.",
+    "status": "supplier_declared",
+    "sourceIds": [
+      "source:humidor-viaje-5-puros"
+    ],
+    "visibility": "public_preview",
+    "volatility": "periodic"
+  },
+  {
+    "id": "claim:cenicero-mesa-description",
+    "subjectId": "cenicero-mesa",
+    "statement": "Este set incluye un cenicero portátil de cerámica, una guillotina, un cortador en V y un punzón (punch). Las herramientas de corte tienen componentes de acero inoxidable. El puro de las fotografías se muestra como ejemplo y no está incluido.",
+    "status": "supplier_declared",
+    "sourceIds": [
+      "source:cenicero-mesa"
+    ],
+    "visibility": "public_preview",
+    "volatility": "periodic"
+  },
+  {
+    "id": "claim:estuche-viaje-description",
+    "subjectId": "estuche-viaje",
+    "statement": "Este estuche con cremallera permite llevar hasta seis puros. Incluye un humidificador con esponja para ayudar a conservar la humedad. El proveedor lo describe como impermeable, pero todavía no contamos con una clasificación verificada de resistencia al agua. Los puros de las fotos no están incluidos.",
+    "status": "supplier_declared",
+    "sourceIds": [
+      "source:estuche-viaje"
+    ],
+    "visibility": "public_preview",
+    "volatility": "periodic"
+  },
+  {
+    "id": "claim:estuche-kit-viaje-description",
+    "subjectId": "estuche-kit-viaje",
+    "statement": "Estuche portátil con acabado negro texturizado y cierre de cremallera. Tiene espacio para llevar entre cuatro y ocho puros, según su tamaño, y organizar accesorios. Los elementos de las fotografías son ilustrativos; aún falta confirmar cuáles accesorios, si los hay, se incluyen con el estuche.",
+    "status": "supplier_declared",
+    "sourceIds": [
+      "source:estuche-kit-viaje"
+    ],
+    "visibility": "public_preview",
+    "volatility": "periodic"
+  },
+  {
+    "id": "claim:reposa-puros-plegable-description",
+    "subjectId": "reposa-puros-plegable",
+    "statement": "Este soporte de acero inoxidable permite apoyar el puro mientras haces una pausa. Su diseño plegable en forma de X facilita guardarlo y llevarlo contigo. Está disponible en dos acabados: plata y negro.",
+    "status": "supplier_declared",
+    "sourceIds": [
+      "source:reposa-puros-plegable"
+    ],
+    "visibility": "public_preview",
+    "volatility": "periodic"
+  }
+]

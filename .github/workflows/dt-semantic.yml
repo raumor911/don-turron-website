@@ -1,0 +1,18 @@
+name: DT Semantic Core — Validación y build
+on:
+  push:
+    branches: [feat/dt-semantic-core-v1]
+    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
+  pull_request:
+    paths: ['knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  semantic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - run: npm run validate:knowledge
