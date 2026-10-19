@@ -14,6 +14,3 @@ Estado: prelanzamiento; no se reciben pedidos, precios y existencias por confirm
 - [Reposa puros plegable de acero inoxidable](/productos/reposa-puros-plegable/)
 - [Cortapuros en V de metal con acabado geométrico](/productos/cortador-v-geometrico/) — Disponibilidad prevista: enero de 2027.
 - [Encendedor metálico Sarike de doble llama](/productos/encendedor-sarike-butano/) — Disponibilidad prevista: enero de 2027.
-
-## Referencia conceptual
-- Encendedor de flama jet (sin oferta comercial).

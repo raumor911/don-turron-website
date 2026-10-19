@@ -6,4 +6,4 @@ Lema: El arte está en los detalles.
 
 Estado: prelanzamiento; no se reciben pedidos, precios y existencias por confirmar.
 
-7 artículos tienen fichas descriptivas y el encendedor de flama jet permanece como referencia conceptual.
+7 artículos cuentan con fichas documentadas. Ninguna ficha confirma existencias ni activa pedidos.

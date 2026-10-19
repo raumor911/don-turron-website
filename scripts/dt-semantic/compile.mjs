@@ -54,8 +54,8 @@ function writeAi(k,fingerprint,graph){
   const asMd=items=>items.map(x=>'## '+x.question+'\n\n'+x.answer+'\n\nFuentes: '+x.sourceIds.join(', ')).join('\n\n');
   const intro='# Don Turrón\n\n'+k.brand.description+'\n\nLema: '+k.brand.tagline+'\n\nEstado: prelanzamiento; no se reciben pedidos, precios y existencias por confirmar.\n';
   const links=doc=>'- ['+doc.name+'](/productos/'+doc.id+'/)'+(doc.launchWindow?' — '+doc.launchWindow.label+'.':'');
-  const brandMd=intro+'\n'+documented.length+' artículos tienen fichas descriptivas y el encendedor de flama jet permanece como referencia conceptual.\n';
-  const catalogMd=intro+'\n## Accesorios documentados\n'+documented.map(links).join('\n')+'\n\n## Referencia conceptual\n- Encendedor de flama jet (sin oferta comercial).\n';
+  const brandMd=intro+'\n'+documented.length+' artículos cuentan con fichas documentadas. Ninguna ficha confirma existencias ni activa pedidos.\n';
+  const catalogMd=intro+'\n## Accesorios documentados\n'+documented.map(links).join('\n')+'\n';
   const intentList=k.intents.filter(publicItem).map(i=>({...i,sourceType:'hypothesis_not_measured'}));
   const termMd='# Terminología\n\n'+k.terminology.filter(publicItem).map(x=>'## '+x.term+'\n\n'+x.definition).join('\n\n')+'\n';
   const sourceList=k.sources.filter(publicItem);

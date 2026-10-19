@@ -2,7 +2,7 @@
 
 Primera versión **demostrable y responsive** de una boutique de accesorios para puros. Diseño inspirado directamente en el emblema y monograma aportados. Investigación y decisiones documentadas con el **núcleo AETHRYON DRAFT v2.0.0**.
 
-> **ESTADO: PRELANZAMIENTO.** El sitio **no vende, no cobra, no reserva inventario y no acepta pedidos**. Su catálogo es conceptual. `noindex` está activo hasta contar con información comercial validada.
+> **ESTADO: PRELANZAMIENTO.** El sitio **no vende, no cobra, no reserva inventario y no acepta pedidos**. Su catálogo contiene fichas documentadas de accesorios, sin ventas habilitadas. `noindex` está activo hasta contar con información comercial validada.
 
 ## Qué incluye
 
@@ -41,7 +41,7 @@ window.DON_TURRON_CONFIG = {
 };
 ```
 
-**`catalog.js`** tiene seis ejemplos. Para cada producto real reemplaza ID, nombre, categoría, descripción, características y dibujo por fotos correctas. No agregues precios/stock hasta contar con una fuente de verdad. El `id` debe ser único y estable para la selección local.
+**`catalog.js`** se genera desde `knowledge/products.json` y contiene siete accesorios documentados. No agregues precios/stock hasta contar con una fuente de verdad. El `id` debe ser único y estable para la selección local.
 
 Los SVG en `assets/` son ilustraciones de apoyo, **no fotografías de productos disponibles**. El script `make-art.py` recrea esos SVG y es opcional en el despliegue. Los logos aportados se encuentran en el mismo directorio.
 
@@ -101,7 +101,7 @@ cd don-turron
 
 ## Atelier Motion V2 — experiencia premium
 
-La versión V2 incorpora `premium.css` y `premium.js` como mejora progresiva de la experiencia visual: animaciones editoriales, reflejos interactivos, microinteracciones de íconos y respuesta de selección. Respeta `prefers-reduced-motion` e incluye un control de movimiento en el pie. No activa compras ni modifica el catálogo conceptual. Documentación: [`docs/INTERACCIONES_PREMIUM_V2.md`](docs/INTERACCIONES_PREMIUM_V2.md). Pruebas: `python tests/qa_browser.py` (requiere Playwright y Chromium).
+La versión V2 incorpora `premium.css` y `premium.js` como mejora progresiva de la experiencia visual: animaciones editoriales, reflejos interactivos, microinteracciones de íconos y respuesta de selección. Respeta `prefers-reduced-motion`; el control visible de movimiento fue retirado del pie. No activa compras. Documentación: [`docs/INTERACCIONES_PREMIUM_V2.md`](docs/INTERACCIONES_PREMIUM_V2.md). Pruebas: `python tests/qa_browser.py` (requiere Playwright y Chromium).
 
 
 ## DT Semantic Intelligence Layer V1 (integrado en main)
@@ -117,7 +117,7 @@ npm run test:observability
 npm run test:nojs # requiere Playwright y Chromium
 ```
 
-La compilación crea seis tarjetas estáticas en `index.html`, cinco fichas en `productos/<id>/index.html` y una guía en `guia/estuche-o-humidor/index.html`. Las galerías y la selección siguen en JavaScript, usando las mismas imágenes de `knowledge/products.json`.
+La compilación crea siete tarjetas estáticas en `index.html`, siete fichas en `productos/<id>/index.html` y una guía en `guia/estuche-o-humidor/index.html`. Las galerías y la selección siguen en JavaScript, usando las mismas imágenes de `knowledge/products.json`.
 
 **Release gate:** `semantic-release.json` exige modo `prelaunch`, sin dominio, indexación, ventas ni IndexNow. `noindex` y `robots.txt` siguen activos. Este flujo no despliega a producción.
 
@@ -145,6 +145,10 @@ Los íconos proceden de la silueta original del monograma, extraída con **trans
 
 El pie de página acredita el desarrollo con la frase **«Experiencia digital desarrollada por [RAUVIA Consulting](https://rauvia.com.mx/)»**. Se integra en `index.html` y en la plantilla `scripts/dt-semantic/pages.mjs`, con prueba de enlaces accesibles en las páginas prerenderizadas (`python tests/qa_rauvia_footer.py`).
 
-Se incorpora como octava tarjeta `encendedor-sarike-butano` (encendedor metálico de butano con acabado plata/dorado y modos de llama descritos por el proveedor). Su ficha, tres imágenes WebP y atributos semánticos proceden de `knowledge/products.json` y `docs/ENCENDEDOR_SARIKE_BUTANO.md`. El anterior `encendedor-jet` permanece como referencia conceptual; ninguno está marcado como disponible para compra. No se publican precios, existencias ni garantías sin verificación.
+Se incorpora como séptima tarjeta documentada `encendedor-sarike-butano` (encendedor metálico de butano con acabado plata/dorado y modos de llama descritos por el proveedor). Su ficha, tres imágenes WebP y atributos semánticos proceden de `knowledge/products.json` y `docs/ENCENDEDOR_SARIKE_BUTANO.md`. La tarjeta conceptual `encendedor-jet` se retiró al confirmar que Sarike ofrece flama suave y jet. Ninguno de los productos se ofrece todavía para compra. No se publican precios, existencias ni garantías sin verificación.
 
 Los pipelines semántico y de telemetría compilan el catálogo vigente antes de comprobar las interacciones de navegador. No modificar `catalog.js`, `ai/` ni las fichas prerenderizadas manualmente: ejecutar `npm run build:semantic` para actualizarlas. El estado de prelanzamiento y `noindex` siguen activos.
+
+## Ajuste editorial · catálogo de siete artículos y footer
+
+El catálogo ya no publica la ilustración de un encendedor jet sin producto respaldado. El **encendedor Sarike** es la única ficha de encendedor: según el proveedor dispone de **flama suave y flama jet**, con lanzamiento previsto para enero de 2027. Se conserva la distinción entre especificaciones declaradas y ensayos no verificados. El footer presenta a la izquierda el aviso de derechos reservados y a la derecha el crédito enlazado a **RAUVIA Consulting**; se eliminó la leyenda visual «Sitio en preparación». También se retiró el selector visible de movimiento, manteniendo el ajuste de accesibilidad del sistema operativo. La indexación continúa bloqueada por el gate de prelanzamiento.

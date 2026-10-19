@@ -1,25 +1,6 @@
 /* AUTOGENERADO desde knowledge/products.json — editar solo el Semantic Core. */
 window.DON_TURRON_CATALOG = [
   {
-    "id": "encendedor-jet",
-    "name": "Encendedor de flama jet",
-    "category": "encendedores",
-    "categoryLabel": "Encendedores",
-    "subtitle": "Referencia visual, aún no disponible.",
-    "description": "Esta ficha muestra un ejemplo visual de encendedor. Aún no hay un modelo confirmado para venta, por lo que faltan datos como combustible, tipo de flama, materiales y especificaciones de seguridad.",
-    "features": [
-      "Tipo de flama por confirmar",
-      "Material por confirmar",
-      "Ficha de seguridad pendiente"
-    ],
-    "art": "lighter",
-    "badge": "REFERENCIA",
-    "images": [],
-    "variants": [],
-    "contentStatus": "conceptual",
-    "commercialStatus": "not_configured"
-  },
-  {
     "id": "humidor-viaje-5-puros",
     "name": "Humidor de viaje para 5 puros",
     "category": "humidores",
@@ -266,11 +247,11 @@ window.DON_TURRON_CATALOG = [
     "name": "Encendedor metálico Sarike de doble llama",
     "category": "encendedores",
     "categoryLabel": "Encendedores",
-    "subtitle": "Dos estilos de llama en una pieza compacta.",
-    "description": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Según la información del proveedor, su mecanismo permite alternar entre llama tradicional y llama azul concentrada mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el comportamiento de la llama y los materiales específicos requieren verificación independiente.",
+    "subtitle": "Flama suave y jet en una sola pieza.",
+    "description": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Según la información proporcionada, permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el desempeño de ambos modos y los materiales específicos están pendientes de verificación independiente.",
     "features": [
       "Combustible declarado por el proveedor: gas butano",
-      "Mecanismo de llama tradicional y llama azul, según fotografías del proveedor",
+      "Dos modos declarados: flama suave y flama jet (azul), con control lateral",
       "Carcasa metálica con acabado texturizado",
       "Dimensiones anunciadas: 61 × 38 × 13 mm; peso anunciado: 89 g",
       "Acabados plata y dorado; existencias por confirmar",

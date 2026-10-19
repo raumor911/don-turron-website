@@ -102,14 +102,11 @@ html.dt-ready .dt-reveal.dt-inview{animation:dt-rise 1s var(--dt-ease) both;anim
 .product-modal{transition:transform .55s var(--dt-ease),opacity .45s var(--dt-ease)}
 .close-icon{transition:transform .5s var(--dt-ease),background .3s,border-color .3s}
 .close-icon:hover,.close-icon:focus-visible{transform:rotate(90deg);border-color:#9e7c52}
-/* Visitor-controlled motion preference, separate from the OS preference. */
-.dt-motion-toggle{display:inline-flex;align-items:center;gap:9px;border:1px solid #5f4d37;background:transparent;color:#c7ae88;font-size:10px;padding:10px 12px;cursor:pointer;transition:border-color .4s,color .4s}
-.dt-motion-toggle::before{content:"";display:block;width:7px;height:7px;border:1px solid currentColor;border-radius:50%;box-shadow:0 0 0 3px rgba(184,144,91,.1)}
-.dt-motion-toggle:hover,.dt-motion-toggle:focus-visible{color:#f2d9af;border-color:#b58b57}
+/* The operating-system reduced-motion preference remains supported without an extra footer control. */
 /* A proper keyboard experience is a form of craftsmanship. */
 :where(a,button,summary):focus-visible{outline:2px solid #d6ac6b;outline-offset:4px}
 @media (hover:none),(pointer:coarse){.hero::after{display:none}.category-tile::before,.product-art::before{display:none}.category-tile:hover,.product-card:hover{box-shadow:none;transform:none}.category-tile:hover .cat-bg{transform:none}.product-card:hover .product-art img{transform:none}.btn-gold:hover{transform:none}}
-@media (max-width:580px){.dt-motion-toggle{margin-top:6px}.product-card:hover{transform:none}.hero h1 .dt-title-line{white-space:normal}.section-header .eyebrow::after{margin-top:9px}}
+@media (max-width:580px){.product-card:hover{transform:none}.hero h1 .dt-title-line{white-space:normal}.section-header .eyebrow::after{margin-top:9px}}
 @media (prefers-reduced-motion:reduce){.dt-progress{display:none!important}}
 html.dt-still *,html.dt-still *::before,html.dt-still *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 html.dt-still .dt-reveal,html.dt-still .dt-enter{opacity:1!important;transform:none!important}

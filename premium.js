@@ -4,9 +4,8 @@
   const root = document.documentElement;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
-  const MOTION_KEY = 'dt-prefer-still-v1';
-  try { if (localStorage.getItem(MOTION_KEY) === 'yes') root.classList.add('dt-still'); } catch (_) {}
-  const active = () => !reduced.matches && !root.classList.contains('dt-still');
+  // Respect the operating-system preference; the footer no longer exposes a manual motion switch.
+  const active = () => !reduced.matches;
   const $ = selector => document.querySelector(selector);
   const $$ = selector => [...document.querySelectorAll(selector)];
 
@@ -121,29 +120,12 @@
     count.addEventListener('animationend',()=>count.classList.remove('dt-pulse'));
   }
 
-  // Choice: respect both OS reduced-motion and the visitor's own control.
-  const footer = $('.footer-bottom');
-  if (footer) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'dt-motion-toggle';
-    const sync = () => {
-      const still = reduced.matches || root.classList.contains('dt-still');
-      button.textContent = still ? 'Movimiento reducido' : 'Reducir movimiento';
-      button.setAttribute('aria-pressed', String(still));
-      button.setAttribute('aria-label',still ? 'Activar animaciones (si el sistema lo permite)' : 'Reducir las animaciones del sitio');
-      if (still) targets.forEach(show);
-      scheduleProgress();
-    };
-    button.addEventListener('click', () => {
-      const nowStill = !root.classList.contains('dt-still');
-      root.classList.toggle('dt-still',nowStill);
-      try { localStorage.setItem(MOTION_KEY,nowStill ? 'yes' : 'no'); } catch (_) {}
-      sync();
-    });
-    footer.appendChild(button);
-    if (reduced.addEventListener) reduced.addEventListener('change',sync);
-    else if (reduced.addListener) reduced.addListener(sync);
-    sync();
-  }
+  // Reduced-motion changes must reveal any content pending entrance animation.
+  const syncReducedMotion = () => {
+    if (reduced.matches) targets.forEach(show);
+    scheduleProgress();
+  };
+  if (reduced.addEventListener) reduced.addEventListener('change',syncReducedMotion);
+  else if (reduced.addListener) reduced.addListener(syncReducedMotion);
+
 })();

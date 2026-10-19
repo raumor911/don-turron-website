@@ -22,6 +22,7 @@ assert len(pages)==9,f'Expected home, seven product pages and guide: {len(pages)
 for p in pages:
     s=p.read_text(encoding='utf8')
     assert 'Experiencia digital desarrollada por' in s,p
+    assert 'Sitio en preparación' not in s,p
     assert s.count('Experiencia digital desarrollada por')==1,p
     assert '<strong>RAUVIA Consulting</strong>' in s,p
     parser=Links();parser.feed(s)

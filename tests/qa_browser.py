@@ -38,13 +38,11 @@ with sync_playwright() as p:
   page.locator('#age-yes').click()
   page.wait_for_timeout(350)
   page.screenshot(path=str(PROJECT/f'tests/{name}.png'),full_page=True)
-  assert page.locator('.product-card').count()==8, 'Producto inicial'
+  assert page.locator('.product-card').count()==7, 'Siete productos con respaldo documental'
+  assert page.locator('.product-card[data-id="encendedor-jet"]').count()==0, 'Sin referencia de encendedor inexistente'
   assert page.locator('.product-card .product-badge').filter(has_text='PRÓXIMAMENTE').count()==2, 'Exclusivamente dos etiquetas Próximamente'
   assert page.locator('.product-card .product-availability').count()==2, 'Solo dos lanzamientos con mes definido'
-  assert page.locator('.product-card .product-image-trigger').count()==8, 'Imagen clicable en las ocho tarjetas'
-  page.locator('.product-card[data-id="encendedor-jet"] .product-image-trigger').click()
-  assert page.locator('#product-modal-name').inner_text()=='Encendedor de flama jet', 'Abrir detalle al pulsar la foto conceptual'
-  page.locator('#product-modal-close').click()
+  assert page.locator('.product-card .product-image-trigger').count()==7, 'Imagen clicable en las siete tarjetas'
   page.locator('.product-card[data-id="humidor-viaje-5-puros"] .product-image-trigger').focus()
   page.keyboard.press('Enter')
   assert page.locator('#product-modal-name').inner_text()=='Humidor de viaje para 5 puros', 'Abrir detalle de la foto con teclado'
@@ -52,13 +50,14 @@ with sync_playwright() as p:
   page.locator('#product-modal-close').click()
   assert page.locator('.product-card[data-id="humidor-viaje-5-puros"]').count()==1, 'Humidor real agregado sin modificar la estructura de las tarjetas'
   assert page.locator('.dt-progress').count()==1, 'Línea de progreso'
-  assert page.locator('.dt-motion-toggle').count()==1, 'Control de movimiento'
-  assert page.locator('.product-card.dt-enter').count()==8, 'Animación productos'
+  assert page.locator('.dt-motion-toggle').count()==0, 'No se muestra control de movimiento'
+  assert page.locator('.product-card.dt-enter').count()==7, 'Animación de siete productos'
   page.locator('[data-filter="encendedores"]').click()
-  assert page.locator('.product-card').count()==2, 'Encendedores incluye referencia conceptual y producto Sarike'
+  assert page.locator('.product-card').count()==1, 'Solo el encendedor Sarike tiene ficha verificada documentalmente'
   assert page.locator('.product-card[data-id="encendedor-sarike-butano"]').count()==1, 'Tarjeta Sarike añadida'
   assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-badge').inner_text()=='PRÓXIMAMENTE', 'Encendedor Sarike: nueva etiqueta'
   assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Sarike: mes previsto'
+  assert 'Flama suave y jet' in page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-subtitle').inner_text(), 'Sarike reúne ambos tipos de flama'
   page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-image-trigger').click()
   assert page.locator('#product-modal-name').inner_text()=='Encendedor metálico Sarike de doble llama', 'Ficha Sarike'
   assert page.locator('.modal-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Sarike: fecha en modal'
@@ -108,7 +107,7 @@ with sync_playwright() as p:
   page.locator('[data-filter="estuches"]').click()
   assert page.locator('.product-card').count()==2, 'Dos estuches en la misma categoría'
   assert page.locator('.product-card[data-id="estuche-viaje"]').count()==1, 'Tercer producto preservado'
-  assert page.locator('.product-card[data-id="estuche-kit-viaje"]').count()==1, 'Cuarto producto sin ampliar las ocho tarjetas'
+  assert page.locator('.product-card[data-id="estuche-kit-viaje"]').count()==1, 'Cuarto producto sin ampliar las siete tarjetas'
   page.locator('.product-card[data-id="estuche-viaje"] [data-detail]').click()
   assert page.locator('#product-modal-name').inner_text()=='Estuche porta puros con humidificador', 'Título del tercer producto'
   assert page.locator('.travel-gallery-controls button').count()==5, 'Cinco vistas del tercer producto'
@@ -149,7 +148,8 @@ with sync_playwright() as p:
    ('estuche-viaje',5),
    ('estuche-kit-viaje',2),
    ('reposa-puros-plegable',3),
-   ('encendedor-jet',1)
+   ('cortador-v-geometrico',5),
+   ('encendedor-sarike-butano',3)
   ]
   for product_id,total in cases:
    page.locator(f'.product-card[data-id="{product_id}"] .product-image-trigger').click()
@@ -193,10 +193,14 @@ with sync_playwright() as p:
    assert page.locator('#mobile-nav').is_visible(),'menú móvil'
    page.locator('#mobile-nav a').first.click()
    assert not page.locator('#mobile-nav').is_visible(),'cerrar menú móvil'
-  page.locator('.dt-motion-toggle').click()
-  assert page.evaluate("document.documentElement.classList.contains('dt-still')"), 'Movimiento reducido'
-  page.locator('.dt-motion-toggle').click()
-  assert not page.evaluate("document.documentElement.classList.contains('dt-still')"), 'Movimiento normal'
+  page.emulate_media(reduced_motion='reduce')
+  assert page.evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches"), 'Respeta preferencia del sistema'
+  page.emulate_media(reduced_motion='no-preference')
+  assert 'Sitio en preparación' not in page.locator('.footer-bottom').inner_text(), 'Se retiró la leyenda obsoleta'
+  assert page.locator('.footer-bottom .footer-credit a[href="https://rauvia.com.mx/"]').count()==1, 'Crédito RAUVIA en footer'
+  credit=page.locator('.footer-bottom .footer-credit').bounding_box()
+  footer=page.locator('.footer-bottom').bounding_box()
+  assert credit is not None and footer is not None and credit['x']+credit['width']>=footer['x']+footer['width']-18, 'Crédito alineado a la derecha'
   overflow=page.evaluate('document.documentElement.scrollWidth > window.innerWidth + 2')
   assert not overflow, f'Overflow horizontal {name}'
   assert not errors, f'Errores JS {name}: {errors}'
