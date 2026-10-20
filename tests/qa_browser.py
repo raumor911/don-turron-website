@@ -166,23 +166,28 @@ with sync_playwright() as p:
   # Simulación determinista de Pointer Events táctiles en Chromium móvil.
   # Safari iOS y Samsung Internet reales requieren una validación posterior en hardware.
   def swipe(selector, x1, y1, x2, y2):
-   # Un gesto real emite PointerEvent que burbujea desde la imagen hasta sus
-   # listeners de galería y documento. dispatch_event() sin bubbles crea un
-   # evento aislado y provoca un falso negativo en el test móvil.
+   # Pointer Events sintéticos emitidos sincrónicamente en el MISMO task de
+   # Chromium: evita que el harness introduzca latencia artificial entre eventos.
    node=page.locator(selector)
-   opts={'pointerType':'touch','pointerId':17,'isPrimary':True,
-         'bubbles':True,'cancelable':True,'composed':True}
-   node.dispatch_event('pointerdown',{**opts,'clientX':x1,'clientY':y1})
-   # El dedo debe mover la imagen ANTES de soltarla: no basta medir el cambio final.
-   midx=(x1+x2)/2
-   midy=(y1+y2)/2
-   node.dispatch_event('pointermove',{**opts,'clientX':midx,'clientY':midy})
+   result=node.evaluate("""(el,p) => {
+     const [x1,y1,x2,y2]=p;
+     const opts={pointerType:'touch',pointerId:17,isPrimary:true,
+                 bubbles:true,cancelable:true,composed:true};
+     const emit=(name,x,y)=>el.dispatchEvent(new PointerEvent(name,{...opts,clientX:x,clientY:y}));
+     emit('pointerdown',x1,y1);
+     emit('pointermove',(x1+x2)/2,(y1+y2)/2);
+     const followed=el.style.transform.includes('translate3d');
+     const engaged=el.classList.contains('dt-swipe-dragging');
+     emit('pointerup',x2,y2);
+     return {followed,engaged,stuck:el.style.transform.includes('translate3d'),
+       width:innerWidth,buttons:document.querySelectorAll('.travel-gallery-controls button').length,
+       zoom:!!document.querySelector('#dt-photo-lightbox.dt-zoomed'),
+       modal:document.querySelector('#product-modal').classList.contains('open')};
+   }""",[x1,y1,x2,y2])
    is_horizontal=abs(x2-x1)>60 and abs(x2-x1)>abs(y2-y1)*1.4
-   is_zoom=page.locator('#dt-photo-lightbox.dt-zoomed').count()>0
-   if is_horizontal and not is_zoom:
-    assert 'translate3d' in (node.get_attribute('style') or ''), f'La imagen sigue el dedo en {selector} / {name}'
-   node.dispatch_event('pointerup',{**opts,'clientX':x2,'clientY':y2})
-   assert 'translate3d' not in (node.get_attribute('style') or ''), f'No dejar transformación pegada en {selector} / {name}'
+   if is_horizontal and not result['zoom']:
+    assert result['followed'] and result['engaged'], f'La imagen no siguió el dedo {selector} / {name}: {result}'
+   assert not result['stuck'], f'Transformación pegada {selector} / {name}: {result}'
   # Galería V4: validar imágenes completas, navegación y ampliación en todos los artículos.
   page.locator('[data-filter="todos"]').click()
   cases = [
