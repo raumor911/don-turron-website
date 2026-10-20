@@ -1,10 +1,10 @@
-# Encendedor metálico Sarike de doble llama
+# Encendedor metálico Parike de doble llama
 
 **Producto:** `encendedor-sarike-butano` · **Categoría:** Encendedores · **Estado:** próximo lanzamiento, sin oferta habilitada.
 
 **Disponibilidad prevista: enero de 2027.** Mes objetivo comunicado por el titular de la marca; no constituye confirmación de inventario, pedido, preventa ni fecha exacta de salida. El calendario puede cambiar.
 
-Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Según la información proporcionada, permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el desempeño de ambos modos y los materiales específicos están pendientes de verificación independiente.
+Encendedor metálico Parike de butano con diseño compacto y detalles de acabado texturizado. Según la información proporcionada, permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado; la resistencia al viento, el desempeño de ambos modos y los materiales específicos están pendientes de verificación independiente.
 
 ## Características declaradas por el proveedor
 
@@ -19,8 +19,8 @@ Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado
 
 ## Fotografías y procedencia
 
-Las tres fotografías aportadas se integran como `assets/products/encendedor-sarike-{plata,dorado,modos-llama}.webp`, con composición oscura de Don Turrón; el cuerpo, las inscripciones y la funcionalidad ilustrada se conservan sin reconstruir el artículo.
+La presentación editorial aprobada se integra en tres fotografías optimizadas y transparentes: `assets/products/encendedor-parike-ambos-acabados.webp`, `assets/products/encendedor-parike-plata.webp` y `assets/products/encendedor-parike-dorado.webp`. Se conserva además la ilustración previa de modos de llama. Las nuevas imágenes se separaron por recorte, sin cambiar la geometría de los encendedores. **Pendiente de cotejo:** la inscripción visible en la imagen facilitada dice «Sarike», mientras el titular confirmó la denominación comercial «Parike». La imagen no constituye evidencia de la inscripción auténtica del producto físico ni debe modificarse sin validación.
 
-**Fuentes:** fotografías y descripción del producto suministradas por el cliente. No existe ensayo independiente, precio, inventario, SKU de cada acabado ni autorización para activar checkout. Se retiró la ilustración conceptual independiente del catálogo: Sarike reúne las dos modalidades declaradas (flama suave y flama jet) en un solo artículo con ID estable.
+**Fuentes:** fotografías y descripción del producto suministradas por el cliente. No existe ensayo independiente, precio, inventario, SKU de cada acabado ni autorización para activar checkout. Se retiró la ilustración conceptual independiente del catálogo: Parike reúne las dos modalidades declaradas (flama suave y flama jet) en un solo artículo con ID estable.
 
 **Metodología:** claims `supplier_declared` y demanda `hypothesis`; sin extrapolación de resultados, volumen de búsqueda o certificaciones.
