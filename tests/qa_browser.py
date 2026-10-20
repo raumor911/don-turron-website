@@ -40,19 +40,19 @@ with sync_playwright() as p:
   page.locator('#age-yes').click()
   page.wait_for_timeout(350)
   page.screenshot(path=str(PROJECT/f'tests/{name}.png'),full_page=True)
-  assert page.locator('.product-card').count()==7, 'Siete productos con respaldo documental'
+  assert page.locator('.product-card').count()==8, 'Ocho productos con respaldo documental'
   assert page.locator('.product-card').first.get_attribute('data-prerender-marker')=='original', 'Conservar DOM prerenderizado sin repintar al cargar'
   assert page.locator('.product-card[data-id="encendedor-jet"]').count()==0, 'Sin referencia de encendedor inexistente'
-  assert page.locator('.product-card .product-badge').filter(has_text='PRÓXIMAMENTE').count()==2, 'Exclusivamente dos etiquetas Próximamente'
-  assert page.locator('.product-card .product-availability').count()==2, 'Solo dos lanzamientos con mes definido'
-  assert page.locator('.product-card .product-image-trigger').count()==7, 'Imagen clicable en las siete tarjetas'
+  assert page.locator('.product-card .product-badge').filter(has_text='PRÓXIMAMENTE').count()==3, 'Tres etiquetas Próximamente'
+  assert page.locator('.product-card .product-availability').count()==3, 'Tres lanzamientos con mes definido'
+  assert page.locator('.product-card .product-image-trigger').count()==8, 'Imagen clicable en las ocho tarjetas'
 
   price_examples={'humidor-viaje-5-puros':649,'cenicero-mesa':549,'estuche-viaje':299,'estuche-kit-viaje':949,'reposa-puros-plegable':189}
   for product_id,amount in price_examples.items():
    card=page.locator(f'.product-card[data-id="{product_id}"]')
    assert f'${amount} MXN' in card.locator('.product-price').inner_text(),product_id
    assert 'IVA incluido' in card.locator('.product-price').inner_text(),product_id
-  for product_id in ('cortador-v-geometrico','encendedor-sarike-butano'):
+  for product_id in ('cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch'):
    assert page.locator(f'.product-card[data-id="{product_id}"] .product-price').inner_text()=='Precio por confirmar',product_id
 
   page.locator('.product-card[data-id="humidor-viaje-5-puros"] .product-image-trigger').focus()
@@ -65,9 +65,9 @@ with sync_playwright() as p:
   assert page.locator('.dt-motion-toggle').count()==0, 'No se muestra control de movimiento'
   assert page.locator('#dt-edge-bronze').count()==1, 'Filtro tonal sobre emblema de esencia'
   assert page.locator('.philosophy-frame img').evaluate("el => getComputedStyle(el).filter.includes('dt-edge-bronze')"), 'Emblema aplica filtro café claro'
-  assert page.locator('.product-card.dt-enter').count()==7, 'Animación de siete productos'
+  assert page.locator('.product-card.dt-enter').count()==8, 'Animación de ocho productos'
   page.locator('[data-filter="encendedores"]').click()
-  assert page.locator('.product-card').count()==1, 'Solo el encendedor Parike tiene ficha verificada documentalmente'
+  assert page.locator('.product-card').count()==2, 'Parike y HONEST en la categoría encendedores'
   assert page.locator('.product-card[data-id="encendedor-sarike-butano"]').count()==1, 'Tarjeta Parike añadida'
   assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-badge').inner_text()=='PRÓXIMAMENTE', 'Encendedor Parike: nueva etiqueta'
   assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Parike: mes previsto'
@@ -81,6 +81,15 @@ with sync_playwright() as p:
   assert 'declarado por el proveedor' not in page.locator('#product-modal-content').inner_text().lower(), 'Combustible sin expresión redundante'
   assert 'existencias por confirmar' not in page.locator('#product-modal-content').inner_text().lower(), 'Sin frases de existencias Parike'
   assert 'Las características se muestran según la información disponible' not in page.locator('#product-modal-content').inner_text(), 'Sin aviso genérico en Parike'
+  page.locator('#product-modal-close').click()
+  assert page.locator('.product-card[data-id="encendedor-honest-punch"]').count()==1, 'HONEST presente en encendedores'
+  assert page.locator('.product-card[data-id="encendedor-honest-punch"] .product-badge').inner_text()=='PRÓXIMAMENTE', 'HONEST próximamente'
+  assert page.locator('.product-card[data-id="encendedor-honest-punch"] .product-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'HONEST enero de 2027'
+  page.locator('.product-card[data-id="encendedor-honest-punch"] .product-image-trigger').click()
+  assert page.locator('#product-modal-name').inner_text()=='Encendedor HONEST de doble flama con cortador punch', 'Título HONEST'
+  assert page.locator('.travel-gallery-controls button').count()==5, 'HONEST tiene cinco fotografías'
+  assert 'resistente al viento' in page.locator('#product-modal-content').inner_text().lower(), 'Descripción de resistencia anunciada HONEST'
+  assert page.locator('.modal-retail-price').count()==0, 'HONEST sin precio previo a lanzamiento'
   page.locator('#product-modal-close').click()
   page.locator('[data-filter="cortadores"]').click()
   assert page.locator('.product-card').count()==1, 'Nueva categoría cortadores'
@@ -197,7 +206,8 @@ with sync_playwright() as p:
    ('estuche-kit-viaje',2),
    ('reposa-puros-plegable',3),
    ('cortador-v-geometrico',5),
-   ('encendedor-sarike-butano',4)
+   ('encendedor-sarike-butano',4),
+    ('encendedor-honest-punch',5)
   ]
   for product_id,total in cases:
    page.locator(f'.product-card[data-id="{product_id}"] .product-image-trigger').click()

@@ -81,7 +81,7 @@ function productPage(p,k){
     <section class="dt-related"><h2>También puedes conocer</h2><ul>${related.map(x=>`<li><a href="../${esc(x.id)}/">${esc(x.name)}</a></li>`).join('')||'<li><a href="../../index.html#coleccion">Explorar la colección</a></li>'}</ul><p><a href="../../index.html#coleccion">Volver a la colección</a> · <a href="../../guia/estuche-o-humidor/">Estuche o humidor: qué cambia</a></p></section>
   </main>`;
   const ld={'@context':'https://schema.org','@graph':[
-   {'@type':'Product','@id':'#product',name:p.name,description:p.description+(p.launchWindow?' '+p.launchWindow.label+'.':''),image:p.images.map(x=>'../../'+x.src),category:p.categoryLabel,brand:{'@type':'Brand',name:'Don Turrón'},...(p.retailPrice?{additionalProperty:[{'@type':'PropertyValue',name:'Precio público informativo (IVA incluido, envío no incluido)',value:retailText(p)}]}:{})},
+   {'@type':'Product','@id':'#product',name:p.name,description:p.description+(p.launchWindow?' '+p.launchWindow.label+'.':''),image:p.images.map(x=>'../../'+x.src),category:p.categoryLabel,brand:{'@type':'Brand',name:p.manufacturerBrand||'Don Turrón'},...(p.retailPrice?{additionalProperty:[{'@type':'PropertyValue',name:'Precio público informativo (IVA incluido, envío no incluido)',value:retailText(p)}]}:{})},
    {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'Inicio',item:'../../index.html'},{'@type':'ListItem',position:2,name:'Colección',item:'../../index.html#coleccion'},{'@type':'ListItem',position:3,name:p.name}]}
   ]};
   return frame(p.name,body,p.description.slice(0,170),ld);

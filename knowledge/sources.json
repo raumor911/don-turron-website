@@ -61,5 +61,12 @@
     "type": "supplier_material",
     "path": "docs/ENCENDEDOR_SARIKE_BUTANO.md",
     "visibility": "public_preview"
+  },
+  {
+    "id": "source:encendedor-honest-punch",
+    "name": "Imágenes y descripción del encendedor HONEST con punch aportadas por el titular",
+    "type": "supplier_material",
+    "path": "docs/ENCENDEDOR_HONEST_PUNCH.md",
+    "visibility": "public_preview"
   }
 ]

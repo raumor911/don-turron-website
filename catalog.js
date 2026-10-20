@@ -324,5 +324,64 @@ window.DON_TURRON_CATALOG = [
       "label": "Disponibilidad prevista: enero de 2027",
       "source": "brand_owner_statement"
     }
+  },
+  {
+    "id": "encendedor-honest-punch",
+    "name": "Encendedor HONEST de doble flama con cortador punch",
+    "category": "encendedores",
+    "categoryLabel": "Encendedores",
+    "subtitle": "Doble flama jet y cortador punch en una sola pieza.",
+    "description": "Encendedor metálico HONEST recargable con gas butano, con dos flamas tipo jet y cortador punch integrado para preparar la punta del puro. Su diseño compacto combina acabado metálico con panel decorativo y se presenta en colores negro y rojo. El proveedor lo describe como resistente al viento.",
+    "features": [
+      "Dos flamas jet para el encendido",
+      "Cortador punch integrado y desplegable",
+      "Recargable con gas butano",
+      "Cuerpo metálico con panel frontal decorativo",
+      "Acabados: negro y rojo",
+      "Diseño anunciado como resistente al viento"
+    ],
+    "art": "lighter",
+    "badge": "PRÓXIMAMENTE",
+    "images": [
+      {
+        "src": "assets/products/encendedor-honest-negro.webp",
+        "label": "Encendedor HONEST, acabado negro de textura cuadriculada"
+      },
+      {
+        "src": "assets/products/encendedor-honest-rojo.webp",
+        "label": "Encendedor HONEST, acabado rojo con líneas decorativas"
+      },
+      {
+        "src": "assets/products/encendedor-honest-doble-llama.webp",
+        "label": "Doble llama jet azul del encendedor HONEST en uso"
+      },
+      {
+        "src": "assets/products/encendedor-honest-punch-mecanismo.webp",
+        "label": "Ilustración del mecanismo desplegable del cortador punch"
+      },
+      {
+        "src": "assets/products/encendedor-honest-punch-7-5mm.webp",
+        "label": "Detalle de uso del cortador punch integrado, referencia ilustrativa"
+      }
+    ],
+    "variants": [
+      {
+        "label": "Negro",
+        "status": "pending_confirmation"
+      },
+      {
+        "label": "Rojo",
+        "status": "pending_confirmation"
+      }
+    ],
+    "contentStatus": "documented",
+    "commercialStatus": "pending_confirmation",
+    "launchWindow": {
+      "status": "planned",
+      "month": "2027-01",
+      "label": "Disponibilidad prevista: enero de 2027",
+      "source": "brand_owner_statement"
+    },
+    "manufacturerBrand": "HONEST"
   }
 ];

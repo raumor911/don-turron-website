@@ -172,6 +172,7 @@
   }
   function modalDisclosure(p) {
     if (p.retailPrice) return '<p class="modal-caption">Envío no incluido. Existencias por confirmar. Este catálogo aún no acepta pedidos.</p>';
+    if (p.id === 'encendedor-honest-punch') return '';
     if (p.id === 'encendedor-sarike-butano') return '';
     if (p.id === 'cortador-v-geometrico') return '<p class="modal-caption">Precio por confirmar.</p>';
     return '<p class="modal-caption">' + (p.launchWindow ? 'Fecha prevista, sujeta a cambios; precio y existencias por confirmar.' : 'Precio y disponibilidad por confirmar.') + ' Las características se muestran según la información disponible.</p>';

@@ -26,7 +26,8 @@
     "description": "Contar con herramientas de corte para puros.",
     "productIds": [
       "cenicero-mesa",
-      "cortador-v-geometrico"
+      "cortador-v-geometrico",
+      "encendedor-honest-punch"
     ],
     "visibility": "public_preview"
   },
@@ -56,7 +57,8 @@
     "name": "Encender un puro",
     "description": "Explorar accesorios de encendido según tipo de llama, sin atribuir prestaciones verificadas.",
     "productIds": [
-      "encendedor-sarike-butano"
+      "encendedor-sarike-butano",
+      "encendedor-honest-punch"
     ],
     "visibility": "public_preview"
   }

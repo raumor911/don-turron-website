@@ -18,7 +18,7 @@ class Links(HTMLParser):
             self.capture=False
         if tag=='footer':self.foot=False
 pages=[ROOT/'index.html',*sorted((ROOT/'productos').glob('*/index.html')),ROOT/'guia/estuche-o-humidor/index.html']
-assert len(pages)==9,f'Expected home, seven product pages and guide: {len(pages)}'
+assert len(pages)==10,f'Expected home, eight product pages and guide: {len(pages)}'
 for p in pages:
     s=p.read_text(encoding='utf8')
     assert 'Experiencia digital desarrollada por' in s,p
