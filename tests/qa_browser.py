@@ -166,14 +166,28 @@ with sync_playwright() as p:
   # Simulación determinista de Pointer Events táctiles en Chromium móvil.
   # Safari iOS y Samsung Internet reales requieren una validación posterior en hardware.
   def swipe(selector, x1, y1, x2, y2):
-   # Un gesto real emite PointerEvent que burbujea desde la imagen hasta sus
-   # listeners de galería y documento. dispatch_event() sin bubbles crea un
-   # evento aislado y provoca un falso negativo en el test móvil.
+   # Pointer Events sintéticos emitidos sincrónicamente en el MISMO task de
+   # Chromium: evita que el harness introduzca latencia artificial entre eventos.
    node=page.locator(selector)
-   opts={'pointerType':'touch','pointerId':17,'isPrimary':True,
-         'bubbles':True,'cancelable':True,'composed':True}
-   node.dispatch_event('pointerdown',{**opts,'clientX':x1,'clientY':y1})
-   node.dispatch_event('pointerup',{**opts,'clientX':x2,'clientY':y2})
+   result=node.evaluate("""(el,p) => {
+     const [x1,y1,x2,y2]=p;
+     const opts={pointerType:'touch',pointerId:17,isPrimary:true,
+                 bubbles:true,cancelable:true,composed:true};
+     const emit=(name,x,y)=>el.dispatchEvent(new PointerEvent(name,{...opts,clientX:x,clientY:y}));
+     emit('pointerdown',x1,y1);
+     emit('pointermove',(x1+x2)/2,(y1+y2)/2);
+     const followed=el.style.transform.includes('translate3d');
+     const engaged=el.classList.contains('dt-swipe-dragging');
+     emit('pointerup',x2,y2);
+     return {followed,engaged,stuck:el.style.transform.includes('translate3d'),
+       width:innerWidth,buttons:document.querySelectorAll('.travel-gallery-controls button').length,
+       zoom:!!document.querySelector('#dt-photo-lightbox.dt-zoomed'),
+       modal:document.querySelector('#product-modal').classList.contains('open')};
+   }""",[x1,y1,x2,y2])
+   is_horizontal=abs(x2-x1)>60 and abs(x2-x1)>abs(y2-y1)*1.4
+   if is_horizontal and not result['zoom']:
+    assert result['followed'] and result['engaged'], f'La imagen no siguió el dedo {selector} / {name}: {result}'
+   assert not result['stuck'], f'Transformación pegada {selector} / {name}: {result}'
   # Galería V4: validar imágenes completas, navegación y ampliación en todos los artículos.
   page.locator('[data-filter="todos"]').click()
   cases = [
@@ -203,9 +217,20 @@ with sync_playwright() as p:
     assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==unchanged, f'Scroll vertical no navega en {name} / {product_id}'
     swipe('.dt-image-open',100,190,240,200)
     assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==original,f'Swipe a anterior en {name} / {product_id}'
+    # Pequeño arrastre accidental: volver suavemente sin cambiar la ficha.
+    swipe('.dt-image-open',220,190,201,187)
+    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==original,f'Arrastre corto no cambia de foto en {name} / {product_id}'
     # El tap/click posterior al gesto debe ser ignorado, sin ampliar accidentalmente.
-    page.locator('.dt-image-open').dispatch_event('click')
+    page.locator('.dt-image-open').evaluate("""el => el.dispatchEvent(new PointerEvent('click', {bubbles:true,pointerType:'touch',pointerId:17}))""")
     assert not page.locator('#dt-photo-lightbox').is_visible(),f'Swipe no abre visor ampliado en {name}'
+    # Un toque genuino NUEVO, incluso inmediato al swipe, sí debe ampliar.
+    tap={'pointerType':'touch','pointerId':19,'isPrimary':True,'bubbles':True,
+         'cancelable':True,'clientX':190,'clientY':180}
+    page.locator('.dt-image-open').dispatch_event('pointerdown',tap)
+    page.locator('.dt-image-open').dispatch_event('pointerup',tap)
+    page.locator('.dt-image-open').evaluate("""el => el.dispatchEvent(new PointerEvent('click', {bubbles:true,pointerType:'touch',pointerId:19}))""")
+    assert page.locator('#dt-photo-lightbox').is_visible(),f'Toque nuevo no bloqueado en {name} / {product_id}'
+    page.keyboard.press('Escape')
    if total > 1:
     assert page.locator('.dt-gallery-nav-anterior').count()==1, f'Flecha anterior {product_id}'
     assert page.locator('.dt-gallery-nav-siguiente').count()==1, f'Flecha siguiente {product_id}'

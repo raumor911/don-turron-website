@@ -76,3 +76,10 @@
   .dt-lightbox-arrow,.dt-lightbox-zoom{padding:10px 8px}
   .dt-lightbox-caption{min-width:0}
 }
+
+/* V4.4 — compositar únicamente mientras el dedo arrastra la imagen. */
+.dt-image-open.dt-swipe-dragging,.dt-lightbox-image.dt-swipe-dragging{will-change:transform,opacity}
+.modal-art .dt-image-open,.dt-lightbox-image{-webkit-tap-highlight-color:transparent}
+@media (prefers-reduced-motion:reduce){
+  .dt-image-open,.dt-lightbox-image{animation:none!important}
+}
