@@ -10,8 +10,9 @@
   // Las imágenes proceden exclusivamente de knowledge/products.json (catálogo generado).
   const photosOf = p => Array.isArray(p.images) && p.images.length ? p.images : null;
   function productPicture(p, placement) {
-    if (!photosOf(p)) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" loading="lazy" />`;
-    return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${photosOf(p)[0].src}" alt="Fotografía de ${html(p.name)}; ${photosOf(p)[0].label}" loading="lazy" width="620" height="620" />`;
+    const priority = placement === 'modal' ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" fetchpriority="low"';
+    if (!photosOf(p)) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" decoding="async" ${priority} />`;
+    return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${photosOf(p)[0].src}" alt="Fotografía de ${html(p.name)}; ${html(photosOf(p)[0].label)}" decoding="async" ${priority} width="620" height="620" />`;
   }
   let selectedFilter = 'todos';
   let lastFocused = null;
@@ -62,6 +63,20 @@
           <div class="product-buy">${priceMarkup(p)}<button type="button" class="add-product" data-add="${html(p.id)}">Seleccionar <span>＋</span></button></div>
         </div>
       </article>`).join('');
+  }
+
+  // El HTML del catálogo ya viene prerenderizado: evitar destruirlo y volver a
+  // insertar siete imágenes durante el primer render. Los filtros siguen siendo dinámicos.
+  function prerenderMatchesCatalog() {
+    const grid = $('product-grid');
+    if (!grid) return false;
+    const cards = [...grid.querySelectorAll(':scope > .product-card')];
+    return cards.length === catalog.length && cards.every((card, index) => {
+      const product = catalog[index];
+      if (!product || card.dataset.id !== product.id) return false;
+      const visiblePrice = card.querySelector('.product-price strong')?.textContent?.trim();
+      return product.retailPrice ? visiblePrice === retailText(product) : !!card.querySelector('.product-price');
+    });
   }
 
   function setFilter(filter, scroll = false) {
@@ -248,5 +263,8 @@
     });
     $('year').textContent=String(new Date().getFullYear());
   }
-  load();renderProducts();renderDrawer();updateCounters();bind();initAgeGate();
+  load();
+  if (!prerenderMatchesCatalog()) renderProducts();
+  else $('result-count').textContent = singular(catalog.length);
+  renderDrawer();updateCounters();bind();initAgeGate();
 })();
