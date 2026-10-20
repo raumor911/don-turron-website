@@ -43,6 +43,8 @@
   let suppressModalClickUntil = 0;
   let suppressLightboxClickUntil = 0;
   const warmedPhotos = new Set();
+  const phoneWidth = window.matchMedia('(max-width:580px)');
+  let nativeScrollSync = false;
   const emit = (event, properties={}) => { try { window.dispatchEvent(new CustomEvent('dt:interaction',{detail:{event,...properties}})); } catch {} };
   const currentProductId = () => modalContent.querySelector('img.travel-photo-modal')?.dataset.productId || null;
 
@@ -212,6 +214,67 @@
     event.preventDefault(); event.stopImmediatePropagation(); suppressLightboxClickUntil=0;
   },true);
 
+  // En teléfonos, el navegador controla la física horizontal y el ajuste de
+  // las fotografías (CSS scroll snap). No competimos con Pointer Events.
+  function addNativeCarousel(art) {
+    const product=(window.DON_TURRON_CATALOG || []).find(p=>p.id===currentProductId());
+    if(!product || !Array.isArray(product.images) || product.images.length<2) return;
+    if(art.querySelector('.dt-native-carousel')) return;
+
+    const carousel=document.createElement('div');
+    carousel.className='dt-native-carousel';
+    carousel.setAttribute('role','group');
+    carousel.setAttribute('aria-label','Fotografías de '+product.name);
+    const total=product.images.length;
+    product.images.forEach((photo,index)=>{
+      const slide=document.createElement('button');
+      slide.type='button';
+      slide.className='dt-native-slide';
+      slide.dataset.nativePhotoIndex=String(index);
+      slide.setAttribute('aria-label','Ampliar fotografía '+(index+1)+' de '+total+': '+photo.label);
+      const image=document.createElement('img');
+      image.src=photo.src;
+      image.alt='Fotografía de '+product.name+': '+photo.label;
+      image.loading=index===0?'eager':'lazy';
+      image.decoding='async';
+      image.draggable=false;
+      slide.appendChild(image);
+      carousel.appendChild(slide);
+    });
+    art.appendChild(carousel);
+
+    // Desplazamiento nativo de Safari, Chrome y Samsung Internet.
+    carousel.addEventListener('scroll',()=>{
+      if(!phoneWidth.matches || nativeScrollSync || !carousel.clientWidth) return;
+      const next=Math.max(0,Math.min(total-1,Math.round(carousel.scrollLeft/carousel.clientWidth)));
+      if(next===activeIndex()) return;
+      const target=galleryButtons()[next];
+      if (!target) return;
+      nativeScrollSync=true;
+      try {target.click();} finally {nativeScrollSync=false;}
+    },{passive:true});
+    carousel.addEventListener('click',event=>{
+      const slide=event.target.closest('.dt-native-slide');
+      if(!slide) return;
+      const index=Number(slide.dataset.nativePhotoIndex);
+      if(index!==activeIndex()) {
+        nativeScrollSync=true;
+        try {galleryButtons()[index]?.click();} finally {nativeScrollSync=false;}
+      }
+      openLightbox(slide);
+    });
+  }
+  function alignNativeCarousel(button) {
+    if(!phoneWidth.matches || nativeScrollSync) return;
+    const carousel=modalContent.querySelector('.dt-native-carousel');
+    if(!carousel || !carousel.clientWidth) return;
+    const index=Number(button.dataset.photoIndex);
+    if(!Number.isInteger(index) || index<0) return;
+    // Un tap sobre el indicador es una selección directa; el swipe conserva
+    // la inercia natural del navegador sin animación artificial adicional.
+    carousel.scrollTo({left:carousel.clientWidth*index,behavior:'instant'});
+  }
+
   function updatePhotoLabel() {
     const photo = currentModalPhoto();
     const opener = modalContent.querySelector('.dt-image-open');
@@ -262,13 +325,18 @@
       }
     }
     updatePhotoLabel();
+    addNativeCarousel(art);
     warmNextPhoto();
   }
 
   // openProduct reemplaza el contenido dinámicamente. Se mejora sin modificar su modelo.
   new MutationObserver(enhanceModal).observe(modalContent, {childList: true});
   modalContent.addEventListener('click', (event) => {
-    if (event.target.closest('[data-photo-index]')) queueMicrotask(updatePhotoLabel);
+    const indicator=event.target.closest('[data-photo-index]');
+    if(indicator){
+      alignNativeCarousel(indicator);
+      queueMicrotask(updatePhotoLabel);
+    }
   });
   lightbox.querySelector('#dt-lightbox-close').addEventListener('click', closeLightbox);
   previousLightbox.addEventListener('click', () => navigate(-1));
