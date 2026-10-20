@@ -147,6 +147,10 @@
     if (origin === 'lightbox' && lightbox.hidden) return;
     const target = motionTarget(origin);
     if (!target) return;
+    // Un toque NUEVO siempre es intencional: no heredará el bloqueo sintético
+    // del swipe anterior (aunque ocurra inmediatamente después).
+    if (origin === 'modal') suppressModalClickUntil = 0;
+    else suppressLightboxClickUntil = 0;
     stopMotion(target);
     gesture = {
       pointerId:event.pointerId, origin, element:target,
