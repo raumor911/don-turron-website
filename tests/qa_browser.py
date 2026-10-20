@@ -218,6 +218,14 @@ with sync_playwright() as p:
     # El tap/click posterior al gesto debe ser ignorado, sin ampliar accidentalmente.
     page.locator('.dt-image-open').evaluate("""el => el.dispatchEvent(new PointerEvent('click', {bubbles:true,pointerType:'touch',pointerId:17}))""")
     assert not page.locator('#dt-photo-lightbox').is_visible(),f'Swipe no abre visor ampliado en {name}'
+    # Un toque genuino NUEVO, incluso inmediato al swipe, sí debe ampliar.
+    tap={'pointerType':'touch','pointerId':19,'isPrimary':True,'bubbles':True,
+         'cancelable':True,'clientX':190,'clientY':180}
+    page.locator('.dt-image-open').dispatch_event('pointerdown',tap)
+    page.locator('.dt-image-open').dispatch_event('pointerup',tap)
+    page.locator('.dt-image-open').evaluate("""el => el.dispatchEvent(new PointerEvent('click', {bubbles:true,pointerType:'touch',pointerId:19}))""")
+    assert page.locator('#dt-photo-lightbox').is_visible(),f'Toque nuevo no bloqueado en {name} / {product_id}'
+    page.keyboard.press('Escape')
    if total > 1:
     assert page.locator('.dt-gallery-nav-anterior').count()==1, f'Flecha anterior {product_id}'
     assert page.locator('.dt-gallery-nav-siguiente').count()==1, f'Flecha siguiente {product_id}'
