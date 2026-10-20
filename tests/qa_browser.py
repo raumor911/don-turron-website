@@ -173,7 +173,16 @@ with sync_playwright() as p:
    opts={'pointerType':'touch','pointerId':17,'isPrimary':True,
          'bubbles':True,'cancelable':True,'composed':True}
    node.dispatch_event('pointerdown',{**opts,'clientX':x1,'clientY':y1})
+   # El dedo debe mover la imagen ANTES de soltarla: no basta medir el cambio final.
+   midx=(x1+x2)/2
+   midy=(y1+y2)/2
+   node.dispatch_event('pointermove',{**opts,'clientX':midx,'clientY':midy})
+   is_horizontal=abs(x2-x1)>60 and abs(x2-x1)>abs(y2-y1)*1.4
+   is_zoom=page.locator('#dt-photo-lightbox.dt-zoomed').count()>0
+   if is_horizontal and not is_zoom:
+    assert 'translate3d' in (node.get_attribute('style') or ''), f'La imagen sigue el dedo en {selector} / {name}'
    node.dispatch_event('pointerup',{**opts,'clientX':x2,'clientY':y2})
+   assert 'translate3d' not in (node.get_attribute('style') or ''), f'No dejar transformación pegada en {selector} / {name}'
   # Galería V4: validar imágenes completas, navegación y ampliación en todos los artículos.
   page.locator('[data-filter="todos"]').click()
   cases = [
@@ -203,8 +212,11 @@ with sync_playwright() as p:
     assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==unchanged, f'Scroll vertical no navega en {name} / {product_id}'
     swipe('.dt-image-open',100,190,240,200)
     assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==original,f'Swipe a anterior en {name} / {product_id}'
+    # Pequeño arrastre accidental: volver suavemente sin cambiar la ficha.
+    swipe('.dt-image-open',220,190,201,187)
+    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==original,f'Arrastre corto no cambia de foto en {name} / {product_id}'
     # El tap/click posterior al gesto debe ser ignorado, sin ampliar accidentalmente.
-    page.locator('.dt-image-open').dispatch_event('click')
+    page.locator('.dt-image-open').evaluate("""el => el.dispatchEvent(new PointerEvent('click', {bubbles:true,pointerType:'touch',pointerId:17}))""")
     assert not page.locator('#dt-photo-lightbox').is_visible(),f'Swipe no abre visor ampliado en {name}'
    if total > 1:
     assert page.locator('.dt-gallery-nav-anterior').count()==1, f'Flecha anterior {product_id}'
