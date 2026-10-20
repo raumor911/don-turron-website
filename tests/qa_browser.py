@@ -43,6 +43,15 @@ with sync_playwright() as p:
   assert page.locator('.product-card .product-badge').filter(has_text='PRÓXIMAMENTE').count()==2, 'Exclusivamente dos etiquetas Próximamente'
   assert page.locator('.product-card .product-availability').count()==2, 'Solo dos lanzamientos con mes definido'
   assert page.locator('.product-card .product-image-trigger').count()==7, 'Imagen clicable en las siete tarjetas'
+
+  price_examples={'humidor-viaje-5-puros':649,'cenicero-mesa':549,'estuche-viaje':299,'estuche-kit-viaje':949,'reposa-puros-plegable':189}
+  for product_id,amount in price_examples.items():
+   card=page.locator(f'.product-card[data-id="{product_id}"]')
+   assert f'${amount} MXN' in card.locator('.product-price').inner_text(),product_id
+   assert 'IVA incluido' in card.locator('.product-price').inner_text(),product_id
+  for product_id in ('cortador-v-geometrico','encendedor-sarike-butano'):
+   assert page.locator(f'.product-card[data-id="{product_id}"] .product-price').inner_text()=='Precio por confirmar',product_id
+
   page.locator('.product-card[data-id="humidor-viaje-5-puros"] .product-image-trigger').focus()
   page.keyboard.press('Enter')
   assert page.locator('#product-modal-name').inner_text()=='Humidor de viaje para 5 puros', 'Abrir detalle de la foto con teclado'
@@ -63,6 +72,7 @@ with sync_playwright() as p:
   page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-image-trigger').click()
   assert page.locator('#product-modal-name').inner_text()=='Encendedor metálico Sarike de doble llama', 'Ficha Sarike'
   assert page.locator('.modal-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Sarike: fecha en modal'
+  assert page.locator('.modal-retail-price').count()==0, 'No price on upcoming lighter'
   assert page.locator('.travel-gallery-controls button').count()==3, 'Galería Sarike con tres fotos'
   assert 'pendientes de verificación independiente' not in page.locator('#product-modal-content').inner_text().lower(), 'No verificación en ficha Sarike'
   assert 'declarado por el proveedor' not in page.locator('#product-modal-content').inner_text().lower(), 'Combustible sin expresión redundante'
