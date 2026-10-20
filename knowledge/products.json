@@ -43,7 +43,13 @@
       }
     ],
     "variants": [],
-    "sortOrder": 2
+    "sortOrder": 2,
+    "retailPrice": {
+      "amount": 649,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
+    }
   },
   {
     "id": "cenicero-mesa",
@@ -93,7 +99,13 @@
       }
     ],
     "variants": [],
-    "sortOrder": 3
+    "sortOrder": 3,
+    "retailPrice": {
+      "amount": 549,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
+    }
   },
   {
     "id": "estuche-viaje",
@@ -143,7 +155,13 @@
       }
     ],
     "variants": [],
-    "sortOrder": 4
+    "sortOrder": 4,
+    "retailPrice": {
+      "amount": 299,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
+    }
   },
   {
     "id": "estuche-kit-viaje",
@@ -181,7 +199,13 @@
       }
     ],
     "variants": [],
-    "sortOrder": 5
+    "sortOrder": 5,
+    "retailPrice": {
+      "amount": 949,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
+    }
   },
   {
     "id": "reposa-puros-plegable",
@@ -232,7 +256,13 @@
         "status": "pending_confirmation"
       }
     ],
-    "sortOrder": 6
+    "sortOrder": 6,
+    "retailPrice": {
+      "amount": 189,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
+    }
   },
   {
     "id": "cortador-v-geometrico",
