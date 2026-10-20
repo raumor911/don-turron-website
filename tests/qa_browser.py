@@ -21,11 +21,13 @@ html=html.replace('<link rel="stylesheet" href="gallery.css" />','<style>'+(PROJ
 html=re.sub(r'<script defer src="[^\"]+"></script>', '', html)
 with sync_playwright() as p:
  browser=p.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
- for name,width,height in [('desktop',1440,900),('mobile',390,844)]:
-  page=browser.new_page(viewport={'width':width,'height':height},device_scale_factor=1)
+ for name,width,height in [('desktop',1440,900),('iphone',390,844),('galaxy',412,915),('compact',360,780)]:
+  touch=name!='desktop'
+  page=browser.new_page(viewport={'width':width,'height':height},device_scale_factor=(2 if touch else 1),is_mobile=touch,has_touch=touch)
   errors=[]
   page.on('pageerror',lambda e:errors.append(str(e)))
   page.set_content(html,wait_until='domcontentloaded')
+  page.evaluate("document.querySelector('.product-card').dataset.prerenderMarker='original'")
   page.add_script_tag(content=(PROJECT/'config.js').read_text())
   page.add_script_tag(content=(PROJECT/'catalog.js').read_text())
   page.add_script_tag(content=(PROJECT/'app.js').read_text())
@@ -39,6 +41,7 @@ with sync_playwright() as p:
   page.wait_for_timeout(350)
   page.screenshot(path=str(PROJECT/f'tests/{name}.png'),full_page=True)
   assert page.locator('.product-card').count()==7, 'Siete productos con respaldo documental'
+  assert page.locator('.product-card').first.get_attribute('data-prerender-marker')=='original', 'Conservar DOM prerenderizado sin repintar al cargar'
   assert page.locator('.product-card[data-id="encendedor-jet"]').count()==0, 'Sin referencia de encendedor inexistente'
   assert page.locator('.product-card .product-badge').filter(has_text='PRÓXIMAMENTE').count()==2, 'Exclusivamente dos etiquetas Próximamente'
   assert page.locator('.product-card .product-availability').count()==2, 'Solo dos lanzamientos con mes definido'
@@ -160,6 +163,12 @@ with sync_playwright() as p:
   page.locator('#product-modal-close').click()
   for asset in ['reposa-puros-dos-acabados.webp','reposa-puros-plata.webp','reposa-puros-negro.webp']:
    assert (PROJECT/'assets/products'/asset).is_file(), f'Falta imagen {asset}'
+  # Simulación determinista de Pointer Events táctiles en Chromium móvil.
+  # Safari iOS y Samsung Internet reales requieren una validación posterior en hardware.
+  def swipe(selector, x1, y1, x2, y2):
+   node=page.locator(selector)
+   node.dispatch_event('pointerdown',{'pointerType':'touch','pointerId':17,'isPrimary':True,'clientX':x1,'clientY':y1})
+   node.dispatch_event('pointerup',{'pointerType':'touch','pointerId':17,'isPrimary':True,'clientX':x2,'clientY':y2})
   # Galería V4: validar imágenes completas, navegación y ampliación en todos los artículos.
   page.locator('[data-filter="todos"]').click()
   cases = [
@@ -180,6 +189,18 @@ with sync_playwright() as p:
    assert page.locator('.dt-image-hint').count()==0, f'Sin indicador visual superior redundante {product_id}'
    assert page.locator('.travel-gallery-controls button').count()==(total if total>1 else 0), f'Conservar indicadores inferiores {product_id}'
    assert page.locator('.dt-image-open').get_attribute('aria-label').startswith('Ampliar imagen:'), f'Imagen ampliable con etiqueta accesible {product_id}'
+   if touch and total > 1:
+    original=page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')
+    swipe('.dt-image-open',240,190,100,200)
+    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==str((int(original)+1)%total),f'Swipe a siguiente en {name} / {product_id}'
+    unchanged=page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')
+    swipe('.dt-image-open',200,170,205,300)
+    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==unchanged, f'Scroll vertical no navega en {name} / {product_id}'
+    swipe('.dt-image-open',100,190,240,200)
+    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==original,f'Swipe a anterior en {name} / {product_id}'
+    # El tap/click posterior al gesto debe ser ignorado, sin ampliar accidentalmente.
+    page.locator('.dt-image-open').dispatch_event('click')
+    assert not page.locator('#dt-photo-lightbox').is_visible(),f'Swipe no abre visor ampliado en {name}'
    if total > 1:
     assert page.locator('.dt-gallery-nav-anterior').count()==1, f'Flecha anterior {product_id}'
     assert page.locator('.dt-gallery-nav-siguiente').count()==1, f'Flecha siguiente {product_id}'
@@ -200,15 +221,25 @@ with sync_playwright() as p:
    if total > 1:
     page.locator('#dt-lightbox-next').click()
     assert page.locator('.travel-gallery-controls button').filter(has=page.locator('[aria-pressed="true"]')).count() >= 0
+   if touch and total > 1:
+    active=int(page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index'))
+    swipe('#dt-lightbox-image',240,200,100,208)
+    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==str((active+1)%total), f'Swipe visor en {name} / {product_id}'
+    swipe('#dt-lightbox-image',100,200,240,208)
+    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==str(active), f'Retroceso visor en {name} / {product_id}'
    page.locator('#dt-lightbox-zoom').click()
    assert page.locator('#dt-photo-lightbox').get_attribute('class').find('dt-zoomed')>=0, f'Zoom {product_id}'
+   if touch and total > 1:
+    active=page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')
+    swipe('#dt-lightbox-image',240,200,100,208)
+    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==active, f'Zoom bloquea swipe en {name} / {product_id}'
    page.locator('#dt-lightbox-zoom').click()
    assert 'dt-zoomed' not in page.locator('#dt-photo-lightbox').get_attribute('class'), f'Reducir zoom {product_id}'
    page.keyboard.press('Escape')
    assert not page.locator('#dt-photo-lightbox').is_visible(), f'Cerrar ampliación {product_id}'
    assert page.locator('#product-modal').get_attribute('aria-hidden')=='false', f'Conservar ficha abierta {product_id}'
    page.locator('#product-modal-close').click()
-  if name=='mobile':
+  if touch:
    page.locator('#menu-toggle').click()
    assert page.locator('#mobile-nav').is_visible(),'menú móvil'
    page.locator('#mobile-nav a').first.click()
