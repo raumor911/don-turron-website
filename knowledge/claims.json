@@ -90,7 +90,7 @@
   {
     "id": "claim:encendedor-honest-punch-description",
     "subjectId": "encendedor-honest-punch",
-    "statement": "Encendedor metálico HONEST recargable con gas butano, con dos flamas tipo jet y cortador punch integrado para preparar la punta del puro. Su diseño compacto combina acabado metálico con panel decorativo y se presenta en colores negro y rojo. El proveedor lo describe como resistente al viento.",
+    "statement": "Encendedor metálico HONEST recargable con gas butano, con dos flamas tipo jet y cortador punch integrado para preparar la punta del puro. Su diseño compacto combina acabado metálico con panel decorativo y se presenta en colores negro y rojo.",
     "status": "supplier_declared",
     "sourceIds": [
       "source:encendedor-honest-punch"
