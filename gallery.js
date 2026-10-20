@@ -1,4 +1,4 @@
-/* Don Turrón · Galería V4.3: deslizamiento táctil accesible, sin librerías externas. */
+/* Don Turrón · Galería V4.4: arrastre visual fluido y gestos no intrusivos. */
 (() => {
   'use strict';
   const modalContent = document.getElementById('product-modal-content');
@@ -90,6 +90,7 @@
     controls[next].click(); // reutiliza la lógica existente de la galería
     updatePhotoLabel();
     if (!lightbox.hidden) syncLightbox();
+    settleMotion(motionTarget(lightbox.hidden?'modal':'lightbox'),direction===1?1:-1,true);
     warmNextPhoto();
   }
   // Precarga solo la siguiente foto de la galería activa, no toda la colección.
@@ -104,41 +105,99 @@
     image.src = next.src;
   }
 
-  // Pointer Events funciona en Safari moderno y Android, sin bloquear scroll vertical.
-  function beginSwipe(event, origin) {
-    if (event.pointerType !== 'touch' || event.isPrimary === false) return;
-    if (galleryButtons().length < 2 || (!lightbox.hidden && lightbox.classList.contains('dt-zoomed'))) return;
-    if (event.clientX < 24 || event.clientX > window.innerWidth - 24) return;
-    if (origin === 'modal') {
-      if (!lightbox.hidden || !productModal.classList.contains('open') || !event.target.closest('.dt-image-open')) return;
-    } else if (lightbox.hidden) return;
-    gesture = {origin, pointerId:event.pointerId, x:event.clientX, y:event.clientY};
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function motionTarget(origin) {
+    return origin === 'modal' ? modalContent.querySelector('.dt-image-open') : largeImage;
   }
-  modalContent.addEventListener('pointerdown', event => beginSwipe(event, 'modal'), {passive:true});
-  stage.addEventListener('pointerdown', event => beginSwipe(event, 'lightbox'), {passive:true});
-  document.addEventListener('pointerup', event => {
+  function stopMotion(element) {
+    if (!element) return;
+    if (typeof element.getAnimations === 'function') {
+      element.getAnimations().forEach(animation => animation.cancel());
+    }
+    element.style.transform = '';
+    element.style.opacity = '';
+  }
+  function settleMotion(element, startX, changed) {
+    if (!element) return;
+    stopMotion(element);
+    if (reducedMotion.matches || typeof element.animate !== 'function') return;
+    const fromX = changed
+      ? (startX > 0 ? 38 : -38)
+      : Math.max(-100, Math.min(100, startX));
+    if (!changed && Math.abs(fromX) < 4) return;
+    element.animate([
+      {transform:'translate3d(' + fromX + 'px,0,0)', opacity: changed ? 0.80 : 0.88},
+      {transform:'translate3d(0,0,0)', opacity:1}
+    ], {duration: changed ? 190 : 150, easing:'cubic-bezier(.2,.8,.2,1)'});
+  }
+  function beginSwipe(event, origin) {
+    if (!['touch','pen'].includes(event.pointerType) || event.isPrimary === false) return;
+    if (gesture || galleryButtons().length < 2 || !lightbox.hidden && lightbox.classList.contains('dt-zoomed')) return;
+    // No interceptar el gesto del sistema en el borde del iPhone.
+    if (event.clientX < 18 || event.clientX > window.innerWidth - 18) return;
+    if (origin === 'modal' && (!lightbox.hidden || !productModal.classList.contains('open') || !event.target.closest('.dt-image-open'))) return;
+    if (origin === 'lightbox' && lightbox.hidden) return;
+    const target = motionTarget(origin);
+    if (!target) return;
+    stopMotion(target);
+    gesture = {
+      pointerId:event.pointerId, origin, element:target,
+      startX:event.clientX, startY:event.clientY,
+      x:event.clientX, y:event.clientY, at:performance.now(), axis:null, dragged:false
+    };
+  }
+  function trackSwipe(event) {
     if (!gesture || event.pointerId !== gesture.pointerId) return;
-    const {origin,x,y} = gesture;
-    gesture = null;
-    const dx = event.clientX - x, dy = event.clientY - y;
-    if (Math.abs(dx) < 42 || Math.abs(dx) < Math.abs(dy) * 1.35) return;
-    if (origin === 'modal') suppressModalClickUntil = performance.now() + 550;
-    else suppressLightboxClickUntil = performance.now() + 550;
-    navigate(dx < 0 ? 1 : -1);
-  }, {passive:true});
-  document.addEventListener('pointercancel', () => { gesture = null; }, {passive:true});
+    const g = gesture, dx = event.clientX - g.startX, dy = event.clientY - g.startY;
+    g.x = event.clientX; g.y = event.clientY;
+    if (!g.axis && Math.hypot(dx,dy) > 8) g.axis = Math.abs(dx) > Math.abs(dy)*1.15 ? 'x' : 'y';
+    if (g.axis !== 'x') return;
+    g.dragged = true;
+    // La fotografía sigue el dedo; solo se anima el transform (sin recalcular layout).
+    const width = Math.max(150,g.element.getBoundingClientRect().width);
+    const offset = Math.max(-width*.52,Math.min(width*.52,dx*.88));
+    g.element.style.transform = 'translate3d(' + offset + 'px,0,0)';
+    g.element.style.opacity = String(Math.max(.76,1-Math.abs(offset)/width*.30));
+  }
+  function endSwipe(event, cancelled=false) {
+    if (!gesture || event.pointerId !== gesture.pointerId) return;
+    const g=gesture; gesture=null;
+    const dx=event.clientX-g.startX, dy=event.clientY-g.startY;
+    const horizontal = g.axis === 'x' || (!g.axis && Math.abs(dx)>Math.abs(dy)*1.15);
+    const elapsed=Math.max(35,performance.now()-g.at);
+    const width=Math.max(150,g.element.getBoundingClientRect().width);
+    // Distancia moderada o gesto rápido, sin activar un scroll vertical.
+    const distance=Math.min(64,Math.max(30,width*.13));
+    const accepted=!cancelled && horizontal && (Math.abs(dx)>=distance || Math.abs(dx)>=24 && Math.abs(dx)/elapsed>.5);
+    if (g.dragged || accepted) {
+      const until=performance.now()+220;
+      if(g.origin==='modal') suppressModalClickUntil=until;
+      else suppressLightboxClickUntil=until;
+    }
+    stopMotion(g.element);
+    if (accepted) navigate(dx < 0 ? 1 : -1);
+    else if (g.dragged) settleMotion(g.element,dx,false);
+  }
+
+  modalContent.addEventListener('pointerdown', event => beginSwipe(event,'modal'),{passive:true});
+  stage.addEventListener('pointerdown', event => beginSwipe(event,'lightbox'),{passive:true});
+  document.addEventListener('pointermove', trackSwipe,{passive:true});
+  document.addEventListener('pointerup', event => endSwipe(event),{passive:true});
+  document.addEventListener('pointercancel', event => endSwipe(event,true),{passive:true});
+
+  // Consumir solo el click sintetizado por el mismo gesto táctil; no bloquear
+  // un nuevo tap de mouse/teclado y no aplicar un bloqueo universal de 550ms.
+  const touchClick = event => event.pointerType === 'touch' || event.pointerType === 'pen' ||
+    event.sourceCapabilities?.firesTouchEvents === true;
   modalContent.addEventListener('click', event => {
-    if (performance.now() >= suppressModalClickUntil || !event.target.closest('.dt-image-open')) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    suppressModalClickUntil = 0;
-  }, true);
+    if (performance.now() >= suppressModalClickUntil || !touchClick(event) || !event.target.closest('.dt-image-open')) return;
+    event.preventDefault(); event.stopImmediatePropagation(); suppressModalClickUntil=0;
+  },true);
   stage.addEventListener('click', event => {
-    if (performance.now() >= suppressLightboxClickUntil || event.target !== largeImage) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    suppressLightboxClickUntil = 0;
-  }, true);
+    if (performance.now() >= suppressLightboxClickUntil || !touchClick(event) || event.target !== largeImage) return;
+    event.preventDefault(); event.stopImmediatePropagation(); suppressLightboxClickUntil=0;
+  },true);
 
   function updatePhotoLabel() {
     const photo = currentModalPhoto();
@@ -158,6 +217,7 @@
   }
   function closeLightbox() {
     if (lightbox.hidden) return;
+    if(gesture) stopMotion(gesture.element);
     gesture = null;
     lightbox.hidden = true;
     lightbox.classList.remove('dt-lightbox-visible');
