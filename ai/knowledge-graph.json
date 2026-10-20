@@ -1,7 +1,7 @@
 {
   "name": "Don Turrón Semantic Knowledge Graph",
   "version": "1.0.0",
-  "fingerprint": "9df2b70fa700df4220e48e051c113c8dad5cb4eccc720407b5c61ef3936367f2",
+  "fingerprint": "8bfc5a0f5408919fe0c520569560e67685638d13a5ab02dad93c8218172f4a68",
   "nodes": [
     {
       "id": "brand:don-turron",
@@ -325,12 +325,6 @@
       "status": "supplier_declared"
     },
     {
-      "id": "feature:encendedor-honest-punch:6",
-      "type": "Feature",
-      "name": "Diseño anunciado como resistente al viento",
-      "status": "supplier_declared"
-    },
-    {
       "id": "usecase:guardar-viaje",
       "type": "UseCase",
       "name": "Guardar puros al viajar"
@@ -543,7 +537,7 @@
     {
       "id": "claim:encendedor-honest-punch-description",
       "type": "Claim",
-      "name": "Encendedor metálico HONEST recargable con gas butano, con dos flamas tipo jet y cortador punch integrado para preparar la punta del puro. Su diseño compacto combina acabado metálico con panel decorativo y se presenta en colores negro y rojo. El proveedor lo describe como resistente al viento.",
+      "name": "Encendedor metálico HONEST recargable con gas butano, con dos flamas tipo jet y cortador punch integrado para preparar la punta del puro. Su diseño compacto combina acabado metálico con panel decorativo y se presenta en colores negro y rojo.",
       "status": "supplier_declared"
     }
   ],
@@ -776,11 +770,6 @@
     {
       "source": "encendedor-honest-punch",
       "target": "feature:encendedor-honest-punch:5",
-      "type": "hasDeclaredFeature"
-    },
-    {
-      "source": "encendedor-honest-punch",
-      "target": "feature:encendedor-honest-punch:6",
       "type": "hasDeclaredFeature"
     },
     {
