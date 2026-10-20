@@ -15,7 +15,8 @@
       "estuche-kit-viaje",
       "reposa-puros-plegable",
       "cortador-v-geometrico",
-      "encendedor-sarike-butano"
+      "encendedor-sarike-butano",
+      "encendedor-honest-punch"
     ],
     "useCaseIds": [
       "usecase:guardar-viaje",
@@ -216,6 +217,27 @@
     ],
     "useCaseIds": [
       "usecase:encendido"
+    ],
+    "status": "hypothesis",
+    "visibility": "public_preview",
+    "searchVolumeEvidence": false
+  },
+  {
+    "id": "intent:encendedor-honest-punch",
+    "name": "Encendedor HONEST de butano con cortador punch",
+    "description": "Explorar encendedor recargable HONEST de doble flama jet con cortador punch integrado y acabados negro o rojo.",
+    "exampleExpressions": [
+      "encendedor HONEST para puros con punch",
+      "encendedor doble llama butano negro rojo",
+      "encendedor HONEST recargable cortador integrado"
+    ],
+    "transactionStage": "exploration",
+    "productIds": [
+      "encendedor-honest-punch"
+    ],
+    "useCaseIds": [
+      "usecase:encendido",
+      "usecase:corte"
     ],
     "status": "hypothesis",
     "visibility": "public_preview",

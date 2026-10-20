@@ -43,19 +43,21 @@ export function validate(data=load()){
     }
     if(p.id==='reposa-puros-plegable')check(p.variants.map(x=>x.label).join('|')==='Plata|Negro' && p.variants.every(x=>!x.sku&&!x.stock), 'unconfirmed variants');
     if(p.id==='cortador-v-geometrico')check(p.variants.map(x=>x.label).join('|')==='Plateado|Dorado' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed cortador variants');
-    if(p.id==='encendedor-sarike-butano')check(p.variants.map(x=>x.label).join('|')==='Plata|Dorado' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed Sarike variants');
+    if(p.id==='encendedor-sarike-butano')check(p.variants.map(x=>x.label).join('|')==='Plata|Dorado' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed Parike variants');
+    if(p.id==='encendedor-honest-punch')check(p.variants.map(x=>x.label).join('|')==='Negro|Rojo' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed HONEST variants');
+    if(p.manufacturerBrand!==undefined)check(typeof p.manufacturerBrand==='string'&&!!p.manufacturerBrand,p.id+': invalid manufacturer brand');
     // Planned launch months never constitute stock confirmation or a commercial Offer.
-    if(['cortador-v-geometrico','encendedor-sarike-butano'].includes(p.id)){
+    if(['cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch'].includes(p.id)){
       check(p.badge==='PRÓXIMAMENTE',p.id+': unexpected upcoming badge');
       check(p.launchWindow?.status==='planned' && p.launchWindow.month==='2027-01' && p.launchWindow.label==='Disponibilidad prevista: enero de 2027' && p.launchWindow.source==='brand_owner_statement',p.id+': invalid planned month');
       check(p.commercialStatus==='pending_confirmation',p.id+': release plan cannot activate commerce');
     } else check(p.launchWindow===undefined,p.id+': unexpected launch window');
   }
   check(data.products.filter(p=>p.retailPrice).length===5,'exactly five priced accessories');
-  check(data.products.length===7,'exactly seven documented products expected');
-  check(data.products.filter(p=>p.contentStatus==='documented').length===7,'seven documented products expected');
+  check(data.products.length===8,'exactly eight documented products expected');
+  check(data.products.filter(p=>p.contentStatus==='documented').length===8,'eight documented products expected');
   check(!data.products.some(p=>p.id==='encendedor-jet'),'unsupported conceptual jet product must not return');
-  const known=['humidor-viaje-5-puros','cenicero-mesa','estuche-viaje','estuche-kit-viaje','reposa-puros-plegable','cortador-v-geometrico','encendedor-sarike-butano'];
+  const known=['humidor-viaje-5-puros','cenicero-mesa','estuche-viaje','estuche-kit-viaje','reposa-puros-plegable','cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch'];
   check(data.products.map(p=>p.id).join('|')===known.join('|'),'product IDs/order changed');
   for(const claim of data.claims){
     check(enums.claimStatus.includes(claim.status),'invalid claim status '+claim.id);
