@@ -50,3 +50,29 @@
 .product-art .product-image-trigger img{display:block;max-width:100%;max-height:100%}
 .product-art .product-image-trigger .travel-photo-card{inset:0;width:100%;height:100%}
 .product-art .product-badge{pointer-events:none}
+
+/* dt-swipe-v1 — iPhone Safari / Galaxy Chrome y Samsung Internet.
+   Mantener scroll vertical y permitir deslizar imágenes en horizontal. */
+.modal-art .dt-image-open,
+.dt-photo-lightbox:not(.dt-zoomed) .dt-lightbox-stage {
+  touch-action: pan-y pinch-zoom;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.modal-art .dt-image-open img,.dt-lightbox-image{-webkit-user-drag:none}
+.product-modal,.drawer-contents,.dt-lightbox-stage{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.dt-photo-lightbox{box-sizing:border-box;height:100vh;height:100dvh}
+.dt-lightbox-stage{overscroll-behavior:contain}
+@media (hover:none),(pointer:coarse){
+  .dt-gallery-nav{min-width:44px;min-height:48px}
+  .modal-art .travel-gallery-controls button{min-width:44px;min-height:44px}
+  .dt-lightbox-close,.dt-lightbox-arrow,.dt-lightbox-zoom{min-width:44px;min-height:44px}
+}
+@media (max-width:390px){
+  .dt-photo-lightbox{gap:7px}
+  .dt-lightbox-top{gap:8px}
+  .dt-lightbox-close{padding:10px}
+  .dt-lightbox-footer{gap:6px}
+  .dt-lightbox-arrow,.dt-lightbox-zoom{padding:10px 8px}
+  .dt-lightbox-caption{min-width:0}
+}

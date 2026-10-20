@@ -1,4 +1,4 @@
-/* Don Turrón · Visor fotográfico V4.2. Sin cajas superiores duplicadas; zoom y navegación intactos. */
+/* Don Turrón · Galería V4.3: deslizamiento táctil accesible, sin librerías externas. */
 (() => {
   'use strict';
   const modalContent = document.getElementById('product-modal-content');
@@ -39,6 +39,9 @@
   const previousLightbox = lightbox.querySelector('#dt-lightbox-prev');
   const nextLightbox = lightbox.querySelector('#dt-lightbox-next');
   let returnFocus = null;
+  let gesture = null;
+  let suppressModalClickUntil = 0;
+  let suppressLightboxClickUntil = 0;
   const emit = (event, properties={}) => { try { window.dispatchEvent(new CustomEvent('dt:interaction',{detail:{event,...properties}})); } catch {} };
   const currentProductId = () => modalContent.querySelector('img.travel-photo-modal')?.dataset.productId || null;
 
@@ -87,7 +90,56 @@
     controls[next].click(); // reutiliza la lógica existente de la galería
     updatePhotoLabel();
     if (!lightbox.hidden) syncLightbox();
+    warmNextPhoto();
   }
+  // Precarga solo la siguiente foto de la galería activa, no toda la colección.
+  function warmNextPhoto() {
+    if (location.protocol !== 'https:' || navigator.connection?.saveData) return;
+    const product = (window.DON_TURRON_CATALOG || []).find(p => p.id === currentProductId());
+    if (!product || !Array.isArray(product.images) || product.images.length < 2) return;
+    const next = product.images[(activeIndex() + 1) % product.images.length];
+    if (!next?.src) return;
+    const image = new Image();
+    image.decoding = 'async';
+    image.src = next.src;
+  }
+
+  // Pointer Events funciona en Safari moderno y Android, sin bloquear scroll vertical.
+  function beginSwipe(event, origin) {
+    if (event.pointerType !== 'touch' || event.isPrimary === false) return;
+    if (galleryButtons().length < 2 || (!lightbox.hidden && lightbox.classList.contains('dt-zoomed'))) return;
+    if (event.clientX < 24 || event.clientX > window.innerWidth - 24) return;
+    if (origin === 'modal') {
+      if (!lightbox.hidden || !productModal.classList.contains('open') || !event.target.closest('.dt-image-open')) return;
+    } else if (lightbox.hidden) return;
+    gesture = {origin, pointerId:event.pointerId, x:event.clientX, y:event.clientY};
+  }
+  modalContent.addEventListener('pointerdown', event => beginSwipe(event, 'modal'), {passive:true});
+  stage.addEventListener('pointerdown', event => beginSwipe(event, 'lightbox'), {passive:true});
+  document.addEventListener('pointerup', event => {
+    if (!gesture || event.pointerId !== gesture.pointerId) return;
+    const {origin,x,y} = gesture;
+    gesture = null;
+    const dx = event.clientX - x, dy = event.clientY - y;
+    if (Math.abs(dx) < 42 || Math.abs(dx) < Math.abs(dy) * 1.35) return;
+    if (origin === 'modal') suppressModalClickUntil = performance.now() + 550;
+    else suppressLightboxClickUntil = performance.now() + 550;
+    navigate(dx < 0 ? 1 : -1);
+  }, {passive:true});
+  document.addEventListener('pointercancel', () => { gesture = null; }, {passive:true});
+  modalContent.addEventListener('click', event => {
+    if (performance.now() >= suppressModalClickUntil || !event.target.closest('.dt-image-open')) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    suppressModalClickUntil = 0;
+  }, true);
+  stage.addEventListener('click', event => {
+    if (performance.now() >= suppressLightboxClickUntil || event.target !== largeImage) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    suppressLightboxClickUntil = 0;
+  }, true);
+
   function updatePhotoLabel() {
     const photo = currentModalPhoto();
     const opener = modalContent.querySelector('.dt-image-open');
@@ -101,10 +153,12 @@
     lightbox.classList.add('dt-lightbox-visible');
     syncLightbox();
     lightbox.focus();
+    warmNextPhoto();
     if(currentProductId())emit('image_zoom',{product_id:currentProductId(),zoomed:true});
   }
   function closeLightbox() {
     if (lightbox.hidden) return;
+    gesture = null;
     lightbox.hidden = true;
     lightbox.classList.remove('dt-lightbox-visible');
     setZoom(false);
@@ -135,6 +189,7 @@
       }
     }
     updatePhotoLabel();
+    warmNextPhoto();
   }
 
   // openProduct reemplaza el contenido dinámicamente. Se mejora sin modificar su modelo.
