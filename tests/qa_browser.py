@@ -220,28 +220,30 @@ with sync_playwright() as p:
    assert page.locator('.travel-gallery-controls button').count()==(total if total>1 else 0), f'Conservar indicadores inferiores {product_id}'
    assert page.locator('.dt-image-open').get_attribute('aria-label').startswith('Ampliar imagen:'), f'Imagen ampliable con etiqueta accesible {product_id}'
    if touch and total > 1:
-    original=page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')
-    swipe('.dt-image-open',240,190,100,200)
-    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==str((int(original)+1)%total),f'Swipe a siguiente en {name} / {product_id}'
-    unchanged=page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')
-    swipe('.dt-image-open',200,170,205,300)
-    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==unchanged, f'Scroll vertical no navega en {name} / {product_id}'
-    swipe('.dt-image-open',100,190,240,200)
-    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==original,f'Swipe a anterior en {name} / {product_id}'
-    # Pequeño arrastre accidental: volver suavemente sin cambiar la ficha.
-    swipe('.dt-image-open',220,190,201,187)
-    assert page.locator('.travel-gallery-controls [aria-pressed="true"]').get_attribute('data-photo-index')==original,f'Arrastre corto no cambia de foto en {name} / {product_id}'
-    # El tap/click posterior al gesto debe ser ignorado, sin ampliar accidentalmente.
-    page.locator('.dt-image-open').evaluate("""el => el.dispatchEvent(new PointerEvent('click', {bubbles:true,pointerType:'touch',pointerId:17}))""")
-    assert not page.locator('#dt-photo-lightbox').is_visible(),f'Swipe no abre visor ampliado en {name}'
-    # Un toque genuino NUEVO, incluso inmediato al swipe, sí debe ampliar.
-    tap={'pointerType':'touch','pointerId':19,'isPrimary':True,'bubbles':True,
-         'cancelable':True,'clientX':190,'clientY':180}
-    page.locator('.dt-image-open').dispatch_event('pointerdown',tap)
-    page.locator('.dt-image-open').dispatch_event('pointerup',tap)
-    page.locator('.dt-image-open').evaluate("""el => el.dispatchEvent(new PointerEvent('click', {bubbles:true,pointerType:'touch',pointerId:19}))""")
-    assert page.locator('#dt-photo-lightbox').is_visible(),f'Toque nuevo no bloqueado en {name} / {product_id}'
+    native=page.locator('.dt-native-carousel')
+    assert native.is_visible(), f'Carrusel nativo visible {name} / {product_id}'
+    assert not page.locator('.dt-image-open').is_visible(),f'Vista antigua oculta en {name}'
+    assert page.locator('.dt-native-slide').count()==total,f'Todas las fotos presentes {name} / {product_id}'
+    native_css=native.evaluate("""el => ({
+      snap:getComputedStyle(el).scrollSnapType,
+      overflow:getComputedStyle(el).overflowX,
+      touch:getComputedStyle(el).touchAction
+    })""")
+    assert native_css['snap']=='x mandatory' and native_css['overflow']=='auto',f'Scroll-snap nativo {name}: {native_css}'
+    assert native_css['touch']=='auto',f'Scroll vertical intacto {name}: {native_css}'
+    # En Scroll Snap el navegador desplaza el contenido; no se simulan Pointer
+    # Events falsos. Comprobar la sincronía real scroll -> estado -> imagen.
+    native.evaluate("""el => {el.scrollTo({left:el.clientWidth,behavior:'instant'});el.dispatchEvent(new Event('scroll'))}""")
+    page.wait_for_function("""() => document.querySelector('.travel-gallery-controls [data-photo-index="1"]').getAttribute('aria-pressed') === 'true'""")
+    assert page.locator('.travel-photo-modal').get_attribute('src')==page.locator('.dt-native-slide img').nth(1).get_attribute('src'), f'Sincronizar foto 2 {name} / {product_id}'
+    native.evaluate("""el => {el.scrollTo({left:0,behavior:'instant'});el.dispatchEvent(new Event('scroll'))}""")
+    page.wait_for_function("""() => document.querySelector('.travel-gallery-controls [data-photo-index="0"]').getAttribute('aria-pressed') === 'true'""")
+    # La foto completa se amplía con un toque normal, sin bloquear tras deslizar.
+    page.locator('.dt-native-slide').first.click()
+    assert page.locator('#dt-photo-lightbox').is_visible(),f'Imagen ampliable por toque {name} / {product_id}'
     page.keyboard.press('Escape')
+   elif total > 1:
+    assert not page.locator('.dt-native-carousel').is_visible(),f'Carrusel nativo ausente en escritorio {product_id}'
    if total > 1:
     assert page.locator('.dt-gallery-nav-anterior').count()==1, f'Navegación anterior de respaldo {product_id}'
     assert page.locator('.dt-gallery-nav-siguiente').count()==1, f'Navegación siguiente de respaldo {product_id}'
@@ -263,7 +265,7 @@ with sync_playwright() as p:
     assert page.locator(f'.travel-gallery-controls button[data-photo-index="{total-1}"]').get_attribute('aria-pressed')=='true', f'Circular teclado {product_id}'
    else:
     assert page.locator('.dt-gallery-nav-siguiente').count()==0, 'No mostrar flechas con una imagen'
-   page.locator('.dt-image-open').click()
+   (page.locator('.dt-native-slide').first if touch and total > 1 else page.locator('.dt-image-open')).click()
    assert page.locator('#dt-photo-lightbox').is_visible(), f'Imagen ampliada {product_id}'
    assert page.locator('#dt-lightbox-image').get_attribute('alt'), f'Texto alternativo {product_id}'
    assert page.locator('#dt-lightbox-counter').is_visible(), f'Indicador del visor ampliado preservado {product_id}'
