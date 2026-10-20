@@ -88,7 +88,7 @@ with sync_playwright() as p:
   page.locator('.product-card[data-id="encendedor-honest-punch"] .product-image-trigger').click()
   assert page.locator('#product-modal-name').inner_text()=='Encendedor HONEST de doble flama con cortador punch', 'Título HONEST'
   assert page.locator('.travel-gallery-controls button').count()==5, 'HONEST tiene cinco fotografías'
-  assert 'resistente al viento' in page.locator('#product-modal-content').inner_text().lower(), 'Descripción de resistencia anunciada HONEST'
+  assert 'resistente al viento' not in page.locator('#product-modal-content').inner_text().lower(), 'HONEST sin afirmaciones de resistencia al viento'
   assert page.locator('.modal-retail-price').count()==0, 'HONEST sin precio previo a lanzamiento'
   page.locator('#product-modal-close').click()
   page.locator('[data-filter="cortadores"]').click()
