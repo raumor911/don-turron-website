@@ -231,6 +231,25 @@ with sync_playwright() as p:
     })""")
     assert native_css['snap']=='x mandatory' and native_css['overflow']=='auto',f'Scroll-snap nativo {name}: {native_css}'
     assert native_css['touch']=='auto',f'Scroll vertical intacto {name}: {native_css}'
+    if product_id=='humidor-viaje-5-puros' and name in ('iphone','galaxy'):
+     # Un verdadero stream Touch de Chromium (CDP), no solo scrollLeft
+     # programático. Comprueba que el browser nativo se mueve bajo el dedo.
+     rect=native.bounding_box()
+     sx=rect['x']+rect['width']*.78
+     ex=rect['x']+rect['width']*.18
+     cy=rect['y']+rect['height']*.52
+     cdp=page.context.new_cdp_session(page)
+     cdp.send('Input.dispatchTouchEvent',{'type':'touchStart','touchPoints':[{'x':sx,'y':cy}]})
+     for step in range(1,11):
+      x=sx+(ex-sx)*step/10
+      cdp.send('Input.dispatchTouchEvent',{'type':'touchMove','touchPoints':[{'x':x,'y':cy}]})
+      page.wait_for_timeout(12)
+     cdp.send('Input.dispatchTouchEvent',{'type':'touchEnd','touchPoints':[]})
+     page.wait_for_timeout(450)
+     actual=native.evaluate('el => el.scrollLeft')
+     assert actual>native.evaluate('el => el.clientWidth')*.45, f'Gesto horizontal nativo no desplazó la pista: {name}, {actual}'
+     cdp.detach()
+
     # En Scroll Snap el navegador desplaza el contenido; no se simulan Pointer
     # Events falsos. Comprobar la sincronía real scroll -> estado -> imagen.
     native.evaluate("""el => {el.scrollTo({left:el.clientWidth,behavior:'instant'});el.dispatchEvent(new Event('scroll'))}""")
