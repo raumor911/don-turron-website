@@ -1,7 +1,7 @@
 {
   "name": "Don Turrón Semantic Knowledge Graph",
   "version": "1.0.0",
-  "fingerprint": "030003572893bf64f90f0763f1ba8c84e70f2d6266af6ee1526680bcfce3b3c9",
+  "fingerprint": "9df2b70fa700df4220e48e051c113c8dad5cb4eccc720407b5c61ef3936367f2",
   "nodes": [
     {
       "id": "brand:don-turron",
@@ -283,6 +283,54 @@
       "status": "supplier_declared"
     },
     {
+      "id": "encendedor-honest-punch",
+      "type": "Product",
+      "name": "Encendedor HONEST de doble flama con cortador punch",
+      "status": "documented",
+      "launchWindow": {
+        "status": "planned",
+        "month": "2027-01",
+        "label": "Disponibilidad prevista: enero de 2027",
+        "source": "brand_owner_statement"
+      }
+    },
+    {
+      "id": "feature:encendedor-honest-punch:1",
+      "type": "Feature",
+      "name": "Dos flamas jet para el encendido",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-honest-punch:2",
+      "type": "Feature",
+      "name": "Cortador punch integrado y desplegable",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-honest-punch:3",
+      "type": "Feature",
+      "name": "Recargable con gas butano",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-honest-punch:4",
+      "type": "Feature",
+      "name": "Cuerpo metálico con panel frontal decorativo",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-honest-punch:5",
+      "type": "Feature",
+      "name": "Acabados: negro y rojo",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "feature:encendedor-honest-punch:6",
+      "type": "Feature",
+      "name": "Diseño anunciado como resistente al viento",
+      "status": "supplier_declared"
+    },
+    {
       "id": "usecase:guardar-viaje",
       "type": "UseCase",
       "name": "Guardar puros al viajar"
@@ -379,6 +427,12 @@
       "status": "hypothesis"
     },
     {
+      "id": "intent:encendedor-honest-punch",
+      "type": "Intent",
+      "name": "Encendedor HONEST de butano con cortador punch",
+      "status": "hypothesis"
+    },
+    {
       "id": "source:brand-home",
       "type": "Source",
       "name": "Identidad y prelanzamiento de Don Turrón",
@@ -433,6 +487,12 @@
       "status": "supplier_material"
     },
     {
+      "id": "source:encendedor-honest-punch",
+      "type": "Source",
+      "name": "Imágenes y descripción del encendedor HONEST con punch aportadas por el titular",
+      "status": "supplier_material"
+    },
+    {
       "id": "claim:brand-mexico",
       "type": "Claim",
       "name": "Don Turrón se presenta como marca mexicana en prelanzamiento.",
@@ -478,6 +538,12 @@
       "id": "claim:encendedor-sarike-butano-description",
       "type": "Claim",
       "name": "Encendedor metálico Parike de butano con diseño compacto y detalles de acabado texturizado. Permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado.",
+      "status": "supplier_declared"
+    },
+    {
+      "id": "claim:encendedor-honest-punch-description",
+      "type": "Claim",
+      "name": "Encendedor metálico HONEST recargable con gas butano, con dos flamas tipo jet y cortador punch integrado para preparar la punta del puro. Su diseño compacto combina acabado metálico con panel decorativo y se presenta en colores negro y rojo. El proveedor lo describe como resistente al viento.",
       "status": "supplier_declared"
     }
   ],
@@ -683,6 +749,41 @@
       "type": "hasDeclaredFeature"
     },
     {
+      "source": "category:encendedores",
+      "target": "encendedor-honest-punch",
+      "type": "containsProduct"
+    },
+    {
+      "source": "encendedor-honest-punch",
+      "target": "feature:encendedor-honest-punch:1",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-honest-punch",
+      "target": "feature:encendedor-honest-punch:2",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-honest-punch",
+      "target": "feature:encendedor-honest-punch:3",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-honest-punch",
+      "target": "feature:encendedor-honest-punch:4",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-honest-punch",
+      "target": "feature:encendedor-honest-punch:5",
+      "type": "hasDeclaredFeature"
+    },
+    {
+      "source": "encendedor-honest-punch",
+      "target": "feature:encendedor-honest-punch:6",
+      "type": "hasDeclaredFeature"
+    },
+    {
       "source": "usecase:guardar-viaje",
       "target": "humidor-viaje-5-puros",
       "type": "mayBeAddressedBy"
@@ -715,6 +816,11 @@
     {
       "source": "usecase:corte",
       "target": "cortador-v-geometrico",
+      "type": "mayBeAddressedBy"
+    },
+    {
+      "source": "usecase:corte",
+      "target": "encendedor-honest-punch",
       "type": "mayBeAddressedBy"
     },
     {
@@ -748,6 +854,11 @@
       "type": "mayBeAddressedBy"
     },
     {
+      "source": "usecase:encendido",
+      "target": "encendedor-honest-punch",
+      "type": "mayBeAddressedBy"
+    },
+    {
       "source": "intent:accesorios-puros",
       "target": "humidor-viaje-5-puros",
       "type": "suggestsProduct"
@@ -780,6 +891,11 @@
     {
       "source": "intent:accesorios-puros",
       "target": "encendedor-sarike-butano",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:accesorios-puros",
+      "target": "encendedor-honest-punch",
       "type": "suggestsProduct"
     },
     {
@@ -933,6 +1049,21 @@
       "type": "addressesUseCase"
     },
     {
+      "source": "intent:encendedor-honest-punch",
+      "target": "encendedor-honest-punch",
+      "type": "suggestsProduct"
+    },
+    {
+      "source": "intent:encendedor-honest-punch",
+      "target": "usecase:encendido",
+      "type": "addressesUseCase"
+    },
+    {
+      "source": "intent:encendedor-honest-punch",
+      "target": "usecase:corte",
+      "type": "addressesUseCase"
+    },
+    {
       "source": "claim:brand-mexico",
       "target": "brand:don-turron",
       "type": "about"
@@ -1010,6 +1141,16 @@
     {
       "source": "claim:encendedor-sarike-butano-description",
       "target": "source:encendedor-sarike-butano",
+      "type": "supportedBy"
+    },
+    {
+      "source": "claim:encendedor-honest-punch-description",
+      "target": "encendedor-honest-punch",
+      "type": "about"
+    },
+    {
+      "source": "claim:encendedor-honest-punch-description",
+      "target": "source:encendedor-honest-punch",
       "type": "supportedBy"
     }
   ]
