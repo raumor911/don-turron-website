@@ -203,6 +203,17 @@ with sync_playwright() as p:
    page.locator(f'.product-card[data-id="{product_id}"] .product-image-trigger').click()
    image=page.locator('.modal-art .dt-image-open img')
    assert image.count()==1, f'Imagen ampliable en {product_id}'
+   assert page.locator('#product-modal-close').is_visible(), f'Cerrar detalle disponible en {name} / {product_id}'
+   close_style=page.locator('#product-modal-close').evaluate("""el => {
+     const rect=el.getBoundingClientRect(), css=getComputedStyle(el);
+     return {width:rect.width,height:rect.height,radius:css.borderRadius,
+             background:css.backgroundColor,label:el.getAttribute('aria-label')};
+   }""")
+   if touch:
+    assert close_style['width']>=44 and close_style['height']>=44, f'Cierre tactil pequeño en {name} / {product_id}: {close_style}'
+    assert close_style['radius']=='50%',f'Cierre circular móvil {name} / {product_id}'
+   assert close_style['label']=='Cerrar detalle',f'Nombre accesible de salida en {name} / {product_id}'
+
    assert image.evaluate('(img)=>getComputedStyle(img).objectFit')=='contain', f'Fotografía sin recorte {product_id}'
    assert page.locator('.dt-gallery-status').count()==0, f'Sin contador superior duplicado {product_id}'
    assert page.locator('.dt-image-hint').count()==0, f'Sin indicador visual superior redundante {product_id}'
@@ -232,13 +243,22 @@ with sync_playwright() as p:
     assert page.locator('#dt-photo-lightbox').is_visible(),f'Toque nuevo no bloqueado en {name} / {product_id}'
     page.keyboard.press('Escape')
    if total > 1:
-    assert page.locator('.dt-gallery-nav-anterior').count()==1, f'Flecha anterior {product_id}'
-    assert page.locator('.dt-gallery-nav-siguiente').count()==1, f'Flecha siguiente {product_id}'
+    assert page.locator('.dt-gallery-nav-anterior').count()==1, f'Navegación anterior de respaldo {product_id}'
+    assert page.locator('.dt-gallery-nav-siguiente').count()==1, f'Navegación siguiente de respaldo {product_id}'
     assert page.locator('.travel-gallery-controls button').count()==total, f'Número de vistas {product_id}'
-    page.locator('.dt-gallery-nav-siguiente').click()
-    assert page.locator('.travel-gallery-controls button[data-photo-index="1"]').get_attribute('aria-pressed')=='true', f'Siguiente {product_id}'
-    page.locator('.dt-gallery-nav-anterior').click()
-    assert page.locator('.travel-gallery-controls button[data-photo-index="0"]').get_attribute('aria-pressed')=='true', f'Anterior {product_id}'
+    if touch:
+     assert not page.locator('.dt-gallery-nav-anterior').is_visible(),f'Flecha anterior oculta en {name} / {product_id}'
+     assert not page.locator('.dt-gallery-nav-siguiente').is_visible(),f'Flecha siguiente oculta en {name} / {product_id}'
+     page.locator('.travel-gallery-controls button[data-photo-index="1"]').click()
+     assert page.locator('.travel-gallery-controls button[data-photo-index="1"]').get_attribute('aria-pressed')=='true', f'Siguiente por indicador táctil {product_id}'
+     page.locator('.travel-gallery-controls button[data-photo-index="0"]').click()
+    else:
+     assert page.locator('.dt-gallery-nav-anterior').is_visible(),f'Flecha anterior escritorio {product_id}'
+     assert page.locator('.dt-gallery-nav-siguiente').is_visible(),f'Flecha siguiente escritorio {product_id}'
+     page.locator('.dt-gallery-nav-siguiente').click()
+     assert page.locator('.travel-gallery-controls button[data-photo-index="1"]').get_attribute('aria-pressed')=='true', f'Siguiente {product_id}'
+     page.locator('.dt-gallery-nav-anterior').click()
+     assert page.locator('.travel-gallery-controls button[data-photo-index="0"]').get_attribute('aria-pressed')=='true', f'Anterior {product_id}'
     page.keyboard.press('ArrowLeft')
     assert page.locator(f'.travel-gallery-controls button[data-photo-index="{total-1}"]').get_attribute('aria-pressed')=='true', f'Circular teclado {product_id}'
    else:
