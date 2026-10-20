@@ -17,6 +17,7 @@
   <link rel="icon" href="assets/favicon-monogram-black.png" type="image/png" sizes="512x512" media="(prefers-color-scheme: light)">
   <link rel="icon" href="assets/favicon-monogram-gold.png" type="image/png" sizes="512x512" media="(prefers-color-scheme: dark)">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" sizes="180x180">
+  <link rel="preload" as="image" href="assets/don-turron-emblema.jpg" fetchpriority="high" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -40,7 +41,7 @@
   <header class="site-header" id="inicio">
     <div class="header-wrap shell">
       <a href="#inicio" class="brand" aria-label="Don Turrón, inicio">
-        <span class="brand-icon"><img src="assets/don-turron-monograma.png" alt="" /></span>
+        <span class="brand-icon"><img src="assets/don-turron-monograma.png" alt="" decoding="async" /></span>
         <span class="brand-wordmark">DON <strong>TURRÓN</strong><span class="brand-caption">EL ARTE DEL DETALLE</span></span>
       </a>
       <nav class="desktop-nav" aria-label="Navegación principal">
@@ -79,7 +80,7 @@
           </div>
           <div class="hero-footnote"><span>01 / 03</span><span class="hairline"></span><span>EMPEZAMOS CON ACCESORIOS PARA PUROS</span></div>
         </div>
-        <div class="hero-emblem" aria-hidden="true"><img src="assets/don-turron-emblema.jpg" alt="" loading="eager" /></div>
+        <div class="hero-emblem" aria-hidden="true"><img src="assets/don-turron-emblema.jpg" alt="" loading="eager" decoding="async" fetchpriority="high" /></div>
       </div>
       <div class="hero-edge-text" aria-hidden="true">DON TURRÓN — NUESTRA PRIMERA SELECCIÓN</div>
       <a href="#categorias" class="hero-scroll" aria-label="Desplazarse a categorías"><span>DESLIZA PARA DESCUBRIR</span><b>↓</b></a>
@@ -131,7 +132,7 @@
     </section>
 
     <section class="philosophy-section" id="filosofia" aria-labelledby="philosophy-heading">
-      <div class="philosophy-visual"><svg class="dt-bronze-filter" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false"><filter id="dt-edge-bronze" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.2126 0.7152 0.0722 0 -0.74" result="luminance"/><feComponentTransfer in="luminance" result="highlights"><feFuncA type="linear" slope="5.5" intercept="0"/></feComponentTransfer><feFlood flood-color="#bca27e" result="bronze"/><feComposite in="bronze" in2="highlights" operator="in" result="recolored"/><feComposite in="recolored" in2="SourceGraphic" operator="over"/></filter></svg><div class="philosophy-frame"><img src="assets/don-turron-emblema.jpg" alt="Emblema dorado de Don Turrón sobre mármol oscuro" loading="lazy" /></div><span>LAS COSAS QUE ELEGIMOS</span></div>
+      <div class="philosophy-visual"><svg class="dt-bronze-filter" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false"><filter id="dt-edge-bronze" color-interpolation-filters="sRGB"><feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.2126 0.7152 0.0722 0 -0.74" result="luminance"/><feComponentTransfer in="luminance" result="highlights"><feFuncA type="linear" slope="5.5" intercept="0"/></feComponentTransfer><feFlood flood-color="#bca27e" result="bronze"/><feComposite in="bronze" in2="highlights" operator="in" result="recolored"/><feComposite in="recolored" in2="SourceGraphic" operator="over"/></filter></svg><div class="philosophy-frame"><img loading="lazy" decoding="async" src="assets/don-turron-emblema.jpg" alt="Emblema dorado de Don Turrón sobre mármol oscuro" loading="lazy" /></div><span>LAS COSAS QUE ELEGIMOS</span></div>
       <div class="philosophy-text"><p class="eyebrow">NUESTRA ESENCIA</p><h2 id="philosophy-heading">El detalle<br>es nuestra <em>firma.</em></h2><p class="philosophy-lead">Creemos que el estilo personal no se define por cuánto se tiene, sino por aquello que se elige.</p><p>Don Turrón nace del gusto por los objetos que combinan funcionalidad, diseño y carácter. Piezas que encontramos interesantes, que tienen un propósito y que pueden acompañarnos en distintos momentos de la vida. Nuestra intención es construir una colección que evolucione con el tiempo, incorporando accesorios y experiencias que compartan una misma filosofía: elegir con criterio, apreciar los detalles y disfrutar de lo cotidiano con personalidad.</p><a class="light-text-link" href="#experiencia">Descubre la experiencia <span>↗</span></a><span class="philosophy-number">DT / 001</span></div>
     </section>
 
@@ -145,7 +146,7 @@
     <section class="faq-section section-space" id="preguntas" aria-labelledby="faq-heading"><div class="shell faq-layout"><div><p class="eyebrow eyebrow-dark">INFORMACIÓN ÚTIL</p><h2 id="faq-heading">Lo que necesitas <em>saber.</em></h2></div><div class="faq-items"><details><summary>¿Ya puedo comprar directamente en el sitio?<span>+</span></summary><p>Esta es una versión de presentación del catálogo. Puedes guardar una selección de accesorios; el pago en línea aún no está habilitado.</p></details><details><summary>¿Los precios y productos son definitivos?<span>+</span></summary><p>Cinco accesorios ya muestran sus precios finales al público, en MXN y con IVA incluido. El envío se calcula por separado y las existencias siguen por confirmar. El cortapuros en V y el encendedor metálico tienen disponibilidad prevista para enero de 2027; sus precios aún no están definidos.</p></details><details><summary>¿Cómo se definirá el envío?<span>+</span></summary><p>Aún no tenemos condiciones de envío confirmadas. El envío no está incluido en los precios publicados. Antes de activar compras, informaremos la cobertura, los costos y los tiempos de entrega.</p></details><details><summary>¿Don Turrón vende puros?<span>+</span></summary><p>El alcance de este sitio es la exhibición de accesorios para puros. No se ofrecen puros ni tabaco a través de este catálogo.</p></details></div></div></section>
   </main>
 
-  <footer class="footer"><div class="shell"><div class="footer-top"><a class="footer-brand" href="#inicio"><img src="assets/don-turron-monograma.png" alt=""/><span>DON TURRÓN<small>EL ARTE DEL DETALLE</small></span></a><div class="footer-links"><a href="#coleccion">Colección</a><a href="#filosofia">Nuestra esencia</a><a href="#experiencia">Experiencia</a><a href="#preguntas">Preguntas frecuentes</a></div></div><div class="footer-bottom"><span>© <span id="year">2026</span> Don Turrón. Todos los derechos reservados.</span><span class="footer-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="RAUVIA Consulting (abre en otra pestaña)"><strong>RAUVIA Consulting</strong></a></span></div></div></footer>
+  <footer class="footer"><div class="shell"><div class="footer-top"><a class="footer-brand" href="#inicio"><img src="assets/don-turron-monograma.png" alt="" loading="lazy" decoding="async"/><span>DON TURRÓN<small>EL ARTE DEL DETALLE</small></span></a><div class="footer-links"><a href="#coleccion">Colección</a><a href="#filosofia">Nuestra esencia</a><a href="#experiencia">Experiencia</a><a href="#preguntas">Preguntas frecuentes</a></div></div><div class="footer-bottom"><span>© <span id="year">2026</span> Don Turrón. Todos los derechos reservados.</span><span class="footer-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="RAUVIA Consulting (abre en otra pestaña)"><strong>RAUVIA Consulting</strong></a></span></div></div></footer>
 
   <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
   <aside class="selection-drawer" id="selection-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-heading" tabindex="-1" aria-hidden="true">
@@ -156,7 +157,7 @@
 
   <div class="product-modal-backdrop" id="product-modal-backdrop" hidden></div><section class="product-modal" id="product-modal" role="dialog" aria-modal="true" aria-labelledby="product-modal-name" aria-hidden="true" tabindex="-1"><button type="button" id="product-modal-close" class="close-icon modal-close" aria-label="Cerrar detalle">✕</button><div id="product-modal-content"></div></section>
 
-  <div class="age-overlay" id="age-overlay" hidden><div class="age-panel" role="dialog" aria-modal="true" aria-labelledby="age-heading"><img src="assets/don-turron-emblema.jpg" alt="Don Turrón" /><p class="eyebrow">EL ARTE ESTÁ EN LOS DETALLES</p><h2 id="age-heading">Bienvenido a <em>Don Turrón.</em></h2><p>Este sitio está dirigido únicamente a personas mayores de 18 años. Confirma tu edad para continuar.</p><button type="button" class="btn btn-gold" id="age-yes">Soy mayor de 18 años <span>→</span></button><button type="button" class="age-no" id="age-no">Soy menor de edad</button><small>No se comercializa tabaco en este sitio.</small></div></div>
+  <div class="age-overlay" id="age-overlay" hidden><div class="age-panel" role="dialog" aria-modal="true" aria-labelledby="age-heading"><img src="assets/don-turron-emblema.jpg" alt="Don Turrón" loading="eager" decoding="async" fetchpriority="high" /><p class="eyebrow">EL ARTE ESTÁ EN LOS DETALLES</p><h2 id="age-heading">Bienvenido a <em>Don Turrón.</em></h2><p>Este sitio está dirigido únicamente a personas mayores de 18 años. Confirma tu edad para continuar.</p><button type="button" class="btn btn-gold" id="age-yes">Soy mayor de 18 años <span>→</span></button><button type="button" class="age-no" id="age-no">Soy menor de edad</button><small>No se comercializa tabaco en este sitio.</small></div></div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
