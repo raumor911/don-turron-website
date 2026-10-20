@@ -166,9 +166,14 @@ with sync_playwright() as p:
   # Simulación determinista de Pointer Events táctiles en Chromium móvil.
   # Safari iOS y Samsung Internet reales requieren una validación posterior en hardware.
   def swipe(selector, x1, y1, x2, y2):
+   # Un gesto real emite PointerEvent que burbujea desde la imagen hasta sus
+   # listeners de galería y documento. dispatch_event() sin bubbles crea un
+   # evento aislado y provoca un falso negativo en el test móvil.
    node=page.locator(selector)
-   node.dispatch_event('pointerdown',{'pointerType':'touch','pointerId':17,'isPrimary':True,'clientX':x1,'clientY':y1})
-   node.dispatch_event('pointerup',{'pointerType':'touch','pointerId':17,'isPrimary':True,'clientX':x2,'clientY':y2})
+   opts={'pointerType':'touch','pointerId':17,'isPrimary':True,
+         'bubbles':True,'cancelable':True,'composed':True}
+   node.dispatch_event('pointerdown',{**opts,'clientX':x1,'clientY':y1})
+   node.dispatch_event('pointerup',{**opts,'clientX':x2,'clientY':y2})
   # Galería V4: validar imágenes completas, navegación y ampliación en todos los artículos.
   page.locator('[data-filter="todos"]').click()
   cases = [
