@@ -83,3 +83,28 @@
 @media (prefers-reduced-motion:reduce){
   .dt-image-open,.dt-lightbox-image{animation:none!important}
 }
+
+/* Detalle de producto en teléfonos: controles mínimos, swipe como navegación.
+   Conservar flechas en escritorio y controles numerados inferiores en móvil. */
+@media (max-width:580px){
+  .product-modal .modal-art .dt-gallery-nav{display:none}
+  .product-modal .modal-close{
+    top:12px;right:12px;z-index:10;
+    display:grid;place-items:center;
+    width:44px;height:44px;min-width:44px;min-height:44px;
+    padding:0;border-radius:50%;
+    border:1px solid rgba(217,179,125,.68);
+    background:rgba(29,22,16,.90);
+    color:#f7e6cf;font:400 18px/1 Arial,sans-serif;
+    box-shadow:0 4px 16px rgba(0,0,0,.28);
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+  }
+  .product-modal .modal-close:hover,
+  .product-modal .modal-close:active{
+    background:#453222;border-color:#edc990;color:#fff8ee;
+  }
+  .product-modal .modal-close:focus-visible{
+    outline:2px solid #f0c68c;outline-offset:3px;
+  }
+}
