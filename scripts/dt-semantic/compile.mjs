@@ -23,6 +23,7 @@ function knowledgeGraph(k,fingerprint){
   for(const p of k.products.filter(publicItem)){
     node(p.id,'Product',p.name,p.contentStatus);
     if(p.launchWindow)nodes[nodes.length-1].launchWindow={...p.launchWindow};
+    if(p.retailPrice)nodes[nodes.length-1].retailPrice={...p.retailPrice};
     edge(p.categoryId,p.id,'containsProduct');
     for(let i=0;i<p.features.length;i++){const id='feature:'+p.id+':'+(i+1);node(id,'Feature',p.features[i],'supplier_declared');edge(p.id,id,'hasDeclaredFeature');}
   }
@@ -45,15 +46,62 @@ const generalSchema=k=>({
    {'@type':'ItemList','@id':'#catalog-list',name:'Accesorios documentados',numberOfItems:k.products.filter(p=>p.contentStatus!=='conceptual').length,itemListElement:k.products.filter(p=>p.contentStatus!=='conceptual').map((p,i)=>({'@type':'ListItem',position:i+1,name:p.name}))}
   ]});
 function writeCatalog(k){
-  const products=k.products.map(p=>Object.fromEntries(['id','name','category','categoryLabel','subtitle','description','features','art','badge','images','variants','contentStatus','commercialStatus','launchWindow'].map(field=>[field,p[field]])));
+  const products=k.products.map(p=>Object.fromEntries(['id','name','category','categoryLabel','subtitle','description','features','art','badge','images','variants','contentStatus','commercialStatus','launchWindow','retailPrice'].map(field=>[field,p[field]])));
   out('catalog.js','/* AUTOGENERADO desde knowledge/products.json — editar solo el Semantic Core. */\nwindow.DON_TURRON_CATALOG = '+JSON.stringify(products,null,2)+';\n');
 }
 function writeAi(k,fingerprint,graph){
   const documented=k.products.filter(p=>p.contentStatus!=='conceptual'&&publicItem(p));
-  const publicProducts=k.products.filter(publicItem).map(p=>({id:p.id,name:p.name,description:p.description,features:p.features,images:p.images,category:p.category,contentStatus:p.contentStatus,commercialStatus:p.commercialStatus,variants:p.variants,launchWindow:p.launchWindow??null,sourceIds:p.sourceIds}));
+  const publicProducts=k.products.filter(publicItem).map(p=>({id:p.id,name:p.name,description:p.description,features:p.features,images:p.images,category:p.category,contentStatus:p.contentStatus,commercialStatus:p.commercialStatus,retailPrice:p.retailPrice??null,variants:p.variants,launchWindow:p.launchWindow??null,sourceIds:p.sourceIds}));
   const asMd=items=>items.map(x=>'## '+x.question+'\n\n'+x.answer+'\n\nFuentes: '+x.sourceIds.join(', ')).join('\n\n');
-  const intro='# Don Turrón\n\n'+k.brand.description+'\n\nLema: '+k.brand.tagline+'\n\nEstado: prelanzamiento; no se reciben pedidos, precios y existencias por confirmar.\n';
-  const links=doc=>'- ['+doc.name+'](/productos/'+doc.id+'/)'+(doc.launchWindow?' — '+doc.launchWindow.label+'.':'');
+  const intro='# Don Turrón\n\n'+k.brand.description+'\n\nLema: '+k.brand.tagline+'\n\nEstado: prelanzamiento sin pedidos ni pagos. Cinco accesorios tienen precio final al público en MXN con IVA incluido y envío por separado; existencias por confirmar. Dos próximos lanzamientos carecen todavía de precio.\n';
+  const links=doc=>'- ['+doc.name+'](/productos/'+doc.id+'/)'+(doc.retailPrice?' — 
+  const brandMd=intro+'\n'+documented.length+' artículos cuentan con fichas documentadas. Ninguna ficha confirma existencias ni activa pedidos.\n';
+  const catalogMd=intro+'\n## Accesorios documentados\n'+documented.map(links).join('\n')+'\n';
+  const intentList=k.intents.filter(publicItem).map(i=>({...i,sourceType:'hypothesis_not_measured'}));
+  const termMd='# Terminología\n\n'+k.terminology.filter(publicItem).map(x=>'## '+x.term+'\n\n'+x.definition).join('\n\n')+'\n';
+  const sourceList=k.sources.filter(publicItem);
+  const paths=['llms.txt','llms-full.txt','ai/brand.md','ai/catalog.md','ai/products.json','ai/knowledge-graph.json','ai/intents.json','ai/canonical-answers.md','ai/terminology.md','ai/sources.json','ai/content-manifest.json'];
+  out('ai/brand.md',brandMd);out('ai/catalog.md',catalogMd);out('ai/products.json',{products:publicProducts});
+  out('ai/knowledge-graph.json',graph);out('ai/intents.json',{notice:'Ejemplos hipotéticos sin volúmenes de búsqueda comprobados',intents:intentList});
+  out('ai/canonical-answers.md','# Respuestas canónicas — Don Turrón\n\n'+asMd(k['canonical-answers'].filter(publicItem))+'\n');
+  out('ai/terminology.md',termMd);out('ai/sources.json',{sources:sourceList});
+  out('llms.txt','# Don Turrón\n\n'+k.brand.description+'\n\n> Prelanzamiento sin pagos ni inventario confirmado. Cinco productos con precio público final (IVA incluido, envío no incluido); dos próximos lanzamientos sin precio.\n\n- [Marca](/ai/brand.md)\n- [Catálogo](/ai/catalog.md)\n- [Productos](/ai/products.json)\n- [Respuestas](/ai/canonical-answers.md)\n- [Fuentes](/ai/sources.json)\n');
+  out('llms-full.txt',brandMd+'\n'+catalogMd+'\n'+asMd(k['canonical-answers'].filter(publicItem))+'\n');
+  out('ai/content-manifest.json',{version:1,knowledgeFingerprint:fingerprint,releaseStatus:'prelaunch',files:paths.filter(x=>x!=='ai/content-manifest.json'),generatedFrom:'knowledge/*.json',crawlerNote:'No atribuir visitas ni recomendaciones a asistentes sin evidencia de origen.'});
+}
+function writeHomepage(schema){
+  const file=path.join(ROOT,'index.html');let html=fs.readFileSync(file,'utf8');
+  const block='<!-- DT-JSONLD-START -->\n<script type="application/ld+json">'+JSON.stringify(schema)+'</script>\n<!-- DT-JSONLD-END -->';
+  if(html.includes('<!-- DT-JSONLD-START -->'))html=html.replace(/<!-- DT-JSONLD-START -->[\s\S]*?<!-- DT-JSONLD-END -->/,block);
+  else{
+    const source=/<script type="application\/ld\+json">[\s\S]*?<\/script>/;
+    if(!source.test(html))throw new Error('Home JSON-LD anchor not found');
+    html=html.replace(source,block);
+  }
+  if(!html.includes('name="robots" content="noindex, nofollow"'))throw new Error('Prelaunch noindex gate missing');
+  out('index.html',html);
+}
+export function generateSitemap(siteUrl,paths=[]){
+  if(!siteUrl) return null;
+  if(!/^https:\/\/[^\s/]+/.test(siteUrl))throw new Error('Valid HTTPS domain required to release sitemap');
+  const origin=new URL(siteUrl).origin;
+  return '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+paths.map(p=>'  <url><loc>'+escape(origin+p)+'</loc></url>').join('\n')+'\n</urlset>\n';
+}
+export function compile(){
+  const k=load();validate(k);
+  const fingerprint=hash(k);
+  writeCatalog(k);
+  const graph=knowledgeGraph(k,fingerprint);
+  writeAi(k,fingerprint,graph);
+  const schema=generalSchema(k);
+  writeHomepage(schema);
+  // Release gate: do not output sitemap/canonical while siteUrl is unknown.
+  if(fs.existsSync(path.join(ROOT,'sitemap.xml')))throw new Error('Prelaunch prohibits sitemap.xml without verified domain');
+  console.log('DT-SC-002 compiled; knowledge fingerprint '+fingerprint);
+  return {fingerprint,k,graph};
+}
+if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))compile();
++doc.retailPrice.amount+' MXN, IVA incluido; envío no incluido.':'')+(doc.launchWindow?' — '+doc.launchWindow.label+'; precio por confirmar.':'');
   const brandMd=intro+'\n'+documented.length+' artículos cuentan con fichas documentadas. Ninguna ficha confirma existencias ni activa pedidos.\n';
   const catalogMd=intro+'\n## Accesorios documentados\n'+documented.map(links).join('\n')+'\n';
   const intentList=k.intents.filter(publicItem).map(i=>({...i,sourceType:'hypothesis_not_measured'}));
