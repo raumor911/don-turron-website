@@ -40,3 +40,12 @@
    El filtro SVG preserva los negros y el monograma dorado original. */
 .dt-bronze-filter{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
 .philosophy-frame img{filter:url("#dt-edge-bronze")}
+
+/* Precios públicos informativos: IVA incluido, envío no incluido; sin activar compras. */
+.product-price-set{display:flex;flex-direction:column;gap:3px}
+.product-price-set strong{font:500 23px/1.1 var(--serif);letter-spacing:-.015em;color:#42301f;white-space:nowrap}
+.product-price-set small{font:600 9px var(--sans);letter-spacing:.03em;color:#816e55}
+.modal-retail-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:7px 15px;margin:7px 0 20px}
+.modal-retail-price strong{font:500 31px/1.1 var(--serif);color:#664726;white-space:nowrap}
+.modal-retail-price small{font-size:11px;color:#806f5a}
+@media(max-width:580px){.product-price-set strong{font-size:19px}.product-price-set small{font-size:8px}.modal-retail-price strong{font-size:27px}}

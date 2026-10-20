@@ -9,6 +9,18 @@ const cat=read('catalog.js'),home=read('index.html');
 const json=JSON.parse(read('ai/products.json')),kg=JSON.parse(read('ai/knowledge-graph.json'));
 const ids=k.products.map(p=>p.id);
 if(!ids.every(id=>cat.includes('"id": "'+id+'"')))throw new Error('Catalog diverges from knowledge');
+const retailMap=new Map(k.products.filter(p=>p.retailPrice).map(p=>[p.id,p.retailPrice.amount]));
+if(retailMap.size!==5)throw new Error('Only five priced accessories allowed');
+for(const p of k.products){
+  const source=p.retailPrice;
+  const publicRecord=json.products.find(x=>x.id===p.id);
+  if(source){
+    const displayed='$'+source.amount.toLocaleString('es-MX')+' MXN';
+    if(!cat.includes('"amount": '+source.amount))throw new Error('Price missing from generated catalog '+p.id);
+    if(publicRecord?.retailPrice?.amount!==source.amount||publicRecord?.retailPrice?.taxIncluded!==true||publicRecord?.retailPrice?.shippingIncluded!==false)throw new Error('AI price mismatch '+p.id);
+    if(!home.includes('data-id="'+p.id+'"')||!home.includes(displayed))throw new Error('Public homepage price missing '+p.id);
+  }else if(publicRecord?.retailPrice!=null)throw new Error('Unpriced launch exposed as priced '+p.id);
+}
 if(json.products.length!==k.products.length||kg.nodes.filter(n=>n.type==='Product').length!==k.products.length)throw new Error('Graph/catalog count mismatch');
 if(!home.includes('noindex, nofollow')||!read('robots.txt').includes('Disallow: /'))throw new Error('Index gate lost');
 if(!home.includes('DT-JSONLD-START'))throw new Error('Homepage JSON-LD missing');
@@ -29,6 +41,9 @@ for(const p of documented){
   const h=read(route);
   if(!h.includes('<h1')||!h.includes(p.name)||!h.includes('noindex, nofollow'))throw new Error('Product HTML missing or not gated: '+route);
   if(!p.images.every(x=>h.includes(x.src)))throw new Error('Missing image in '+route);
+  if(p.retailPrice&&!h.includes('$'+p.retailPrice.amount.toLocaleString('es-MX')+' MXN'))throw new Error('Price missing on product page '+p.id);
+  if(p.retailPrice&&(!h.includes('IVA incluido')||!h.includes('Envío no incluido')))throw new Error('Tax/shipping note missing '+p.id);
+  if(!p.retailPrice&&h.includes('class="dt-retail-price"'))throw new Error('Upcoming product shows price '+p.id);
   const ld=h.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
   if(!ld)throw new Error('Product JSON-LD missing '+route);
   const nodes=JSON.parse(ld[1])['@graph'];

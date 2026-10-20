@@ -30,6 +30,12 @@
       "category": "humidores",
       "contentStatus": "documented",
       "commercialStatus": "pending_confirmation",
+      "retailPrice": {
+        "amount": 649,
+        "currency": "MXN",
+        "taxIncluded": true,
+        "shippingIncluded": false
+      },
       "variants": [],
       "launchWindow": null,
       "sourceIds": [
@@ -70,6 +76,12 @@
       "category": "ceniceros",
       "contentStatus": "documented",
       "commercialStatus": "pending_confirmation",
+      "retailPrice": {
+        "amount": 549,
+        "currency": "MXN",
+        "taxIncluded": true,
+        "shippingIncluded": false
+      },
       "variants": [],
       "launchWindow": null,
       "sourceIds": [
@@ -110,6 +122,12 @@
       "category": "estuches",
       "contentStatus": "documented",
       "commercialStatus": "pending_confirmation",
+      "retailPrice": {
+        "amount": 299,
+        "currency": "MXN",
+        "taxIncluded": true,
+        "shippingIncluded": false
+      },
       "variants": [],
       "launchWindow": null,
       "sourceIds": [
@@ -138,6 +156,12 @@
       "category": "estuches",
       "contentStatus": "documented",
       "commercialStatus": "pending_confirmation",
+      "retailPrice": {
+        "amount": 949,
+        "currency": "MXN",
+        "taxIncluded": true,
+        "shippingIncluded": false
+      },
       "variants": [],
       "launchWindow": null,
       "sourceIds": [
@@ -170,6 +194,12 @@
       "category": "soportes",
       "contentStatus": "documented",
       "commercialStatus": "pending_confirmation",
+      "retailPrice": {
+        "amount": 189,
+        "currency": "MXN",
+        "taxIncluded": true,
+        "shippingIncluded": false
+      },
       "variants": [
         {
           "label": "Plata",
@@ -221,6 +251,7 @@
       "category": "cortadores",
       "contentStatus": "documented",
       "commercialStatus": "pending_confirmation",
+      "retailPrice": null,
       "variants": [
         {
           "label": "Plateado",
@@ -269,6 +300,7 @@
       "category": "encendedores",
       "contentStatus": "documented",
       "commercialStatus": "pending_confirmation",
+      "retailPrice": null,
       "variants": [
         {
           "label": "Plata",

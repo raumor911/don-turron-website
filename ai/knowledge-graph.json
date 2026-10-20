@@ -1,7 +1,7 @@
 {
   "name": "Don Turrón Semantic Knowledge Graph",
   "version": "1.0.0",
-  "fingerprint": "a06d23c14601023b9ca917e82f084b0d7529ec9eda01cf814850ee6267e65fe6",
+  "fingerprint": "f138a39505d3707c6ddfb79e0bfa590c6c95ac47d49dbc96bbd6573385a97e91",
   "nodes": [
     {
       "id": "brand:don-turron",
@@ -52,7 +52,13 @@
       "id": "humidor-viaje-5-puros",
       "type": "Product",
       "name": "Humidor de viaje para 5 puros",
-      "status": "documented"
+      "status": "documented",
+      "retailPrice": {
+        "amount": 649,
+        "currency": "MXN",
+        "taxIncluded": true,
+        "shippingIncluded": false
+      }
     },
     {
       "id": "feature:humidor-viaje-5-puros:1",
@@ -76,7 +82,13 @@
       "id": "cenicero-mesa",
       "type": "Product",
       "name": "Set portátil de cenicero y cortadores",
-      "status": "documented"
+      "status": "documented",
+      "retailPrice": {
+        "amount": 549,
+        "currency": "MXN",
+        "taxIncluded": true,
+        "shippingIncluded": false
+      }
     },
     {
       "id": "feature:cenicero-mesa:1",
@@ -100,7 +112,13 @@
       "id": "estuche-viaje",
       "type": "Product",
       "name": "Estuche porta puros con humidificador",
-      "status": "documented"
+      "status": "documented",
+      "retailPrice": {
+        "amount": 299,
+        "currency": "MXN",
+        "taxIncluded": true,
+        "shippingIncluded": false
+      }
     },
     {
       "id": "feature:estuche-viaje:1",
@@ -124,7 +142,13 @@
       "id": "estuche-kit-viaje",
       "type": "Product",
       "name": "Estuche portátil para 4 a 8 puros",
-      "status": "documented"
+      "status": "documented",
+      "retailPrice": {
+        "amount": 949,
+        "currency": "MXN",
+        "taxIncluded": true,
+        "shippingIncluded": false
+      }
     },
     {
       "id": "feature:estuche-kit-viaje:1",
@@ -148,7 +172,13 @@
       "id": "reposa-puros-plegable",
       "type": "Product",
       "name": "Reposa puros plegable de acero inoxidable",
-      "status": "documented"
+      "status": "documented",
+      "retailPrice": {
+        "amount": 189,
+        "currency": "MXN",
+        "taxIncluded": true,
+        "shippingIncluded": false
+      }
     },
     {
       "id": "feature:reposa-puros-plegable:1",

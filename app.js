@@ -21,6 +21,8 @@
 
   const html = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const productById = (id) => catalog.find(p => p.id === id);
+  const retailText = p => p.retailPrice ? '$'+Number(p.retailPrice.amount).toLocaleString('es-MX')+' MXN' : null;
+  const priceMarkup = p => p.retailPrice ? `<span class="product-price product-price-set"><strong>${retailText(p)}</strong><small>IVA incluido</small></span>` : '<span class="product-price">Precio por confirmar</span>';
   const asInt = (x) => Number.isFinite(Number(x)) ? Math.max(0, Math.min(MAX_QUANTITY, Math.floor(Number(x)))) : 0;
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch (e) { /* optional persistence */ } };
   function load() {
@@ -57,7 +59,7 @@
         </div>
         <div class="product-details"><div class="product-category">${html(p.categoryLabel.toUpperCase())}</div>
           <h3>${html(p.name)}</h3><p class="product-subtitle">${html(p.subtitle)}</p>${p.launchWindow ? `<p class="product-availability">${html(p.launchWindow.label)}</p>` : ''}
-          <div class="product-buy"><span class="product-price">Precio por confirmar</span><button type="button" class="add-product" data-add="${html(p.id)}">Seleccionar <span>＋</span></button></div>
+          <div class="product-buy">${priceMarkup(p)}<button type="button" class="add-product" data-add="${html(p.id)}">Seleccionar <span>＋</span></button></div>
         </div>
       </article>`).join('');
   }
@@ -98,7 +100,7 @@
     if (!items.length) contents.innerHTML = `<div class="drawer-empty"><span class="empty-signet">✦</span><h3>Tu selección está vacía.</h3><p>Puedes guardar aquí los accesorios que te interesen.</p></div>`;
     else contents.innerHTML = items.map(({product:p,qty}) => `
       <div class="drawer-line"><div class="drawer-art">${productPicture(p, "drawer")}</div>
-        <div class="drawer-line-text"><h3>${html(p.name)}</h3><p>PRECIO Y DISPONIBILIDAD POR CONFIRMAR</p>
+        <div class="drawer-line-text"><h3>${html(p.name)}</h3><p>${p.retailPrice ? retailText(p)+' · IVA incluido, envío aparte · Disponibilidad por confirmar' : 'PRECIO Y DISPONIBILIDAD POR CONFIRMAR'}</p>
           <div class="qty-controls"><button type="button" data-qty="-1" data-id="${html(p.id)}" aria-label="Quitar una unidad de ${html(p.name)}">−</button><span>${qty}</span><button type="button" data-qty="1" data-id="${html(p.id)}" aria-label="Agregar una unidad de ${html(p.name)}">+</button></div>
           <button type="button" class="remove-line" data-remove="${html(p.id)}">Eliminar</button>
         </div></div>`).join('');
@@ -107,7 +109,7 @@
   }
   function validEmail(email) { return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
   function selectionText() {
-    const lines = ['Don Turrón — Consulta de disponibilidad', '', ...Object.entries(cart).filter(([id]) => productById(id)).map(([id,qty]) => `• ${productById(id).name} × ${qty}`),'','Solicito confirmar precios, existencias y opciones de entrega.','Esta lista no constituye un pedido ni una reserva.'];
+    const lines = ['Don Turrón — Consulta de disponibilidad', '', ...Object.entries(cart).filter(([id]) => productById(id)).map(([id,qty]) => `• ${productById(id).name} × ${qty}${productById(id).retailPrice ? ' · '+retailText(productById(id))+' c/u (IVA incluido)' : ' · precio por confirmar'}`),'','Los precios publicados incluyen IVA; envío por separado. Solicito confirmar existencias y opciones de entrega.','Esta lista no constituye un pedido ni una reserva.'];
     return lines.join('\n');
   }
   async function copySelection() {
@@ -154,6 +156,7 @@
     emit('selection_open');
   }
   function modalDisclosure(p) {
+    if (p.retailPrice) return '<p class="modal-caption">Envío no incluido. Existencias por confirmar. Este catálogo aún no acepta pedidos.</p>';
     if (p.id === 'encendedor-sarike-butano') return '';
     if (p.id === 'cortador-v-geometrico') return '<p class="modal-caption">Precio por confirmar.</p>';
     return '<p class="modal-caption">' + (p.launchWindow ? 'Fecha prevista, sujeta a cambios; precio y existencias por confirmar.' : 'Precio y disponibilidad por confirmar.') + ' Las características se muestran según la información disponible.</p>';
@@ -161,7 +164,7 @@
   function openProduct(id, trigger) {
     const p = productById(id);
     if (!p) return;
-    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p>${p.launchWindow ? `<p class="modal-availability">${html(p.launchWindow.label)}</p>` : ''}<ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul>${modalDisclosure(p)}<button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
+    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p>${p.launchWindow ? `<p class="modal-availability">${html(p.launchWindow.label)}</p>` : ''}${p.retailPrice ? `<p class="modal-retail-price"><strong>${retailText(p)}</strong><small>IVA incluido · Envío no incluido</small></p>` : ''}<ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul>${modalDisclosure(p)}<button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
     openDialog($('product-modal'), $('product-modal-backdrop'), trigger);
     emit('product_view',{product_id:id});
   }

@@ -6,6 +6,7 @@ const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const out=(p,text)=>{const dest=path.join(ROOT,p);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,text,'utf8');};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const jsonld=obj=>JSON.stringify(obj).replace(/</g,'\\u003c');
+const retailText=p=>p.retailPrice?'$'+p.retailPrice.amount.toLocaleString('es-MX')+' MXN':null;
 function relatedProducts(p,k){
   const visible=k.products.filter(x=>x.id!==p.id&&x.contentStatus==='documented');
   const score=x=>{
@@ -41,7 +42,7 @@ const frame=(title,body,description,ld)=>`<!doctype html>
 .dt-kicker{text-transform:uppercase;letter-spacing:.13em;color:#917044;font-size:12px}
 .dt-title{font:500 clamp(40px,5vw,65px)/1.03 Georgia,serif;margin:18px 0 26px}
 .dt-description{font-size:15px;line-height:1.9;max-width:60ch}
-.dt-launch{margin:8px 0 25px;padding:12px 15px;border-left:2px solid #b78a56;background:#f0e8dd;color:#6d4b28;font-size:13px;line-height:1.6;font-weight:600}
+.dt-retail-price{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin:0 0 20px;color:#5d4022}.dt-retail-price strong{font:500 32px Georgia,serif}.dt-retail-price span{font-size:12px;color:#746554}.dt-launch{margin:8px 0 25px;padding:12px 15px;border-left:2px solid #b78a56;background:#f0e8dd;color:#6d4b28;font-size:13px;line-height:1.6;font-weight:600}
 .dt-features li{line-height:1.7;padding:10px 0;border-bottom:1px solid #d9cfc0;font-size:14px}
 .dt-images{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
 .dt-images figure{margin:0;min-width:0;background:#231a14;padding:8px}
@@ -71,15 +72,16 @@ function productPage(p,k){
   const body=`<main class="dt-main"><nav class="dt-breadcrumb" aria-label="Ruta de navegación"><a href="../../index.html">Inicio</a> / <a href="../../index.html#coleccion">Colección</a> / ${esc(p.name)}</nav>
     <section class="dt-layout"><div><p class="dt-kicker">${esc(p.categoryLabel)} · Artículo documentado</p><h1 class="dt-title">${esc(p.name)}</h1>
     <p class="dt-description">${esc(p.description)}</p>
+    ${p.retailPrice?`<p class="dt-retail-price"><strong>${esc(retailText(p))}</strong><span>IVA incluido · Envío no incluido</span></p>`:''}
     ${p.launchWindow?`<p class="dt-launch">${esc(p.launchWindow.label)}</p>`:''}
     <h2>Características descritas</h2><ul class="dt-features">${p.features.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
     ${p.variants.length?`<p>Acabados descritos: ${p.variants.map(v=>esc(v.label)).join(' y ')}. Las existencias por acabado están pendientes.</p>`:''}
-    <p class="dt-note">${p.launchWindow?'Disponibilidad prevista para enero de 2027. Esta página presenta el producto y todavía no recibe pedidos.':'Precio, disponibilidad y envío pendientes de confirmación. Esta página informa sobre el producto, no recibe pedidos. Algunas características proceden de la información del proveedor.'}</p></div>
+    <p class="dt-note">${p.launchWindow?'Disponibilidad prevista para enero de 2027. Esta página presenta el producto y todavía no recibe pedidos.':'Precio final al público con IVA incluido; el envío se calcula por separado. Existencias por confirmar. Esta página informa sobre el producto; todavía no recibe pedidos.'}</p></div>
     <div class="dt-images" aria-label="Fotografías del producto">${images}</div></section>
     <section class="dt-related"><h2>También puedes conocer</h2><ul>${related.map(x=>`<li><a href="../${esc(x.id)}/">${esc(x.name)}</a></li>`).join('')||'<li><a href="../../index.html#coleccion">Explorar la colección</a></li>'}</ul><p><a href="../../index.html#coleccion">Volver a la colección</a> · <a href="../../guia/estuche-o-humidor/">Estuche o humidor: qué cambia</a></p></section>
   </main>`;
   const ld={'@context':'https://schema.org','@graph':[
-   {'@type':'Product','@id':'#product',name:p.name,description:p.description+(p.launchWindow?' '+p.launchWindow.label+'.':''),image:p.images.map(x=>'../../'+x.src),category:p.categoryLabel,brand:{'@type':'Brand',name:'Don Turrón'}},
+   {'@type':'Product','@id':'#product',name:p.name,description:p.description+(p.launchWindow?' '+p.launchWindow.label+'.':''),image:p.images.map(x=>'../../'+x.src),category:p.categoryLabel,brand:{'@type':'Brand',name:'Don Turrón'},...(p.retailPrice?{additionalProperty:[{'@type':'PropertyValue',name:'Precio público informativo (IVA incluido, envío no incluido)',value:retailText(p)}]}:{})},
    {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'Inicio',item:'../../index.html'},{'@type':'ListItem',position:2,name:'Colección',item:'../../index.html#coleccion'},{'@type':'ListItem',position:3,name:p.name}]}
   ]};
   return frame(p.name,body,p.description.slice(0,170),ld);
@@ -93,7 +95,7 @@ function guidePage(k){
 function prerenderHome(k){
   const cards=k.products.map(p=>{
     const img=p.images.length?`<img class="travel-photo travel-photo-card" data-product-id="${esc(p.id)}" src="${esc(p.images[0].src)}" alt="Fotografía de ${esc(p.name)}; ${esc(p.images[0].label)}" loading="lazy" width="620" height="620">`:`<img src="assets/${esc(p.art)}.svg" alt="Ilustración conceptual de ${esc(p.name)}" loading="lazy">`;
-    return `<article class="product-card" data-id="${esc(p.id)}"><div class="product-art art-${esc(p.art)}">${p.badge?`<span class="product-badge">${esc(p.badge)}</span>`:''}<button type="button" class="product-image-trigger" data-open-photo="${esc(p.id)}" aria-label="Ver detalles de ${esc(p.name)}">${img}</button><button type="button" class="product-quick" data-detail="${esc(p.id)}" aria-label="Ver detalles de ${esc(p.name)}">↗</button></div><div class="product-details"><div class="product-category">${esc(p.categoryLabel.toUpperCase())}</div><h3>${esc(p.name)}</h3><p class="product-subtitle">${esc(p.subtitle)}</p>${p.launchWindow?`<p class="product-availability">${esc(p.launchWindow.label)}</p>`:''}<div class="product-buy"><span class="product-price">Precio por confirmar</span><button type="button" class="add-product" data-add="${esc(p.id)}">Seleccionar <span>＋</span></button></div></div></article>`;
+    return `<article class="product-card" data-id="${esc(p.id)}"><div class="product-art art-${esc(p.art)}">${p.badge?`<span class="product-badge">${esc(p.badge)}</span>`:''}<button type="button" class="product-image-trigger" data-open-photo="${esc(p.id)}" aria-label="Ver detalles de ${esc(p.name)}">${img}</button><button type="button" class="product-quick" data-detail="${esc(p.id)}" aria-label="Ver detalles de ${esc(p.name)}">↗</button></div><div class="product-details"><div class="product-category">${esc(p.categoryLabel.toUpperCase())}</div><h3>${esc(p.name)}</h3><p class="product-subtitle">${esc(p.subtitle)}</p>${p.launchWindow?`<p class="product-availability">${esc(p.launchWindow.label)}</p>`:''}<div class="product-buy">${p.retailPrice?`<span class="product-price product-price-set"><strong>${esc(retailText(p))}</strong><small>IVA incluido</small></span>`:`<span class="product-price">Precio por confirmar</span>`}<button type="button" class="add-product" data-add="${esc(p.id)}">Seleccionar <span>＋</span></button></div></div></article>`;
   }).join('\n');
   let html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
   const block='<div class="product-grid" id="product-grid"><!-- DT-CATALOG-START -->\n'+cards+'\n<!-- DT-CATALOG-END --></div>';

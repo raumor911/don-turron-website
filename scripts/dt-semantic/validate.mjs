@@ -26,6 +26,16 @@ export function validate(data=load()){
     check(Array.isArray(p.variants),p.id+': variants must be list');
     check(p.categoryId==='category:'+p.category,'category mismatch '+p.id);
     check(p.commercialStatus!=='available','unverified inventory not permitted '+p.id);
+    // El precio es información pública y no confirma inventario ni habilita comercio.
+    const hasPrice=Object.prototype.hasOwnProperty.call(p,'retailPrice');
+    if(hasPrice){
+      const v=p.retailPrice;
+      check(v&&typeof v==='object'&&Number.isInteger(v.amount)&&v.amount>0,p.id+': positive integer public price required');
+      check(v?.currency==='MXN'&&v?.taxIncluded===true&&v?.shippingIncluded===false,p.id+': price must be MXN, IVA included, shipping separate');
+      check(!p.launchWindow,p.id+': upcoming product must not publish a price');
+      check(p.contentStatus==='documented',p.id+': cannot price conceptual product');
+    } else check(!!p.launchWindow,p.id+': missing price for existing catalog item');
+
     if(p.contentStatus==='conceptual')check(p.commercialStatus==='not_configured' && p.images.length===0,'conceptual product exposed as offer '+p.id);
     for(const image of p.images||[]){
       check(/^assets\/products\/[a-z0-9-]+\.webp$/.test(image.src),p.id+': invalid image path');
@@ -41,6 +51,7 @@ export function validate(data=load()){
       check(p.commercialStatus==='pending_confirmation',p.id+': release plan cannot activate commerce');
     } else check(p.launchWindow===undefined,p.id+': unexpected launch window');
   }
+  check(data.products.filter(p=>p.retailPrice).length===5,'exactly five priced accessories');
   check(data.products.length===7,'exactly seven documented products expected');
   check(data.products.filter(p=>p.contentStatus==='documented').length===7,'seven documented products expected');
   check(!data.products.some(p=>p.id==='encendedor-jet'),'unsupported conceptual jet product must not return');

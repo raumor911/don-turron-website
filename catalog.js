@@ -34,7 +34,13 @@ window.DON_TURRON_CATALOG = [
     ],
     "variants": [],
     "contentStatus": "documented",
-    "commercialStatus": "pending_confirmation"
+    "commercialStatus": "pending_confirmation",
+    "retailPrice": {
+      "amount": 649,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
+    }
   },
   {
     "id": "cenicero-mesa",
@@ -74,7 +80,13 @@ window.DON_TURRON_CATALOG = [
     ],
     "variants": [],
     "contentStatus": "documented",
-    "commercialStatus": "pending_confirmation"
+    "commercialStatus": "pending_confirmation",
+    "retailPrice": {
+      "amount": 549,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
+    }
   },
   {
     "id": "estuche-viaje",
@@ -114,7 +126,13 @@ window.DON_TURRON_CATALOG = [
     ],
     "variants": [],
     "contentStatus": "documented",
-    "commercialStatus": "pending_confirmation"
+    "commercialStatus": "pending_confirmation",
+    "retailPrice": {
+      "amount": 299,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
+    }
   },
   {
     "id": "estuche-kit-viaje",
@@ -142,7 +160,13 @@ window.DON_TURRON_CATALOG = [
     ],
     "variants": [],
     "contentStatus": "documented",
-    "commercialStatus": "pending_confirmation"
+    "commercialStatus": "pending_confirmation",
+    "retailPrice": {
+      "amount": 949,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
+    }
   },
   {
     "id": "reposa-puros-plegable",
@@ -183,7 +207,13 @@ window.DON_TURRON_CATALOG = [
       }
     ],
     "contentStatus": "documented",
-    "commercialStatus": "pending_confirmation"
+    "commercialStatus": "pending_confirmation",
+    "retailPrice": {
+      "amount": 189,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
+    }
   },
   {
     "id": "cortador-v-geometrico",
