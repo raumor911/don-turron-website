@@ -67,7 +67,7 @@ ${body}
 <footer class="dt-footer"><span>Don Turrón · Catálogo en prelanzamiento · Sin compras habilitadas</span><span class="dt-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="RAUVIA Consulting (abre en otra pestaña)"><strong>RAUVIA Consulting</strong></a></span></footer>
 </body></html>`;
 function productPage(p,k){
-  const images=p.images.map((x,i)=>`<figure><img src="../../${esc(x.src)}" alt="${esc(x.label)}" width="620" height="620" loading="${i?'lazy':'eager'}"><figcaption>${esc(x.label)}</figcaption></figure>`).join('');
+  const images=p.images.map((x,i)=>`<figure><img src="../../${esc(x.src)}" alt="${esc(x.label)}" width="620" height="620" decoding="async" loading="${i?'lazy':'eager'}" fetchpriority="${i?'low':'high'}"><figcaption>${esc(x.label)}</figcaption></figure>`).join('');
   const related=relatedProducts(p,k);
   const body=`<main class="dt-main"><nav class="dt-breadcrumb" aria-label="Ruta de navegación"><a href="../../index.html">Inicio</a> / <a href="../../index.html#coleccion">Colección</a> / ${esc(p.name)}</nav>
     <section class="dt-layout"><div><p class="dt-kicker">${esc(p.categoryLabel)} · Artículo documentado</p><h1 class="dt-title">${esc(p.name)}</h1>
@@ -94,7 +94,7 @@ function guidePage(k){
 }
 function prerenderHome(k){
   const cards=k.products.map(p=>{
-    const img=p.images.length?`<img class="travel-photo travel-photo-card" data-product-id="${esc(p.id)}" src="${esc(p.images[0].src)}" alt="Fotografía de ${esc(p.name)}; ${esc(p.images[0].label)}" loading="lazy" width="620" height="620">`:`<img src="assets/${esc(p.art)}.svg" alt="Ilustración conceptual de ${esc(p.name)}" loading="lazy">`;
+    const img=p.images.length?`<img class="travel-photo travel-photo-card" data-product-id="${esc(p.id)}" src="${esc(p.images[0].src)}" alt="Fotografía de ${esc(p.name)}; ${esc(p.images[0].label)}" loading="lazy" decoding="async" fetchpriority="low" width="620" height="620">`:`<img src="assets/${esc(p.art)}.svg" alt="Ilustración conceptual de ${esc(p.name)}" loading="lazy">`;
     return `<article class="product-card" data-id="${esc(p.id)}"><div class="product-art art-${esc(p.art)}">${p.badge?`<span class="product-badge">${esc(p.badge)}</span>`:''}<button type="button" class="product-image-trigger" data-open-photo="${esc(p.id)}" aria-label="Ver detalles de ${esc(p.name)}">${img}</button><button type="button" class="product-quick" data-detail="${esc(p.id)}" aria-label="Ver detalles de ${esc(p.name)}">↗</button></div><div class="product-details"><div class="product-category">${esc(p.categoryLabel.toUpperCase())}</div><h3>${esc(p.name)}</h3><p class="product-subtitle">${esc(p.subtitle)}</p>${p.launchWindow?`<p class="product-availability">${esc(p.launchWindow.label)}</p>`:''}<div class="product-buy">${p.retailPrice?`<span class="product-price product-price-set"><strong>${esc(retailText(p))}</strong><small>IVA incluido</small></span>`:`<span class="product-price">Precio por confirmar</span>`}<button type="button" class="add-product" data-add="${esc(p.id)}">Seleccionar <span>＋</span></button></div></div></article>`;
   }).join('\n');
   let html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
