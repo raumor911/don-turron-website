@@ -58,7 +58,7 @@
     },
     {
       "id": "source:encendedor-sarike-butano",
-      "name": "Ficha proporcionada e imágenes de encendedor Sarike de butano",
+      "name": "Ficha proporcionada e imágenes de encendedor Parike de butano",
       "type": "supplier_material",
       "path": "docs/ENCENDEDOR_SARIKE_BUTANO.md",
       "visibility": "public_preview"

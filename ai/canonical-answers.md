@@ -8,7 +8,7 @@ Fuentes: source:brand-home
 
 ## ¿Se puede comprar?
 
-El catálogo está en prelanzamiento y no acepta pedidos ni pagos. Cinco accesorios ya muestran precios finales al público en MXN con IVA incluido y envío por separado; las existencias siguen por confirmar. El cortapuros en V y el encendedor Sarike tienen disponibilidad prevista para enero de 2027 y todavía no tienen precio publicado.
+El catálogo está en prelanzamiento y no acepta pedidos ni pagos. Cinco accesorios ya muestran precios finales al público en MXN con IVA incluido y envío por separado; las existencias siguen por confirmar. El cortapuros en V y el encendedor Parike tienen disponibilidad prevista para enero de 2027 y todavía no tienen precio publicado.
 
 Fuentes: source:brand-home
 

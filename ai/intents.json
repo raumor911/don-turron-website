@@ -218,8 +218,8 @@
       "name": "Encendedor de butano con modos de llama",
       "description": "Explorar un encendedor metálico de butano con opción de llama tradicional y llama azul, sujeto a confirmación técnica.",
       "exampleExpressions": [
-        "encendedor Sarike butano plata",
-        "encendedor Sarike dorado llama azul",
+        "encendedor Parike butano plata",
+        "encendedor Parike dorado llama azul",
         "encendedor para puros con doble modo de llama"
       ],
       "transactionStage": "exploration",

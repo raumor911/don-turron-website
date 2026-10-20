@@ -1,7 +1,7 @@
 {
   "name": "Don Turrón Semantic Knowledge Graph",
   "version": "1.0.0",
-  "fingerprint": "f138a39505d3707c6ddfb79e0bfa590c6c95ac47d49dbc96bbd6573385a97e91",
+  "fingerprint": "030003572893bf64f90f0763f1ba8c84e70f2d6266af6ee1526680bcfce3b3c9",
   "nodes": [
     {
       "id": "brand:don-turron",
@@ -243,7 +243,7 @@
     {
       "id": "encendedor-sarike-butano",
       "type": "Product",
-      "name": "Encendedor metálico Sarike de doble llama",
+      "name": "Encendedor metálico Parike de doble llama",
       "status": "documented",
       "launchWindow": {
         "status": "planned",
@@ -429,7 +429,7 @@
     {
       "id": "source:encendedor-sarike-butano",
       "type": "Source",
-      "name": "Ficha proporcionada e imágenes de encendedor Sarike de butano",
+      "name": "Ficha proporcionada e imágenes de encendedor Parike de butano",
       "status": "supplier_material"
     },
     {
@@ -477,7 +477,7 @@
     {
       "id": "claim:encendedor-sarike-butano-description",
       "type": "Claim",
-      "name": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado.",
+      "name": "Encendedor metálico Parike de butano con diseño compacto y detalles de acabado texturizado. Permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado.",
       "status": "supplier_declared"
     }
   ],
