@@ -2,7 +2,7 @@
 
 Don Turrón es una marca mexicana de accesorios y estilo de vida que comienza con una colección de accesorios para puros.
 
-> Prelanzamiento. Sin pagos, precios ni inventario confirmados.
+> Prelanzamiento sin pagos ni inventario confirmado. Cinco productos con precio público final (IVA incluido, envío no incluido); dos próximos lanzamientos sin precio.
 
 - [Marca](/ai/brand.md)
 - [Catálogo](/ai/catalog.md)
