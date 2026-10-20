@@ -42,6 +42,7 @@
   let gesture = null;
   let suppressModalClickUntil = 0;
   let suppressLightboxClickUntil = 0;
+  const warmedPhotos = new Set();
   const emit = (event, properties={}) => { try { window.dispatchEvent(new CustomEvent('dt:interaction',{detail:{event,...properties}})); } catch {} };
   const currentProductId = () => modalContent.querySelector('img.travel-photo-modal')?.dataset.productId || null;
 
@@ -93,16 +94,21 @@
     settleMotion(motionTarget(lightbox.hidden?'modal':'lightbox'),direction===1?1:-1,true);
     warmNextPhoto();
   }
-  // Precarga solo la siguiente foto de la galería activa, no toda la colección.
+  // Solo cuando el visitante abre una galería: precargar anterior y siguiente
+  // para eliminar espera al deslizar hacia ambos lados. Evitar redes lentas.
   function warmNextPhoto() {
-    if (location.protocol !== 'https:' || navigator.connection?.saveData) return;
+    const connection = navigator.connection;
+    if (location.protocol !== 'https:' || connection?.saveData || /2g|3g/.test(connection?.effectiveType || '')) return;
     const product = (window.DON_TURRON_CATALOG || []).find(p => p.id === currentProductId());
     if (!product || !Array.isArray(product.images) || product.images.length < 2) return;
-    const next = product.images[(activeIndex() + 1) % product.images.length];
-    if (!next?.src) return;
-    const image = new Image();
-    image.decoding = 'async';
-    image.src = next.src;
+    for(const direction of [-1,1]) {
+      const next = product.images[(activeIndex() + direction + product.images.length) % product.images.length];
+      if (!next?.src || warmedPhotos.has(next.src)) continue;
+      warmedPhotos.add(next.src);
+      const image = new Image();
+      image.decoding = 'async';
+      image.src = next.src;
+    }
   }
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -117,6 +123,7 @@
     }
     element.style.transform = '';
     element.style.opacity = '';
+    element.classList.remove('dt-swipe-dragging');
   }
   function settleMotion(element, startX, changed) {
     if (!element) return;
@@ -144,7 +151,8 @@
     gesture = {
       pointerId:event.pointerId, origin, element:target,
       startX:event.clientX, startY:event.clientY,
-      x:event.clientX, y:event.clientY, at:performance.now(), axis:null, dragged:false
+      x:event.clientX, y:event.clientY, at:performance.now(), axis:null, dragged:false,
+      width:Math.max(150,target.getBoundingClientRect().width)
     };
   }
   function trackSwipe(event) {
@@ -154,8 +162,9 @@
     if (!g.axis && Math.hypot(dx,dy) > 8) g.axis = Math.abs(dx) > Math.abs(dy)*1.15 ? 'x' : 'y';
     if (g.axis !== 'x') return;
     g.dragged = true;
+    g.element.classList.add('dt-swipe-dragging');
     // La fotografía sigue el dedo; solo se anima el transform (sin recalcular layout).
-    const width = Math.max(150,g.element.getBoundingClientRect().width);
+    const width = g.width;
     const offset = Math.max(-width*.52,Math.min(width*.52,dx*.88));
     g.element.style.transform = 'translate3d(' + offset + 'px,0,0)';
     g.element.style.opacity = String(Math.max(.76,1-Math.abs(offset)/width*.30));
@@ -166,7 +175,7 @@
     const dx=event.clientX-g.startX, dy=event.clientY-g.startY;
     const horizontal = g.axis === 'x' || (!g.axis && Math.abs(dx)>Math.abs(dy)*1.15);
     const elapsed=Math.max(35,performance.now()-g.at);
-    const width=Math.max(150,g.element.getBoundingClientRect().width);
+    const width=g.width;
     // Distancia moderada o gesto rápido, sin activar un scroll vertical.
     const distance=Math.min(64,Math.max(30,width*.13));
     const accepted=!cancelled && horizontal && (Math.abs(dx)>=distance || Math.abs(dx)>=24 && Math.abs(dx)/elapsed>.5);
