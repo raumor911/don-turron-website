@@ -30,10 +30,11 @@ test('DT-TEL-001 known bots, claimed not verified, extended policy',()=>{
  assert.equal(detectCrawler('NotGooglebot')?.crawler_name,'generic-crawler'); // not misidentified as Googlebot
 });
 test('Semantic Core manifest drives resources and product IDs',()=>{
- assert.equal(knowledge.products.length,7,'Only 7 documented products are kept');
+ assert.equal(knowledge.products.length,8,'Eight documented products are kept');
  assert.ok(!knowledge.products.some(p=>p.id==='encendedor-jet'),'Unbacked legacy illustration removed');
  assert.equal(classifyPath('/productos/encendedor-sarike-butano/',knowledge).product_id,'encendedor-sarike-butano');
  assert.equal(classifyPath('/productos/cortador-v-geometrico/',knowledge).product_id,'cortador-v-geometrico');
+ assert.equal(classifyPath('/productos/encendedor-honest-punch/',knowledge).product_id,'encendedor-honest-punch');
  assert.equal(classifyPath('/productos/humidor-viaje-5-puros/?token=secret',knowledge).product_id,'humidor-viaje-5-puros');
  assert.equal(classifyPath('/productos/encendedor-jet/',knowledge).eligible,false);
  assert.equal(classifyPath('/llms.txt',knowledge).page_type,'system_llms');
