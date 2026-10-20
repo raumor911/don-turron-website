@@ -206,11 +206,11 @@ with sync_playwright() as p:
    assert page.locator('#product-modal-close').is_visible(), f'Cerrar detalle disponible en {name} / {product_id}'
    close_style=page.locator('#product-modal-close').evaluate("""el => {
      const rect=el.getBoundingClientRect(), css=getComputedStyle(el);
-     return {width:rect.width,height:rect.height,radius:css.borderRadius,
+     return {width:rect.width,height:rect.height,definedWidth:parseFloat(css.width),radius:css.borderRadius,
              background:css.backgroundColor,label:el.getAttribute('aria-label')};
    }""")
    if touch:
-    assert close_style['width']>=44 and close_style['height']>=44, f'Cierre tactil pequeño en {name} / {product_id}: {close_style}'
+    assert close_style['definedWidth']>=48 and close_style['width']>=44 and close_style['height']>=44, f'Cierre tactil pequeño en {name} / {product_id}: {close_style}'
     assert close_style['radius']=='50%',f'Cierre circular móvil {name} / {product_id}'
    assert close_style['label']=='Cerrar detalle',f'Nombre accesible de salida en {name} / {product_id}'
 
