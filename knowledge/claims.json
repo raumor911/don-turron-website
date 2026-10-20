@@ -79,7 +79,7 @@
   {
     "id": "claim:encendedor-sarike-butano-description",
     "subjectId": "encendedor-sarike-butano",
-    "statement": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado.",
+    "statement": "Encendedor metálico Parike de butano con diseño compacto y detalles de acabado texturizado. Permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado.",
     "status": "supplier_declared",
     "sourceIds": [
       "source:encendedor-sarike-butano"

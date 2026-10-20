@@ -67,20 +67,20 @@ with sync_playwright() as p:
   assert page.locator('.philosophy-frame img').evaluate("el => getComputedStyle(el).filter.includes('dt-edge-bronze')"), 'Emblema aplica filtro café claro'
   assert page.locator('.product-card.dt-enter').count()==7, 'Animación de siete productos'
   page.locator('[data-filter="encendedores"]').click()
-  assert page.locator('.product-card').count()==1, 'Solo el encendedor Sarike tiene ficha verificada documentalmente'
-  assert page.locator('.product-card[data-id="encendedor-sarike-butano"]').count()==1, 'Tarjeta Sarike añadida'
-  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-badge').inner_text()=='PRÓXIMAMENTE', 'Encendedor Sarike: nueva etiqueta'
-  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Sarike: mes previsto'
-  assert 'Flama suave y jet' in page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-subtitle').inner_text(), 'Sarike reúne ambos tipos de flama'
+  assert page.locator('.product-card').count()==1, 'Solo el encendedor Parike tiene ficha verificada documentalmente'
+  assert page.locator('.product-card[data-id="encendedor-sarike-butano"]').count()==1, 'Tarjeta Parike añadida'
+  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-badge').inner_text()=='PRÓXIMAMENTE', 'Encendedor Parike: nueva etiqueta'
+  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Parike: mes previsto'
+  assert 'Flama suave y jet' in page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-subtitle').inner_text(), 'Parike reúne ambos tipos de flama'
   page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-image-trigger').click()
-  assert page.locator('#product-modal-name').inner_text()=='Encendedor metálico Sarike de doble llama', 'Ficha Sarike'
-  assert page.locator('.modal-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Sarike: fecha en modal'
+  assert page.locator('#product-modal-name').inner_text()=='Encendedor metálico Parike de doble llama', 'Ficha Parike'
+  assert page.locator('.modal-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Parike: fecha en modal'
   assert page.locator('.modal-retail-price').count()==0, 'No price on upcoming lighter'
-  assert page.locator('.travel-gallery-controls button').count()==3, 'Galería Sarike con tres fotos'
-  assert 'pendientes de verificación independiente' not in page.locator('#product-modal-content').inner_text().lower(), 'No verificación en ficha Sarike'
+  assert page.locator('.travel-gallery-controls button').count()==4, 'Galería Parike con cuatro fotos'
+  assert 'pendientes de verificación independiente' not in page.locator('#product-modal-content').inner_text().lower(), 'No verificación en ficha Parike'
   assert 'declarado por el proveedor' not in page.locator('#product-modal-content').inner_text().lower(), 'Combustible sin expresión redundante'
-  assert 'existencias por confirmar' not in page.locator('#product-modal-content').inner_text().lower(), 'Sin frases de existencias Sarike'
-  assert 'Las características se muestran según la información disponible' not in page.locator('#product-modal-content').inner_text(), 'Sin aviso genérico en Sarike'
+  assert 'existencias por confirmar' not in page.locator('#product-modal-content').inner_text().lower(), 'Sin frases de existencias Parike'
+  assert 'Las características se muestran según la información disponible' not in page.locator('#product-modal-content').inner_text(), 'Sin aviso genérico en Parike'
   page.locator('#product-modal-close').click()
   page.locator('[data-filter="cortadores"]').click()
   assert page.locator('.product-card').count()==1, 'Nueva categoría cortadores'
@@ -197,7 +197,7 @@ with sync_playwright() as p:
    ('estuche-kit-viaje',2),
    ('reposa-puros-plegable',3),
    ('cortador-v-geometrico',5),
-   ('encendedor-sarike-butano',3)
+   ('encendedor-sarike-butano',4)
   ]
   for product_id,total in cases:
    page.locator(f'.product-card[data-id="{product_id}"] .product-image-trigger').click()

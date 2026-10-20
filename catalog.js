@@ -274,11 +274,11 @@ window.DON_TURRON_CATALOG = [
   },
   {
     "id": "encendedor-sarike-butano",
-    "name": "Encendedor metálico Sarike de doble llama",
+    "name": "Encendedor metálico Parike de doble llama",
     "category": "encendedores",
     "categoryLabel": "Encendedores",
     "subtitle": "Flama suave y jet en una sola pieza.",
-    "description": "Encendedor metálico Sarike de butano con diseño compacto y detalles de acabado texturizado. Permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado.",
+    "description": "Encendedor metálico Parike de butano con diseño compacto y detalles de acabado texturizado. Permite alternar entre una flama suave (tradicional) y una flama jet (azul concentrada) mediante el control lateral. Disponible en acabados plata y dorado.",
     "features": [
       "Combustible: gas butano",
       "Dos modos de flama: suave y jet (azul), con control lateral",
@@ -290,16 +290,20 @@ window.DON_TURRON_CATALOG = [
     "badge": "PRÓXIMAMENTE",
     "images": [
       {
-        "src": "assets/products/encendedor-sarike-plata.webp",
-        "label": "Encendedor Sarike con acabado plateado, vista frontal"
+        "src": "assets/products/encendedor-parike-plata.webp",
+        "label": "Encendedor Parike con acabado plateado, vista frontal"
       },
       {
-        "src": "assets/products/encendedor-sarike-dorado.webp",
-        "label": "Encendedor Sarike con acabado dorado, vista frontal"
+        "src": "assets/products/encendedor-parike-dorado.webp",
+        "label": "Encendedor Parike con acabado dorado, vista frontal"
+      },
+      {
+        "src": "assets/products/encendedor-parike-ambos-acabados.webp",
+        "label": "Encendedor Parike de doble llama: acabados plateado y dorado"
       },
       {
         "src": "assets/products/encendedor-sarike-modos-llama.webp",
-        "label": "Demostración ilustrativa del mecanismo de llama tradicional y llama azul"
+        "label": "Ilustración de los dos modos de flama: suave y jet"
       }
     ],
     "variants": [

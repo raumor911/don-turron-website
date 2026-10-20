@@ -13,4 +13,4 @@ Estado: prelanzamiento sin pedidos ni pagos. Cinco accesorios tienen precio fina
 - [Estuche portátil para 4 a 8 puros](/productos/estuche-kit-viaje/) — $949 MXN, IVA incluido; envío no incluido.
 - [Reposa puros plegable de acero inoxidable](/productos/reposa-puros-plegable/) — $189 MXN, IVA incluido; envío no incluido.
 - [Cortapuros en V de metal con acabado geométrico](/productos/cortador-v-geometrico/) — Disponibilidad prevista: enero de 2027; precio por confirmar.
-- [Encendedor metálico Sarike de doble llama](/productos/encendedor-sarike-butano/) — Disponibilidad prevista: enero de 2027; precio por confirmar.
+- [Encendedor metálico Parike de doble llama](/productos/encendedor-sarike-butano/) — Disponibilidad prevista: enero de 2027; precio por confirmar.
