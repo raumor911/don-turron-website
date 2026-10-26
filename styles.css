@@ -49,3 +49,15 @@
 .modal-retail-price strong{font:500 31px/1.1 var(--serif);color:#664726;white-space:nowrap}
 .modal-retail-price small{font-size:11px;color:#806f5a}
 @media(max-width:580px){.product-price-set strong{font-size:19px}.product-price-set small{font-size:8px}.modal-retail-price strong{font-size:27px}}
+
+/* Reposa puros — variantes con inventario registrado, sin habilitar comercio */
+.product-stock{margin:0 0 12px;color:#6d573b;font-size:11px;line-height:1.6;font-weight:650}
+.variant-picker{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 11px;margin:0 0 15px}
+.variant-picker label{display:flex;flex-direction:column;gap:5px;min-width:0;color:#77644c;font-size:10px;letter-spacing:.03em}
+.variant-picker select{width:100%;min-width:0;max-width:100%;border:1px solid #cfc0ae;background:#faf7f1;color:#31261c;border-radius:2px;min-height:36px;padding:7px 8px;font-size:12px}
+.variant-picker select:focus-visible{outline:2px solid #a17847;outline-offset:2px}
+.variant-picker select:disabled{opacity:.65}
+.variant-picker .variant-remaining{grid-column:1/-1;margin:0;color:#7b6957;font-size:10px;line-height:1.5}
+.add-product:disabled,.modal-text [data-add]:disabled{opacity:.45;cursor:not-allowed}
+.drawer-variant{font-weight:700;color:#7c5839!important;font-size:11px!important}
+@media(max-width:580px){.product-stock{font-size:9px}.variant-picker{grid-template-columns:minmax(0,1fr);gap:7px}.variant-picker label{font-size:9px}.variant-picker select{font-size:11px;min-height:34px}.variant-picker .variant-remaining{font-size:9px}.modal-text .variant-picker{grid-template-columns:repeat(2,minmax(0,1fr))}}

@@ -4,7 +4,7 @@ Don Turrón es una marca mexicana de accesorios y estilo de vida que comienza co
 
 Lema: El arte está en los detalles.
 
-Estado: prelanzamiento sin pedidos ni pagos. Cinco accesorios tienen precio final al público en MXN con IVA incluido y envío por separado; existencias por confirmar. Tres próximos lanzamientos carecen todavía de precio.
+Estado: prelanzamiento sin pedidos ni pagos. Cinco accesorios tienen precio final al público en MXN con IVA incluido y envío por separado. Inventario registrado únicamente para el reposa puros: Plata (2 unidades) y Negro (1 unidad); demás existencias por confirmar. Tres próximos lanzamientos carecen todavía de precio.
 
 ## Accesorios documentados
 - [Humidor de viaje para 5 puros](/productos/humidor-viaje-5-puros/) — $649 MXN, IVA incluido; envío no incluido.

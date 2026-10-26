@@ -170,6 +170,25 @@ with sync_playwright() as p:
   page.locator('#product-modal-content [data-add]').click()
   assert page.locator('#cart-count').inner_text()=='2', 'Añadir soporte sin romper selección'
   page.locator('#product-modal-close').click()
+  reposa=page.locator('.product-card[data-id="reposa-puros-plegable"]')
+  assert 'Plata: 2 disponibles' in reposa.inner_text(), 'Inventario Plata visible en tarjeta'
+  assert 'Negro: 1 disponible' in reposa.inner_text(), 'Inventario Negro visible en tarjeta'
+  assert reposa.locator('[data-variant-qty] option').count()==1, 'Una unidad Plata restante después del modal'
+  reposa.locator('[data-add]').click()
+  assert page.locator('#cart-count').inner_text()=='3', 'Agrega la segunda unidad Plata'
+  assert reposa.locator('[data-add]').is_disabled(), 'No permite exceder las dos Plata'
+  reposa.locator('[data-variant-color]').select_option('Negro')
+  assert reposa.locator('[data-add]').is_enabled(), 'Negro se gestiona por separado'
+  assert reposa.locator('[data-variant-qty] option').count()==1, 'Solo una unidad Negro'
+  reposa.locator('[data-add]').click()
+  assert page.locator('#cart-count').inner_text()=='4', 'Añade una unidad Negro'
+  assert reposa.locator('[data-add]').is_disabled(), 'No permite exceder el Negro'
+  page.locator('#open-selection').click()
+  assert 'Color: Plata' in page.locator('#drawer-contents').inner_text(), 'Selección distingue Plata'
+  assert 'Color: Negro' in page.locator('#drawer-contents').inner_text(), 'Selección distingue Negro'
+  assert page.locator('#drawer-contents [data-id="reposa-puros-plegable::Plata"][data-qty="1"]').is_disabled(), 'No se puede aumentar Plata en el drawer'
+  assert page.locator('#drawer-contents [data-id="reposa-puros-plegable::Negro"][data-qty="1"]').is_disabled(), 'No se puede aumentar Negro en el drawer'
+  page.locator('#close-selection').click()
   for asset in ['reposa-puros-dos-acabados.webp','reposa-puros-plata.webp','reposa-puros-negro.webp']:
    assert (PROJECT/'assets/products'/asset).is_file(), f'Falta imagen {asset}'
   # Simulación determinista de Pointer Events táctiles en Chromium móvil.
