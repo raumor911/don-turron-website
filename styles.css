@@ -66,3 +66,6 @@
 .drawer-copy[aria-disabled="true"]{opacity:.5;cursor:not-allowed;pointer-events:none}
 
 @media(max-width:580px){.hero-photo{background-image:url("assets/responsive/emblema-640.webp")}}
+
+/* Preserve the monogram aspect ratio when intrinsic dimensions reserve layout space. */
+.brand-icon img,.footer-brand img{height:auto}

@@ -67,6 +67,9 @@
 
 @media(max-width:580px){.hero-photo{background-image:url("assets/responsive/emblema-640.webp")}}
 
+/* Preserve the monogram aspect ratio when intrinsic dimensions reserve layout space. */
+.brand-icon img,.footer-brand img{height:auto}
+
 /* DON TURRÓN / ATELIER MOTION
    V2 · Opt-in enhancement. Brand first, movement second.
    All effects degrade gracefully without JavaScript. */
