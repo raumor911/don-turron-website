@@ -69,7 +69,7 @@ function writeAi(k,fingerprint,graph){
   out('llms-full.txt',brandMd+'\n'+catalogMd+'\n'+asMd(k['canonical-answers'].filter(publicItem))+'\n');
   out('ai/content-manifest.json',{version:1,knowledgeFingerprint:fingerprint,releaseStatus:'prelaunch',files:paths.filter(x=>x!=='ai/content-manifest.json'),generatedFrom:'knowledge/*.json',crawlerNote:'No atribuir visitas ni recomendaciones a asistentes sin evidencia de origen.'});
 }
-function writeHomepage(schema){
+function writeHomepage(schema,k){
   const file=path.join(ROOT,'index.html');let html=fs.readFileSync(file,'utf8');
   const block='<!-- DT-JSONLD-START -->\n<script type="application/ld+json">'+JSON.stringify(schema)+'</script>\n<!-- DT-JSONLD-END -->';
   if(html.includes('<!-- DT-JSONLD-START -->'))html=html.replace(/<!-- DT-JSONLD-START -->[\s\S]*?<!-- DT-JSONLD-END -->/,block);
@@ -78,6 +78,12 @@ function writeHomepage(schema){
     if(!source.test(html))throw new Error('Home JSON-LD anchor not found');
     html=html.replace(source,block);
   }
+  // Una única fuente de verdad para FAQ visible y LLMO: knowledge/faq.json.
+  const faq=k.faq.filter(publicItem).map(item=>'<details><summary>'+escape(item.question)+'<span>+</span></summary><p>'+escape(item.answer)+'</p></details>').join('');
+  const faqBlock='<div class="faq-items"><!-- DT-FAQ-START -->'+faq+'<!-- DT-FAQ-END --></div>';
+  const faqRegion=/<div class="faq-items">[\s\S]*?<\/div>/;
+  if(!faqRegion.test(html))throw new Error('Homepage FAQ container missing');
+  html=html.replace(faqRegion,faqBlock);
   if(!html.includes('name="robots" content="noindex, nofollow"'))throw new Error('Prelaunch noindex gate missing');
   out('index.html',html);
 }
@@ -94,7 +100,7 @@ export function compile(){
   const graph=knowledgeGraph(k,fingerprint);
   writeAi(k,fingerprint,graph);
   const schema=generalSchema(k);
-  writeHomepage(schema);
+  writeHomepage(schema,k);
   // Release gate: do not output sitemap/canonical while siteUrl is unknown.
   if(fs.existsSync(path.join(ROOT,'sitemap.xml')))throw new Error('Prelaunch prohibits sitemap.xml without verified domain');
   console.log('DT-SC-002 compiled; knowledge fingerprint '+fingerprint);
