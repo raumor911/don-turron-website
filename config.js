@@ -7,6 +7,6 @@ window.DON_TURRON_CONFIG = {
   contactEmail: '', // Ej. contacto@dominio-propio.mx, cuando exista una cuenta real.
   currency: 'MXN',
   catalogMode: 'inquiry', // Selección por WhatsApp, sin cobro en el sitio.
-  liveCatalogEnabled: false, // Activar solo cuando 003 SQL + API + secretos se verifiquen.
+  liveCatalogEnabled: true, // Consume /api/catalog desde MySQL; si no responde, muestra estado por confirmar.
   siteUrl: '' // Completar con dominio definitivo y retirar noindex al lanzamiento.
 };
