@@ -37,15 +37,16 @@ window.DON_TURRON_CONFIG = {
   contactEmail: '',  // correo real para activar mailto
   currency: 'MXN',
   catalogMode: 'inquiry',
-  siteUrl: ''
+  liveCatalogEnabled: true,
+  siteUrl: 'https://www.donturron.com.mx/'
 };
 ```
 
-**`catalog.js`** se genera desde `knowledge/products.json` y contiene siete accesorios documentados. No agregues precios/stock hasta contar con una fuente de verdad. El `id` debe ser único y estable para la selección local.
+**`catalog.js`** se genera desde `knowledge/products.json` y contiene ocho accesorios documentados. La base MySQL de Don Turrón proporciona inventario y datos comerciales al navegador mediante la API protegida del servidor; el HTML prerenderizado conserva un snapshot editorial. El `id` debe ser único y estable para la selección local.
 
 Los SVG en `assets/` son ilustraciones de apoyo, **no fotografías de productos disponibles**. El script `make-art.py` recrea esos SVG y es opcional en el despliegue. Los logos aportados se encuentran en el mismo directorio.
 
-La etiqueta `<meta name="robots" content="noindex, nofollow">` y `robots.txt` impiden la indexación intencionadamente durante el pre-lanzamiento. Para habilitar indexación **después de validar el sitio**, retirar `noindex`, publicar el sitemap/canonical con el dominio auténtico, ajustar Open Graph y registrar el dominio en Search Console.
+Las rutas públicas de producción incluyen `<meta name="robots" content="index, follow">`, enlaces canónicos a `https://www.donturron.com.mx/`, un `robots.txt` permisivo y el sitemap `https://www.donturron.com.mx/sitemap.xml`. Para solicitar indexación, registrar el dominio en Google Search Console.
 
 ## Pruebas
 
@@ -117,9 +118,9 @@ npm run test:observability
 npm run test:nojs # requiere Playwright y Chromium
 ```
 
-La compilación crea siete tarjetas estáticas en `index.html`, siete fichas en `productos/<id>/index.html` y una guía en `guia/estuche-o-humidor/index.html`. Las galerías y la selección siguen en JavaScript, usando las mismas imágenes de `knowledge/products.json`.
+La compilación crea ocho tarjetas estáticas en `index.html`, ocho fichas en `productos/<id>/index.html` y una guía en `guia/estuche-o-humidor/index.html`. Las galerías y la selección siguen en JavaScript, usando las mismas imágenes de `knowledge/products.json`.
 
-**Release gate:** `semantic-release.json` exige modo `prelaunch`, sin dominio, indexación, ventas ni IndexNow. `noindex` y `robots.txt` siguen activos. Este flujo no despliega a producción.
+**Release gate:** `semantic-release.json` usa modo `production`, dominio `www.donturron.com.mx` e indexación activada. El generador mantiene `robots.txt`, sitemap y canónicos coherentes. `enableCommerce`, `publishOffers` e `indexNow` continúan desactivados; no habilita cobros, ofertas estructuradas ni llamadas de IndexNow.
 
 **Fuentes y gobierno:** [Arquitectura](docs/DT_SEMANTIC_ARCHITECTURE.md), [Contrato](docs/DT_KNOWLEDGE_CONTRACT.md), [Claims](docs/DT_CLAIMS_GOVERNANCE.md), [Relevancia](docs/DT_RELEVANCE_LAYER.md), [SEO gates](docs/DT_SEO_RELEASE_GATES.md), [Observabilidad](docs/DT_CRAWLER_OBSERVABILITY.md), [Cambios](docs/DT_SEMANTIC_CHANGELOG.md).
 
@@ -147,8 +148,8 @@ El pie de página acredita el desarrollo con la frase **«Experiencia digital de
 
 Se incorpora como séptima tarjeta documentada `encendedor-sarike-butano` (encendedor metálico de butano con acabado plata/dorado y modos de llama descritos por el proveedor). Su ficha, tres imágenes WebP y atributos semánticos proceden de `knowledge/products.json` y `docs/ENCENDEDOR_SARIKE_BUTANO.md`. La tarjeta conceptual `encendedor-jet` se retiró al confirmar que Sarike ofrece flama suave y jet. Ninguno de los productos se ofrece todavía para compra. No se publican precios, existencias ni garantías sin verificación.
 
-Los pipelines semántico y de telemetría compilan el catálogo vigente antes de comprobar las interacciones de navegador. No modificar `catalog.js`, `ai/` ni las fichas prerenderizadas manualmente: ejecutar `npm run build:semantic` para actualizarlas. El estado de prelanzamiento y `noindex` siguen activos.
+Los pipelines semántico y de telemetría compilan el catálogo vigente antes de comprobar las interacciones de navegador. No modificar `catalog.js`, `ai/` ni las fichas prerenderizadas manualmente: ejecutar `npm run build:semantic` para actualizarlas. El sitio es indexable; la selección por WhatsApp no equivale a un checkout.
 
 ## Ajuste editorial · catálogo de siete artículos y footer
 
-El catálogo ya no publica la ilustración de un encendedor jet sin producto respaldado. El **encendedor Sarike** es la única ficha de encendedor: según el proveedor dispone de **flama suave y flama jet**, con lanzamiento previsto para enero de 2027. Se conserva la distinción entre especificaciones declaradas y ensayos no verificados. El footer presenta a la izquierda el aviso de derechos reservados y a la derecha el crédito enlazado a **RAUVIA Consulting**; se eliminó la leyenda visual «Sitio en preparación». También se retiró el selector visible de movimiento, manteniendo el ajuste de accesibilidad del sistema operativo. La indexación continúa bloqueada por el gate de prelanzamiento.
+El catálogo ya no publica la ilustración de un encendedor jet sin producto respaldado. El **encendedor Sarike** es la única ficha de encendedor: según el proveedor dispone de **flama suave y flama jet**, con lanzamiento previsto para enero de 2027. Se conserva la distinción entre especificaciones declaradas y ensayos no verificados. El footer presenta a la izquierda el aviso de derechos reservados y a la derecha el crédito enlazado a **RAUVIA Consulting**; se eliminó la leyenda visual «Sitio en preparación». También se retiró el selector visible de movimiento, manteniendo el ajuste de accesibilidad del sistema operativo. La indexación se habilitó posteriormente mediante el gate de publicación productiva.
