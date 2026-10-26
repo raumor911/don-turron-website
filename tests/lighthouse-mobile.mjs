@@ -16,7 +16,7 @@ for(const [label,url] of cases){
   }
 }
 const median=key=>Object.fromEntries(Object.entries(results).map(([label,r])=>[label,r.map(x=>x[key]).sort((a,b)=>a-b)[1]]));
-const summary={method:'Lighthouse default mobile simulated Slow 4G; 3 cold runs per local HTTP source; same runner, no CDN',baseline:'b358c90b6c50cdf5dd818d082e6f3a2683aecff1',results,median:Object.fromEntries(['score','lcp','fcp','cls','tbt','bytes'].map(k=>[k,median(k)]))};
+const summary={method:'Lighthouse default mobile simulated Slow 4G; 3 cold runs per gzip-negotiated static HTTP source; same runner, CDN latency excluded',baseline:'b358c90b6c50cdf5dd818d082e6f3a2683aecff1',results,median:Object.fromEntries(['score','lcp','fcp','cls','tbt','bytes'].map(k=>[k,median(k)]))};
 fs.writeFileSync('tests/performance/summary.json',JSON.stringify(summary,null,2)+'\n');
 console.log('DT_MOBILE_METRICS '+JSON.stringify(summary));
 if(summary.median.lcp.after>summary.median.lcp.before+100)throw new Error('Mobile LCP regression');

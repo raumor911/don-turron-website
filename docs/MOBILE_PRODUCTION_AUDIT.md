@@ -24,3 +24,7 @@ The local environment denies listening sockets, browser processes and outbound s
 ## Concurrent main changes preserved
 
 Main advanced to `20ed3de51e59163170de90da253d196730004527` during the audit, adding the gated inventory API and catalog client. These changes are integrated without activating `liveCatalogEnabled`, executing migrations or configuring database secrets. Responsive card hints apply only to the known compiled derivatives; future database-managed images fall back to their original URL. The inventory contract is included in validation.
+
+## Compression and benchmark comparability
+
+The initial local series used Python's uncompressed server: baseline median LCP 5.407 s versus integrated candidate 3.381 s, performance 76 versus 92, and 941488 versus 474688 transferred bytes. This differs from production, where the original PSI report measured only 18.1 KiB for the three CSS responses instead of their roughly 55 KiB uncompressed source. The final comparison negotiates gzip for HTML/CSS/JS/JSON/SVG on **both** baseline and candidate servers using the same handler; WOFF2 and images pass through unchanged. A decoded byte comparison verifies the CSS response. This changes the benchmark transport, not Vercel configuration or application content. The LCP <3 s and CLS ≤0.1 budgets remain unchanged. Public PSI must still verify the merged deployment; gzip simulation does not reproduce CDN latency or field conditions.

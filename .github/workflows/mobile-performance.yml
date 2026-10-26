@@ -45,8 +45,9 @@ jobs:
         run: |
           mkdir -p /tmp/dt-baseline
           git archive b358c90b6c50cdf5dd818d082e6f3a2683aecff1 | tar -x -C /tmp/dt-baseline
-          python -m http.server 8128 --bind 127.0.0.1 --directory /tmp/dt-baseline > /tmp/dt-before.log 2>&1 &
-          python -m http.server 8127 --bind 127.0.0.1 > /tmp/dt-after.log 2>&1 &
+          python tests/serve_compressed.py --port 8128 --directory /tmp/dt-baseline > /tmp/dt-before.log 2>&1 &
+          python tests/serve_compressed.py --port 8127 > /tmp/dt-after.log 2>&1 &
+          curl --retry 5 --retry-connrefused --retry-delay 1 --silent --show-error --compressed http://127.0.0.1:8127/site.css | cmp site.css -
           node tests/lighthouse-mobile.mjs
       - uses: actions/upload-artifact@v4
         if: always()
