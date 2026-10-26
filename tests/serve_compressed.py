@@ -14,6 +14,18 @@ class CompressedHandler(SimpleHTTPRequestHandler):
     def log_message(self, *_args):
         pass
 
+    def do_GET(self):
+        if self.path=='/api/catalog':
+            body=b'{"error":"catalog_unavailable"}'
+            self.send_response(503)
+            self.send_header('Content-Type','application/json')
+            self.send_header('Cache-Control','no-store')
+            self.send_header('Content-Length',str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        return super().do_GET()
+
     def send_head(self):
         path=Path(self.translate_path(self.path))
         if path.is_dir():

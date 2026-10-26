@@ -8,6 +8,11 @@ from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1]
 class SilentHandler(SimpleHTTPRequestHandler):
     def log_message(self,*_args): pass
+    def do_GET(self):
+        if self.path=='/api/catalog':
+            body=b'{"error":"catalog_unavailable"}'
+            self.send_response(503);self.send_header('Content-Type','application/json');self.send_header('Content-Length',str(len(body)));self.end_headers();self.wfile.write(body);return
+        return super().do_GET()
 with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROOT))) as server:
     Thread(target=server.serve_forever,daemon=True).start()
     base=os.environ.get('DT_LIVE_URL',f'http://127.0.0.1:{server.server_port}')
@@ -32,6 +37,8 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
             assert page.evaluate("document.fonts.check('400 16px Manrope') && document.fonts.check('italic 400 16px \"Cormorant Garamond\"')"), 'Original local fonts not loaded'
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Horizontal overflow'
             card=page.locator('[data-id="cenicero-mesa"]')
+            assert card.locator('.product-price').inner_text()=='Precio por confirmar', 'Unavailable API must not present stale price as current'
+            assert page.locator('.product-stock').count()==0, 'Unavailable API must not confirm build inventory'
             card.locator('[data-add]').click()
             page.locator('#open-selection').click()
             link=page.locator('#whatsapp-selection')

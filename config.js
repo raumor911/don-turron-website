@@ -7,6 +7,6 @@ window.DON_TURRON_CONFIG = {
   contactEmail: '', // Ej. contacto@dominio-propio.mx, cuando exista una cuenta real.
   currency: 'MXN',
   catalogMode: 'inquiry', // Selección por WhatsApp, sin cobro en el sitio.
-  liveCatalogEnabled: false, // Requiere migración, API y secretos verificados.
+  liveCatalogEnabled: true, // Activado en main: consulta /api/catalog y degrada a por confirmar.
   siteUrl: 'https://www.donturron.com.mx' // Dominio verificado en Vercel.
 };
