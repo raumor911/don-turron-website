@@ -30,10 +30,11 @@ if(!home.includes('noindex, nofollow')||!read('robots.txt').includes('Disallow: 
 if(!home.includes('DT-JSONLD-START'))throw new Error('Homepage JSON-LD missing');
 const schema=JSON.parse(home.match(/<!-- DT-JSONLD-START -->\s*<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
 if(schema['@graph'].some(n=>['Offer','AggregateRating','Review'].includes(n['@type'])))throw new Error('Unsupported markup');
-const publicFiles=['llms.txt','llms-full.txt','ai/brand.md','ai/catalog.md','ai/products.json','ai/knowledge-graph.json','ai/intents.json','ai/canonical-answers.md','ai/terminology.md','ai/sources.json','ai/content-manifest.json'];
+const publicFiles=['llms.txt','llms-full.txt','ai/brand.md','ai/catalog.md','ai/faq.md','ai/products.json','ai/knowledge-graph.json','ai/intents.json','ai/canonical-answers.md','ai/terminology.md','ai/sources.json','ai/content-manifest.json'];
 for(const file of publicFiles){if(!fs.existsSync(path.join(ROOT,file)))throw new Error('Missing output '+file);}
 for(const file of ['ai/products.json','ai/knowledge-graph.json','ai/intents.json','ai/sources.json','ai/content-manifest.json'])JSON.parse(read(file));
 for(const file of publicFiles){const s=read(file);if(/sk-proj-|BEGIN PRIVATE KEY|acquisitionCost|grossMargin|example\.com/i.test(s))throw new Error('Private value in '+file);}
+for(const item of k.faq.filter(x=>x.visibility==='public'||x.visibility==='public_preview'))if(!read('ai/faq.md').includes('## '+item.question+'\n\n'+item.answer))throw new Error('Public AI FAQ out of sync '+item.id);
 const retired='encendedor-jet';
 if(k.products.some(p=>p.id===retired))throw new Error('Removed phantom product returned in Semantic Core');
 for(const rel of ['catalog.js','index.html','ai/products.json','ai/catalog.md','ai/brand.md','llms-full.txt','ai/knowledge-graph.json']){
@@ -58,6 +59,16 @@ for(const p of documented){
 if(fs.existsSync(path.join(ROOT,'productos/encendedor-jet/index.html')))throw new Error('Conceptual product published with product page');
 if(!read('index.html').includes('DT-CATALOG-START')||(home.match(/class="product-card"/g)||[]).length!==k.products.length)throw new Error('Home not prerendered with current product count');
 if(!home.includes('id="whatsapp-selection"')||home.includes('id="copy-selection"'))throw new Error('WhatsApp selection CTA missing or obsolete');
+const escFaq=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const faqBlock=home.match(/<!-- DT-FAQ-START -->([\s\S]*?)<!-- DT-FAQ-END -->/);
+const visibleFaq=k.faq.filter(x=>x.visibility==='public'||x.visibility==='public_preview');
+if(!faqBlock||(faqBlock[1].match(/<details>/g)||[]).length!==visibleFaq.length)throw new Error('FAQ visible count diverges from Semantic Core');
+for(const item of visibleFaq){
+  const markup='<details><summary>'+escFaq(item.question)+'<span>+</span></summary><p>'+escFaq(item.answer)+'</p></details>';
+  if(!faqBlock[1].includes(markup))throw new Error('FAQ content diverges: '+item.id);
+}
+const puros=visibleFaq.filter(x=>x.id==='faq:puros');
+if(puros.length!==1||puros[0].question!=='¿Don Turrón vende puros?'||puros[0].answer!=='El alcance de este sitio es la exhibición de accesorios para puros. No se ofrecen puros ni tabaco a través de este catálogo.')throw new Error('Original puros FAQ was altered');
 if(!read('guia/estuche-o-humidor/index.html').includes('noindex, nofollow'))throw new Error('Guide not gated');
 const gate=JSON.parse(read('semantic-release.json'));
 if(gate.mode!=='prelaunch'||gate.enableIndexing!==false||gate.enableCommerce!==false||gate.verifiedDomain!==null)throw new Error('Invalid release gate');

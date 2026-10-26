@@ -3,7 +3,7 @@
     "id": "answer:marca",
     "intentId": "intent:marca",
     "question": "¿Qué es Don Turrón?",
-    "answer": "Don Turrón es una marca mexicana de accesorios y estilo de vida que comienza con una colección de accesorios para puros.",
+    "answer": "Don Turrón es una marca mexicana de accesorios y estilo de vida, operada por RAUVIA. Actualmente funciona mediante canales digitales desde la Ciudad de México, sin tienda boutique física.",
     "claimIds": [
       "claim:brand-mexico"
     ],
@@ -16,7 +16,7 @@
     "id": "answer:comprar",
     "intentId": "intent:accesorios-puros",
     "question": "¿Se puede comprar?",
-    "answer": "El catálogo está en prelanzamiento y no acepta pedidos ni pagos. Cinco accesorios muestran precios finales al público en MXN con IVA incluido y envío por separado; existencias por confirmar. El cortapuros en V, el encendedor Parike y el encendedor HONEST tienen disponibilidad prevista para enero de 2027, todavía sin precio publicado.",
+    "answer": "Puedes elegir accesorios en Mi selección y consultar su compra por WhatsApp. Don Turrón confirma existencias, importe total y envío antes del pago. Para tarjetas de crédito o débito se envía un enlace de pago; también hay opciones de pago en establecimientos participantes, sujetas a confirmación. Actualmente los envíos cubren CDMX y zona metropolitana con una tarifa de $500 MXN; compras confirmadas y pagadas antes de las 15:00 horas se entregan el mismo día. El sitio no procesa pagos directamente.",
     "claimIds": [],
     "sourceIds": [
       "source:brand-home"

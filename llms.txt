@@ -2,10 +2,11 @@
 
 Don Turrón es una marca mexicana de accesorios y estilo de vida que comienza con una colección de accesorios para puros.
 
-> Prelanzamiento sin pagos ni reservas. Inventario registrado: set portátil de cenicero y cortadores (1 unidad), estuche porta puros con humidificador (1 unidad), estuche portátil para 4 a 8 puros (1 unidad) y reposa puros plegable (Plata 2; Negro 1). Las demás existencias siguen por confirmar. Cinco productos con precio público final (IVA incluido, envío no incluido); tres próximos lanzamientos sin precio.
+> Catálogo digital en prelanzamiento sin checkout ni cobros dentro del sitio. Consultas de compra por WhatsApp; envíos en CDMX y zona metropolitana por $500 MXN, con entrega el mismo día para pagos y existencias confirmados antes de las 15:00 horas. Inventario registrado: set portátil de cenicero y cortadores (1 unidad), estuche porta puros con humidificador (1 unidad), estuche portátil para 4 a 8 puros (1 unidad) y reposa puros plegable (Plata 2; Negro 1). Las demás existencias siguen por confirmar. Cinco productos con precio público final (IVA incluido, envío no incluido); tres próximos lanzamientos sin precio.
 
 - [Marca](/ai/brand.md)
 - [Catálogo](/ai/catalog.md)
+- [Preguntas frecuentes](/ai/faq.md)
 - [Productos](/ai/products.json)
 - [Respuestas](/ai/canonical-answers.md)
 - [Fuentes](/ai/sources.json)
