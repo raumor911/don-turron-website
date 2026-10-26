@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: {node-version: '24'}
-      - run: npm install --prefix /tmp/dt-audit --no-save lighthouse@13.5.0
+      - run: npm install --prefix /tmp/dt-audit --no-save lighthouse@13.5.0 puppeteer-core
       - name: Capture critical-path evidence
         run: |
           python -m http.server 8127 --bind 127.0.0.1 > /tmp/dt.log 2>&1 &
@@ -21,7 +21,26 @@ jobs:
           node --input-type=module - <<'JS'
           import fs from 'node:fs';
           const r=JSON.parse(fs.readFileSync('/tmp/report.json'));
+          console.log('SCREEN '+JSON.stringify(r.configSettings.screenEmulation));
           for(const id of ['largest-contentful-paint','lcp-breakdown-insight','lcp-discovery-insight','render-blocking-insight','network-dependency-tree-insight','network-requests'])console.log('DIAGNOSTIC '+id+' '+JSON.stringify(r.audits[id]));
+          JS
+      - name: Inspect compositor and entrance timing
+        run: |
+          node - <<'JS'
+          const fs=require('fs');
+          const puppeteer=require('/tmp/dt-audit/node_modules/puppeteer-core');
+          (async()=>{
+            const browser=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox']});
+            for(const [label,extra] of [['current',''],['no-blur','.age-overlay{backdrop-filter:none!important}'],['no-motion','.hero *,.hero *::after{animation:none!important;transition:none!important}'],['no-noise','.hero-noise{display:none!important}'],['no-filters','.hero-photo,.hero-art{filter:none!important;transition:none!important}']]){
+              const page=await browser.newPage();await page.setViewport({width:412,height:823,deviceScaleFactor:1.75,isMobile:true,hasTouch:true});
+              await page.evaluateOnNewDocument(()=>{window.lcps=[];new PerformanceObserver(l=>{for(const e of l.getEntries())window.lcps.push({time:e.startTime,url:e.url,element:e.element?.outerHTML.slice(0,250)})}).observe({type:'largest-contentful-paint',buffered:true});});
+              await page.setRequestInterception(true);
+              page.on('request',req=>req.url().endsWith('/site.css')?req.respond({status:200,contentType:'text/css',body:fs.readFileSync('site.css','utf8')+extra}):req.continue());
+              await page.goto('http://127.0.0.1:8127/',{waitUntil:'networkidle0'});await new Promise(r=>setTimeout(r,2800));
+              console.log('BROWSER '+label+' '+JSON.stringify(await page.evaluate(()=>({width:innerWidth,lcps:window.lcps,art:[...document.querySelectorAll('.hero-art,.hero-photo,.dt-title-line')].map(n=>({class:n.className,animation:getComputedStyle(n).animationName,transition:getComputedStyle(n).transition,filter:getComputedStyle(n).filter})),animations:document.getAnimations().map(a=>({name:a.animationName,target:a.effect?.target?.className}))}))));await page.close();
+            }
+            await browser.close();
+          })();
           JS
       - uses: actions/upload-artifact@v4
         with:
