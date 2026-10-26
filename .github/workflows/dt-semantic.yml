@@ -1,7 +1,7 @@
 name: DT Semantic Core — Validación y build
 on:
   push:
-    branches: [feat/dt-semantic-core-v1, feat/dt-cortador-v-product, feat/dt-transparent-favicon, feat/dt-rauvia-footer-sarike-lighter, feat/dt-availability-jan-2027, fix/dt-remove-jet-reference-footer-motion, fix/dt-philosophy-bronze-editorial-cleanup, feat/dt-catalog-consumer-prices-iva, feat/dt-mobile-swipe-performance-v1, feat/dt-parike-brand-imagery, feat/dt-honest-punch-jan2027, fix/dt-honest-remove-wind-claims]
+    branches: [feat/dt-seo-production-v1, feat/dt-semantic-core-v1, feat/dt-cortador-v-product, feat/dt-transparent-favicon, feat/dt-rauvia-footer-sarike-lighter, feat/dt-availability-jan-2027, fix/dt-remove-jet-reference-footer-motion, fix/dt-philosophy-bronze-editorial-cleanup, feat/dt-catalog-consumer-prices-iva, feat/dt-mobile-swipe-performance-v1, feat/dt-parike-brand-imagery, feat/dt-honest-punch-jan2027, fix/dt-honest-remove-wind-claims]
     paths: ['favicon.ico','assets/favicon*','assets/apple-touch-icon.png','assets/products/**','knowledge/**','scripts/dt-semantic/**','package.json','semantic-release.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
   pull_request:
     paths: ['favicon.ico','assets/favicon*','assets/apple-touch-icon.png','assets/products/**','knowledge/**','scripts/dt-semantic/**','package.json','.github/workflows/dt-semantic.yml','catalog.js','app.js','index.html','ai/**','productos/**','llms*.txt','tests/**']
@@ -44,7 +44,7 @@ jobs:
           python tests/qa_rauvia_footer.py
           node scripts/dt-semantic/observability.test.mjs
       - name: Registrar solo artefactos generados en la rama de desarrollo
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/feat/dt-semantic-core-v1' || github.ref == 'refs/heads/feat/dt-cortador-v-product' || github.ref == 'refs/heads/feat/dt-rauvia-footer-sarike-lighter' || github.ref == 'refs/heads/feat/dt-availability-jan-2027' || github.ref == 'refs/heads/fix/dt-remove-jet-reference-footer-motion' || github.ref == 'refs/heads/fix/dt-philosophy-bronze-editorial-cleanup' || github.ref == 'refs/heads/feat/dt-catalog-consumer-prices-iva' || github.ref == 'refs/heads/feat/dt-mobile-swipe-performance-v1' || github.ref == 'refs/heads/feat/dt-parike-brand-imagery' || github.ref == 'refs/heads/feat/dt-honest-punch-jan2027' || github.ref == 'refs/heads/fix/dt-honest-remove-wind-claims')
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/feat/dt-seo-production-v1' || github.ref == 'refs/heads/feat/dt-semantic-core-v1' || github.ref == 'refs/heads/feat/dt-cortador-v-product' || github.ref == 'refs/heads/feat/dt-rauvia-footer-sarike-lighter' || github.ref == 'refs/heads/feat/dt-availability-jan-2027' || github.ref == 'refs/heads/fix/dt-remove-jet-reference-footer-motion' || github.ref == 'refs/heads/fix/dt-philosophy-bronze-editorial-cleanup' || github.ref == 'refs/heads/feat/dt-catalog-consumer-prices-iva' || github.ref == 'refs/heads/feat/dt-mobile-swipe-performance-v1' || github.ref == 'refs/heads/feat/dt-parike-brand-imagery' || github.ref == 'refs/heads/feat/dt-honest-punch-jan2027' || github.ref == 'refs/heads/fix/dt-honest-remove-wind-claims')
         shell: bash
         run: |
           set -euo pipefail
@@ -53,7 +53,7 @@ jobs:
           git add catalog.js index.html ai/ llms.txt llms-full.txt
           if [ -d productos ]; then git add productos/; fi
           if [ -d guia ]; then git add guia/; fi
-          if [ -f sitemap.xml ]; then exit 1; fi
+          git add robots.txt sitemap.xml
           if ! git diff --cached --quiet; then
             git commit -m 'build: generate deterministic Don Turrón semantic assets'
             git push origin HEAD:${GITHUB_REF_NAME}
