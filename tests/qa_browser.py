@@ -199,18 +199,20 @@ with sync_playwright() as p:
   reposa.locator('[data-add]').click()
   assert page.locator('#cart-count').inner_text()=='4', 'Añade una unidad Negro'
   assert reposa.locator('[data-add]').is_disabled(), 'No permite exceder el Negro'
-  page.evaluate("window.__sentWhatsApp=[];window.open=(url,target,features)=>{window.__sentWhatsApp.push({url,target,features});return null}")
   page.locator('#open-selection').click()
-  assert page.locator('#whatsapp-selection').is_enabled(), 'CTA WhatsApp habilitado con selección'
-  page.locator('#whatsapp-selection').click()
-  sent=page.evaluate("window.__sentWhatsApp[0]")
-  assert sent and sent['url'].startswith('https://wa.me/525586494076?text='), 'Número de WhatsApp correcto'
+  wa=page.locator('#whatsapp-selection')
+  assert wa.get_attribute('aria-disabled')=='false', 'CTA WhatsApp habilitado con selección'
+  url=wa.get_attribute('href')
+  assert url and url.startswith('https://wa.me/525586494076?text='), f'Número de WhatsApp correcto: {url}'
+  assert wa.get_attribute('target')=='_blank', 'WhatsApp abre nueva pestaña'
   from urllib.parse import unquote
-  message=unquote(sent['url'].split('?text=',1)[1])
+  message=unquote(url.split('?text=',1)[1])
   assert 'Humidor de viaje para 5 puros' in message, 'Incluye primer producto'
   assert 'Color: Plata' in message and 'Cantidad: 2' in message, 'Incluye dos Plata'
   assert 'Color: Negro' in message and 'Cantidad: 1' in message, 'Incluye Negro'
   assert 'Total de artículos: 4' in message and '$' in message, 'Incluye total y precios'
+  page.evaluate("document.querySelector('#whatsapp-selection').addEventListener('click', e => e.preventDefault(), {capture:true,once:true})")
+  wa.click()
   assert page.evaluate("window.__dtEvents.some(e=>e.event==='selection_whatsapp')"), 'Telemetría de WhatsApp'
   page.locator('#close-selection').click()
   page.locator('#open-selection').click()
