@@ -199,11 +199,13 @@ window.DON_TURRON_CATALOG = [
     "variants": [
       {
         "label": "Plata",
-        "status": "pending_confirmation"
+        "status": "confirmed",
+        "stock": 2
       },
       {
         "label": "Negro",
-        "status": "pending_confirmation"
+        "status": "confirmed",
+        "stock": 1
       }
     ],
     "contentStatus": "documented",
