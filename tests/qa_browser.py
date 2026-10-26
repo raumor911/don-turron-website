@@ -126,6 +126,22 @@ with sync_playwright() as p:
   assert 'Cierres y humidificador' in page.locator('.travel-photo-modal').get_attribute('alt'), 'Galería con interacción'
   assert page.locator('.travel-gallery-controls button[data-photo-index="2"]').get_attribute('aria-pressed')=='true', 'Galería accesible'
   page.locator('#product-modal-close').click()
+  # Stock unitario sin duplicados: tarjeta, modal y drawer.
+  for stock_id in ('cenicero-mesa','estuche-viaje','estuche-kit-viaje'):
+   page.locator('[data-filter="todos"]').click()
+   stock_card=page.locator(f'.product-card[data-id="{stock_id}"]')
+   assert stock_card.locator('.product-stock').inner_text()=='1 unidad disponible',f'Stock visible {stock_id}'
+   stock_card.locator('[data-add]').click()
+   assert stock_card.locator('[data-add]').is_disabled(),f'No duplicar cantidad {stock_id}'
+   stock_card.locator('[data-detail]').click()
+   assert page.locator('#product-modal-content .product-stock').inner_text()=='1 unidad disponible',f'Stock en modal {stock_id}'
+   assert page.locator('#product-modal-content [data-add]').is_disabled(),f'Límite en modal {stock_id}'
+   page.locator('#product-modal-close').click()
+   page.locator('#open-selection').click()
+   assert page.locator(f'#drawer-contents [data-id="{stock_id}"][data-qty="1"]').is_disabled(),f'Límite en selección {stock_id}'
+   page.locator(f'#drawer-contents [data-remove="{stock_id}"]').click()
+   page.locator('#close-selection').click()
+   assert stock_card.locator('[data-add]').is_enabled(),f'Se libera unidad al quitar {stock_id}'
   page.locator('[data-filter="ceniceros"]').click()
   assert page.locator('.product-card').count()==1, 'Filtro de ceniceros preservado'
   assert page.locator('.product-card[data-id="cenicero-mesa"]').count()==1, 'Misma estructura de las fichas'
@@ -183,6 +199,20 @@ with sync_playwright() as p:
   reposa.locator('[data-add]').click()
   assert page.locator('#cart-count').inner_text()=='4', 'Añade una unidad Negro'
   assert reposa.locator('[data-add]').is_disabled(), 'No permite exceder el Negro'
+  page.evaluate("window.__sentWhatsApp=[];window.open=(url,target,features)=>{window.__sentWhatsApp.push({url,target,features});return null}")
+  page.locator('#open-selection').click()
+  assert page.locator('#whatsapp-selection').is_enabled(), 'CTA WhatsApp habilitado con selección'
+  page.locator('#whatsapp-selection').click()
+  sent=page.evaluate("window.__sentWhatsApp[0]")
+  assert sent and sent['url'].startswith('https://wa.me/525586494076?text='), 'Número de WhatsApp correcto'
+  from urllib.parse import unquote
+  message=unquote(sent['url'].split('?text=',1)[1])
+  assert 'Humidor de viaje para 5 puros' in message, 'Incluye primer producto'
+  assert 'Color: Plata' in message and 'Cantidad: 2' in message, 'Incluye dos Plata'
+  assert 'Color: Negro' in message and 'Cantidad: 1' in message, 'Incluye Negro'
+  assert 'Total de artículos: 4' in message and '$' in message, 'Incluye total y precios'
+  assert page.evaluate("window.__dtEvents.some(e=>e.event==='selection_whatsapp')"), 'Telemetría de WhatsApp'
+  page.locator('#close-selection').click()
   page.locator('#open-selection').click()
   assert 'Color: Plata' in page.locator('#drawer-contents').inner_text(), 'Selección distingue Plata'
   assert 'Color: Negro' in page.locator('#drawer-contents').inner_text(), 'Selección distingue Negro'
