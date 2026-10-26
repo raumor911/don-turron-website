@@ -1,0 +1,37 @@
+name: Verify original font assets
+on:
+  push:
+    branches: [perf/mobile-production-core]
+    paths: ['.github/workflows/font-assets.yml']
+permissions:
+  contents: read
+jobs:
+  fonts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Download the exact fonts observed in the baseline
+        run: |
+          mkdir fonts
+          curl --fail --silent --show-error --location 'https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSvfedN4.woff2' --output fonts/manrope-latin.woff2
+          curl --fail --silent --show-error --location 'https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtKky2F7g.woff2' --output fonts/cormorant-garamond-latin.woff2
+          curl --fail --silent --show-error --location 'https://fonts.gstatic.com/s/cormorantgaramond/v21/co3ZmX5slCNuHLi8bLeY9MK7whWMhyjYrEtImSqn7B6D.woff2' --output fonts/cormorant-garamond-italic-latin.woff2
+          python -m pip install fonttools brotli
+          python - <<'PY'
+          from fontTools.ttLib import TTFont
+          from pathlib import Path
+          import hashlib,json
+          result=[]
+          for p in Path('fonts').glob('*.woff2'):
+              f=TTFont(p)
+              assert all(ord(c) in f.getBestCmap() for c in 'ÁÉÍÓÚÜÑáéíóúüñ'),p
+              result.append({'file':p.name,'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'family':f['name'].getDebugName(1),'axes':[(a.axisTag,a.minValue,a.maxValue) for a in f['fvar'].axes]})
+          Path('fonts/manifest.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-original-fonts
+          path: fonts/
