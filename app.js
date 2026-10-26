@@ -346,12 +346,19 @@
       .map(image => ({src:image.src,label:nonempty(image.label,200)}));
     if (!images.length) return null;
     const stock = Number.isInteger(remote.stock) && remote.stock>=0 ? remote.stock : undefined;
-    const variants = current.variants.map(v => {
-      const record = remote.variants.find(r => r && r.label === v.label);
-      if (!record) return {...v,stock:undefined,status:'pending_confirmation'};
-      const count=Number.isInteger(record.stock)&&record.stock>=0?record.stock:undefined;
-      return {...v,stock:count,status:count===undefined?'pending_confirmation':'confirmed'};
-    });
+    // Incorporar altas/bajas de acabados desde dt_variants, conservando el
+    // orden de los colores conocidos para no alterar de golpe la experiencia.
+    const variants = remote.variants.filter(v=>v && typeof v.label==='string')
+      .sort((a,b)=>{
+        const ia=current.variants.findIndex(v=>v.label===a.label);
+        const ib=current.variants.findIndex(v=>v.label===b.label);
+        return (ia<0?999:ia)-(ib<0?999:ib);
+      }).map(record=>{
+        const prior=current.variants.find(v=>v.label===record.label)||{};
+        const count=Number.isInteger(record.stock)&&record.stock>=0?record.stock:undefined;
+        return {...prior,label:nonempty(record.label,80),stock:count,
+          status:count===undefined?'pending_confirmation':'confirmed'};
+      });
     const incomingLaunch=remote.launchWindow;
     const launchWindow=incomingLaunch && current.launchWindow?.month===incomingLaunch.month &&
       current.launchWindow?.label===incomingLaunch.label ? current.launchWindow : incomingLaunch || undefined;
