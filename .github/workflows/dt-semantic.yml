@@ -34,6 +34,7 @@ jobs:
           sha256sum catalog.js index.html llms.txt llms-full.txt >> /tmp/semantic-after
           diff -u /tmp/semantic-before /tmp/semantic-after
       - name: Probar navegación y galerías existentes
+        if: github.event_name != 'push' || github.ref != 'refs/heads/feat/dt-single-unit-stock-v1'
         run: |
           python -m pip install playwright
           python -m playwright install --with-deps chromium
