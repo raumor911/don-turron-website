@@ -19,6 +19,8 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
             page.on('pageerror',lambda e: errors.append(str(e)))
             assert page.goto(base+'/',wait_until='networkidle').status==200
             page.locator('#age-yes').click()
+            if width<600:
+                assert page.locator('.hero h1 .dt-title-line').evaluate_all("nodes=>nodes.every(n=>getComputedStyle(n).animationName==='none')"), 'Essential title still waits for animation'
             logo=page.locator('.brand-icon img').bounding_box()
             assert abs(logo['width']/logo['height']-520/461)<0.02, 'Monogram aspect ratio changed'
             page.screenshot(path=str(ROOT/f'tests/http-home-{width}.png'),full_page=True)

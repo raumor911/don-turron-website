@@ -203,7 +203,7 @@ html.dt-still .dt-progress{display:none!important}
 @media(max-width:580px){.travel-gallery-controls{bottom:9px;left:8px;right:8px}.travel-gallery-controls button{height:42px;width:42px}}
 
 /* Essential mobile content paints without an entrance delay. Desktop motion is preserved. */
-@media(max-width:760px){html.dt-ready .hero-art,html.dt-ready .hero-eyebrow,html.dt-ready .hero h1 .dt-title-line,html.dt-ready .hero-copy>p,html.dt-ready .hero-links,html.dt-ready .hero-footnote{animation:none;opacity:1} .hero .hero-photo{transition:none}}
+@media(max-width:760px){html.dt-ready .hero-art,html.dt-ready .hero-eyebrow,html.dt-ready .hero h1 .dt-title-line,html.dt-ready .hero-copy>p,html.dt-ready .hero-links,html.dt-ready .hero-footnote{animation:none!important;opacity:1;transform:none} .hero .hero-photo{transition:none}}
 
 /* Don Turrón · Galería V4.2: controles superiores redundantes eliminados. */
 .product-art .travel-photo-card,.drawer-art img.travel-photo{object-fit:contain;object-position:center;transform:none!important}
