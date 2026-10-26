@@ -25,7 +25,7 @@
   const retailText = p => p.retailPrice ? '$'+Number(p.retailPrice.amount).toLocaleString('es-MX')+' MXN' : null;
   const priceMarkup = p => p.retailPrice ? `<span class="product-price product-price-set"><strong>${retailText(p)}</strong><small>IVA incluido</small></span>` : '<span class="product-price">Precio por confirmar</span>';
   const asInt = (x) => Number.isFinite(Number(x)) ? Math.max(0, Math.min(MAX_QUANTITY, Math.floor(Number(x)))) : 0;
-  const hasRecordedStock = p => !!p && p.id === 'reposa-puros-plegable' && Array.isArray(p.variants) && p.variants.length === 2 && p.variants.every(v => Number.isInteger(v.stock) && v.stock >= 0);
+  const hasRecordedStock = p => !!p && Array.isArray(p.variants) && p.variants.length > 0 && p.variants.every(v => Number.isInteger(v.stock) && v.stock >= 0);
   const keyFor = (p, label) => hasRecordedStock(p) ? p.id + '::' + label : p.id;
   function entryFor(key) {
     const [id, label, extra] = key.split('::');
@@ -42,7 +42,7 @@
   const stockLine = p => p.variants.map(v => v.label + ': ' + v.stock + ' ' + (v.stock === 1 ? 'disponible' : 'disponibles')).join(' · ');
   function variantPicker(p) {
     if (!hasRecordedStock(p)) return '';
-    return `<div class="variant-picker" data-variant-product="${html(p.id)}"><label>Color<select data-variant-color aria-label="Color del reposa puros">${p.variants.map(v => `<option value="${html(v.label)}">${html(v.label)}</option>`).join('')}</select></label><label>Cantidad<select data-variant-qty aria-label="Cantidad del reposa puros"><option value="1">1</option><option value="2">2</option></select></label><p class="variant-remaining" data-variant-remaining aria-live="polite"></p></div>`;
+    return `<div class="variant-picker" data-variant-product="${html(p.id)}"><label>Color<select data-variant-color aria-label="Color de ${html(p.name)}">${p.variants.map(v => `<option value="${html(v.label)}">${html(v.label)}</option>`).join('')}</select></label><label>Cantidad<select data-variant-qty aria-label="Cantidad de ${html(p.name)}"><option value="1">1</option><option value="2">2</option></select></label><p class="variant-remaining" data-variant-remaining aria-live="polite"></p></div>`;
   }
   function syncVariantPicker(root) {
     if (!root) return;
