@@ -19,6 +19,10 @@ for(const p of k.products){
     if(!cat.includes('"amount": '+source.amount))throw new Error('Price missing from generated catalog '+p.id);
     if(publicRecord?.retailPrice?.amount!==source.amount||publicRecord?.retailPrice?.taxIncluded!==true||publicRecord?.retailPrice?.shippingIncluded!==false)throw new Error('AI price mismatch '+p.id);
     if(!home.includes('data-id="'+p.id+'"')||!home.includes(displayed))throw new Error('Public homepage price missing '+p.id);
+    if(Number.isInteger(p.stock)){
+      const label=p.stock+' '+(p.stock===1?'unidad disponible':'unidades disponibles');
+      if(publicRecord?.stock!==p.stock || !cat.includes('"stock": '+p.stock) || !home.includes(label))throw new Error('Recorded stock divergence '+p.id);
+    }
   }else if(publicRecord?.retailPrice!=null)throw new Error('Unpriced launch exposed as priced '+p.id);
 }
 if(json.products.length!==k.products.length||kg.nodes.filter(n=>n.type==='Product').length!==k.products.length)throw new Error('Graph/catalog count mismatch');
@@ -43,6 +47,7 @@ for(const p of documented){
   if(!p.images.every(x=>h.includes(x.src)))throw new Error('Missing image in '+route);
   if(p.retailPrice&&!h.includes('$'+p.retailPrice.amount.toLocaleString('es-MX')+' MXN'))throw new Error('Price missing on product page '+p.id);
   if(p.retailPrice&&(!h.includes('IVA incluido')||!h.includes('Envío no incluido')))throw new Error('Tax/shipping note missing '+p.id);
+  if(Number.isInteger(p.stock) && !h.includes('Inventario registrado: '+p.stock+' unidad'))throw new Error('Product stock missing from detail page '+p.id);
   if(!p.retailPrice&&h.includes('class="dt-retail-price"'))throw new Error('Upcoming product shows price '+p.id);
   const ld=h.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
   if(!ld)throw new Error('Product JSON-LD missing '+route);
@@ -52,6 +57,7 @@ for(const p of documented){
 }
 if(fs.existsSync(path.join(ROOT,'productos/encendedor-jet/index.html')))throw new Error('Conceptual product published with product page');
 if(!read('index.html').includes('DT-CATALOG-START')||(home.match(/class="product-card"/g)||[]).length!==k.products.length)throw new Error('Home not prerendered with current product count');
+if(!home.includes('id="whatsapp-selection"')||home.includes('id="copy-selection"'))throw new Error('WhatsApp selection CTA missing or obsolete');
 if(!read('guia/estuche-o-humidor/index.html').includes('noindex, nofollow'))throw new Error('Guide not gated');
 const gate=JSON.parse(read('semantic-release.json'));
 if(gate.mode!=='prelaunch'||gate.enableIndexing!==false||gate.enableCommerce!==false||gate.verifiedDomain!==null)throw new Error('Invalid release gate');

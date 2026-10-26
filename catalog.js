@@ -79,6 +79,7 @@ window.DON_TURRON_CATALOG = [
       }
     ],
     "variants": [],
+    "stock": 1,
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation",
     "retailPrice": {
@@ -125,6 +126,7 @@ window.DON_TURRON_CATALOG = [
       }
     ],
     "variants": [],
+    "stock": 1,
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation",
     "retailPrice": {
@@ -159,6 +161,7 @@ window.DON_TURRON_CATALOG = [
       }
     ],
     "variants": [],
+    "stock": 1,
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation",
     "retailPrice": {

@@ -105,7 +105,8 @@
       "currency": "MXN",
       "taxIncluded": true,
       "shippingIncluded": false
-    }
+    },
+    "stock": 1
   },
   {
     "id": "estuche-viaje",
@@ -161,7 +162,8 @@
       "currency": "MXN",
       "taxIncluded": true,
       "shippingIncluded": false
-    }
+    },
+    "stock": 1
   },
   {
     "id": "estuche-kit-viaje",
@@ -205,7 +207,8 @@
       "currency": "MXN",
       "taxIncluded": true,
       "shippingIncluded": false
-    }
+    },
+    "stock": 1
   },
   {
     "id": "reposa-puros-plegable",
