@@ -61,3 +61,6 @@
 .add-product:disabled,.modal-text [data-add]:disabled{opacity:.45;cursor:not-allowed}
 .drawer-variant{font-weight:700;color:#7c5839!important;font-size:11px!important}
 @media(max-width:580px){.product-stock{font-size:9px}.variant-picker{grid-template-columns:minmax(0,1fr);gap:7px}.variant-picker label{font-size:9px}.variant-picker select{font-size:11px;min-height:34px}.variant-picker .variant-remaining{font-size:9px}.modal-text .variant-picker{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* WhatsApp CTA habilitado únicamente cuando hay una selección */
+.drawer-copy[aria-disabled="true"]{opacity:.5;cursor:not-allowed;pointer-events:none}
