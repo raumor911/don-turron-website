@@ -17,8 +17,8 @@
   <link rel="icon" href="assets/favicon-monogram-black.png" type="image/png" sizes="512x512" media="(prefers-color-scheme: light)">
   <link rel="icon" href="assets/favicon-monogram-gold.png" type="image/png" sizes="512x512" media="(prefers-color-scheme: dark)">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" sizes="180x180">
-  <link rel="preload" as="image" href="assets/responsive/emblema-640.webp" media="(max-width:580px)" fetchpriority="high" />
-  <link rel="preload" as="image" href="assets/responsive/emblema-1024.webp" media="(min-width:581px)" fetchpriority="high" />
+  <link rel="preload" as="image" href="assets/responsive/emblema-640.avif" type="image/avif" media="(max-width:580px)" fetchpriority="high" />
+  <link rel="preload" as="image" href="assets/responsive/emblema-1024.avif" type="image/avif" media="(min-width:581px)" fetchpriority="high" />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/manrope-latin.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/cormorant-garamond-latin.woff2" crossorigin />
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/cormorant-garamond-italic-latin.woff2" crossorigin />
@@ -69,7 +69,7 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-noise"></div>
       <div class="hero-ambient"></div>
-      <div class="hero-art" aria-hidden="true"><div class="hero-photo"></div><div class="hero-art-glow"></div></div>
+      <div class="hero-art" aria-hidden="true"><div class="hero-photo"><picture><source media="(max-width:580px)" type="image/avif" srcset="assets/responsive/emblema-640.avif"><source type="image/avif" srcset="assets/responsive/emblema-1024.avif"><source media="(max-width:580px)" type="image/webp" srcset="assets/responsive/emblema-640.webp"><img src="assets/responsive/emblema-1024.webp" width="1024" height="1024" alt="" decoding="async" fetchpriority="high" loading="eager"></picture></div><div class="hero-art-glow"></div></div>
       <div class="shell hero-grid">
         <div class="hero-copy">
           <div class="eyebrow hero-eyebrow"><span class="line"></span> DON TURRÓN · NUESTRA PRIMERA COLECCIÓN</div>

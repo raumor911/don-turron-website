@@ -10,7 +10,7 @@ LCP element: `.hero-photo`. The report identifies about 1950 ms of element rende
 
 ## Implementation
 
-- Responsive WebP derivatives of the emblem, transparent monogram, and first photograph of each product; originals remain available to galleries and zoom. Cards retain native lazy loading and use 320/640 px variants after filtering as well as in static HTML.
+- A native responsive picture delivers the emblem in AVIF with a WebP fallback; WebP derivatives serve the transparent monogram and first photograph of each product; originals remain available to galleries and zoom. Cards retain native lazy loading and use 320/640 px variants after filtering as well as in static HTML.
 - One stylesheet with exactly the original cascade order instead of three requests. The three exact Latin variable font binaries observed in the baseline are served locally and preloaded. Their glyph coverage (including Spanish), weight axes and SHA-256 were verified with fontTools; the unmodified fonts retain their OFL licenses. This removes the external font CSS/request chain while preserving typography. Both asynchronous external loading (CLS 0.115) and blocking external loading (LCP 3.76 s) were rejected before merge.
 - Essential mobile hero elements no longer wait for entrance animations. Desktop styling and motion remain available. The hidden duplicate emblem image was removed.
 - Carousel loading/priority hints are set before assigning image sources. No gallery prefetch is added to the initial path. Selection storage, quantities, WhatsApp number and message construction are retained.

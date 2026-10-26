@@ -5,8 +5,8 @@ from playwright.sync_api import sync_playwright
 PROJECT=Path(__file__).resolve().parents[1]
 assets={}
 for path in list((PROJECT/'assets').rglob('*')):
- if path.suffix in ('.jpg','.png','.svg','.webp','.woff2'):
-  mime={'jpg':'image/jpeg','png':'image/png','svg':'image/svg+xml','webp':'image/webp','woff2':'font/woff2'}[path.suffix.lstrip('.')]
+ if path.suffix in ('.jpg','.png','.svg','.webp','.woff2','.avif'):
+  mime={'jpg':'image/jpeg','png':'image/png','svg':'image/svg+xml','webp':'image/webp','woff2':'font/woff2','avif':'image/avif'}[path.suffix.lstrip('.')]
   assets[path.relative_to(PROJECT).as_posix()]=f'data:{mime};base64,'+base64.b64encode(path.read_bytes()).decode()
 html=(PROJECT/'index.html').read_text()
 css=(PROJECT/'site.css').read_text()
