@@ -58,6 +58,16 @@ for(const p of documented){
 if(fs.existsSync(path.join(ROOT,'productos/encendedor-jet/index.html')))throw new Error('Conceptual product published with product page');
 if(!read('index.html').includes('DT-CATALOG-START')||(home.match(/class="product-card"/g)||[]).length!==k.products.length)throw new Error('Home not prerendered with current product count');
 if(!home.includes('id="whatsapp-selection"')||home.includes('id="copy-selection"'))throw new Error('WhatsApp selection CTA missing or obsolete');
+const escFaq=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const faqBlock=home.match(/<!-- DT-FAQ-START -->([\s\S]*?)<!-- DT-FAQ-END -->/);
+const visibleFaq=k.faq.filter(x=>x.visibility==='public'||x.visibility==='public_preview');
+if(!faqBlock||(faqBlock[1].match(/<details>/g)||[]).length!==visibleFaq.length)throw new Error('FAQ visible count diverges from Semantic Core');
+for(const item of visibleFaq){
+  const markup='<details><summary>'+escFaq(item.question)+'<span>+</span></summary><p>'+escFaq(item.answer)+'</p></details>';
+  if(!faqBlock[1].includes(markup))throw new Error('FAQ content diverges: '+item.id);
+}
+const puros=visibleFaq.filter(x=>x.id==='faq:puros');
+if(puros.length!==1||puros[0].question!=='¿Don Turrón vende puros?'||puros[0].answer!=='El alcance de este sitio es la exhibición de accesorios para puros. No se ofrecen puros ni tabaco a través de este catálogo.')throw new Error('Original puros FAQ was altered');
 if(!read('guia/estuche-o-humidor/index.html').includes('noindex, nofollow'))throw new Error('Guide not gated');
 const gate=JSON.parse(read('semantic-release.json'));
 if(gate.mode!=='prelaunch'||gate.enableIndexing!==false||gate.enableCommerce!==false||gate.verifiedDomain!==null)throw new Error('Invalid release gate');
