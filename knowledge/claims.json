@@ -2,12 +2,12 @@
   {
     "id": "claim:brand-mexico",
     "subjectId": "brand:don-turron",
-    "statement": "Don Turrón se presenta como marca mexicana en prelanzamiento.",
+    "statement": "Don Turrón se presenta como marca mexicana de accesorios para puros.",
     "status": "verified",
     "sourceIds": [
       "source:brand-home"
     ],
-    "visibility": "public_preview",
+    "visibility": "public",
     "volatility": "stable"
   },
   {
@@ -18,7 +18,7 @@
     "sourceIds": [
       "source:humidor-viaje-5-puros"
     ],
-    "visibility": "public_preview",
+    "visibility": "public",
     "volatility": "periodic"
   },
   {
@@ -29,7 +29,7 @@
     "sourceIds": [
       "source:cenicero-mesa"
     ],
-    "visibility": "public_preview",
+    "visibility": "public",
     "volatility": "periodic"
   },
   {
@@ -40,7 +40,7 @@
     "sourceIds": [
       "source:estuche-viaje"
     ],
-    "visibility": "public_preview",
+    "visibility": "public",
     "volatility": "periodic"
   },
   {
@@ -51,7 +51,7 @@
     "sourceIds": [
       "source:estuche-kit-viaje"
     ],
-    "visibility": "public_preview",
+    "visibility": "public",
     "volatility": "periodic"
   },
   {
@@ -62,7 +62,7 @@
     "sourceIds": [
       "source:reposa-puros-plegable"
     ],
-    "visibility": "public_preview",
+    "visibility": "public",
     "volatility": "periodic"
   },
   {
@@ -73,7 +73,7 @@
     "sourceIds": [
       "source:cortador-v-geometrico"
     ],
-    "visibility": "public_preview",
+    "visibility": "public",
     "volatility": "periodic"
   },
   {
@@ -84,7 +84,7 @@
     "sourceIds": [
       "source:encendedor-sarike-butano"
     ],
-    "visibility": "public_preview",
+    "visibility": "public",
     "volatility": "periodic"
   },
   {
@@ -95,7 +95,7 @@
     "sourceIds": [
       "source:encendedor-honest-punch"
     ],
-    "visibility": "public_preview",
+    "visibility": "public",
     "volatility": "periodic"
   }
 ]

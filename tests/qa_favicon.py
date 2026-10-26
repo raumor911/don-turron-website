@@ -41,7 +41,7 @@ pages=[ROOT/'index.html',*sorted((ROOT/'productos').glob('*/index.html')),ROOT/'
 assert len(pages)>=8,'Expected home, six products and guide'
 for p in pages:
     html=p.read_text(encoding='utf-8')
-    assert 'noindex' in html,'Prelaunch rules unexpectedly removed'
+    assert 'index, follow' in html,'Production indexing metadata missing'
     parser=Icons()
     parser.feed(html)
     hrefs=[icon['href'] for icon in parser.icons]

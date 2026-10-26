@@ -10,7 +10,7 @@
     "sourceIds": [
       "source:brand-home"
     ],
-    "visibility": "public_preview"
+    "visibility": "public"
   },
   {
     "id": "answer:comprar",
@@ -21,7 +21,7 @@
     "sourceIds": [
       "source:brand-home"
     ],
-    "visibility": "public_preview"
+    "visibility": "public"
   },
   {
     "id": "answer:humidor-estuche",
@@ -36,6 +36,6 @@
       "source:humidor-viaje-5-puros",
       "source:estuche-viaje"
     ],
-    "visibility": "public_preview"
+    "visibility": "public"
   }
 ]

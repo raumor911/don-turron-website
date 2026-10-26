@@ -26,7 +26,7 @@
         "usecase:apoyo"
       ],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     },
@@ -46,7 +46,7 @@
         "usecase:conservar-humedad"
       ],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     },
@@ -67,7 +67,7 @@
         "usecase:guardar-viaje"
       ],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     },
@@ -87,7 +87,7 @@
         "usecase:corte"
       ],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     },
@@ -107,7 +107,7 @@
         "usecase:apoyo"
       ],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     },
@@ -130,7 +130,7 @@
         "usecase:guardar-viaje"
       ],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     },
@@ -152,7 +152,7 @@
         "usecase:guardar-viaje"
       ],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     },
@@ -173,7 +173,7 @@
         "usecase:regalo"
       ],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     },
@@ -189,7 +189,7 @@
       "productIds": [],
       "useCaseIds": [],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     },
@@ -210,7 +210,7 @@
         "usecase:corte"
       ],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     },
@@ -231,7 +231,7 @@
         "usecase:encendido"
       ],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     },
@@ -253,7 +253,7 @@
         "usecase:corte"
       ],
       "status": "hypothesis",
-      "visibility": "public_preview",
+      "visibility": "public",
       "searchVolumeEvidence": false,
       "sourceType": "hypothesis_not_measured"
     }

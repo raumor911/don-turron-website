@@ -1,0 +1,32 @@
+# Mobile performance and production release — 2026-10-26
+
+Baseline source: `b358c90b6c50cdf5dd818d082e6f3a2683aecff1` on main, also reported by the current Vercel production deployment. Vercel confirms Git deployments from this repository; merging main may automatically publish. No deployment API, promotion, DNS or protection setting is changed by this work.
+
+## Public baseline
+
+[PageSpeed Insights mobile report](https://pagespeed.web.dev/analysis/https-www-donturron-com-mx/vri56rp9a5?form_factor=mobile), October 26, 2026, 15:56 Mexico City: performance 78, FCP 2.7 s, LCP 4.2 s (calculator: 4241 ms), TBT 30 ms, CLS 0.013, Speed Index 5.0 s. Lighthouse 13.5.0, emulated Moto G Power, simulated Slow 4G. CrUX reports no field data. These are laboratory observations, not a measurement on a physical phone or a guarantee for every network.
+
+LCP element: `.hero-photo`. The report identifies about 1950 ms of element render delay, 1380 ms potential render-blocking savings, and 450 KiB estimated image savings. The original emblem is 235064 bytes, and the original monogram is 70399 bytes. All original product photography remains intact.
+
+## Implementation
+
+- A native responsive picture delivers the emblem in AVIF with a WebP fallback and 512/640/1024 px candidates selected by pixel density; WebP derivatives serve the transparent monogram and first photograph of each product; originals remain available to galleries and zoom. Cards retain native lazy loading and use 320/640 px variants after filtering as well as in static HTML.
+- One stylesheet with exactly the original cascade order instead of three requests. The three exact Latin variable font binaries observed in the baseline are served locally; the two primary faces are preloaded, while italic is discovered by CSS to keep the emblem ahead in the critical queue. Their glyph coverage (including Spanish), weight axes and SHA-256 were verified with fontTools; the unmodified fonts retain their OFL licenses. This removes the external font CSS/request chain while preserving typography. Both asynchronous external loading (CLS 0.115) and blocking external loading (LCP 3.76 s) were rejected before merge.
+- Essential mobile hero elements no longer wait for entrance animations. Desktop styling and motion remain available. The hidden duplicate emblem image was removed.
+- Carousel loading/priority hints are set before assigning image sources. No gallery prefetch is added to the initial path. Selection storage, quantities, WhatsApp number and message construction are retained.
+- Production metadata is generated from `semantic-release.json`. Canonicals, JSON-LD references and a ten-route sitemap use `https://www.donturron.com.mx`, confirmed by Vercel project-domain records. The apex redirects to www. No alternate domain is invented.
+- `enableIndexing` is enabled. `enableCommerce`, `publishOffers` and `indexNow` remain false: no checkout or IndexNow service exists, and publication alone does not validate structured offers or stock. Telemetry remains opt-in and disabled without a configured backend. Planned January 2027 products keep their planned status; no tobacco sale, rating, certification or stock claim is introduced.
+
+## Verification and limits
+
+The local environment denies listening sockets, browser processes and outbound shell network access. Static generation, artifact validation, JavaScript syntax and non-network telemetry tests can run locally. GitHub Actions runs the existing visual/interaction suite, HTTP mobile checks, no-JS routes, favicon/footer checks, receiver tests, and three cold Lighthouse runs per source on the same runner. A CLS budget of 0.1 guards visual stability. Raw JSON reports and screenshots are retained as `mobile-evidence`. The script prints all samples and medians; local HTTP comparisons exclude CDN conditions. Public PageSpeed measurement must be repeated after the automatically deployed SHA is confirmed. The <3 s objective applies to LCP/essential content; below-fold images intentionally load on demand.
+
+## Concurrent main changes preserved
+
+Main advanced to `20ed3de51e59163170de90da253d196730004527` during the audit, adding the gated inventory API and catalog client. These changes are integrated; a later main commit `772bf9dedce972dfadb028978dceba6b0cfc877b` enabled `liveCatalogEnabled`, and that setting is preserved. This audit does not execute migrations or configure database secrets. Responsive card hints apply only to the known compiled derivatives; future database-managed images fall back to their original URL. The inventory contract is included in validation.
+
+## Compression and benchmark comparability
+
+The initial local series used Python's uncompressed server: baseline median LCP 5.407 s versus integrated candidate 3.381 s, performance 76 versus 92, and 941488 versus 474688 transferred bytes. This differs from production, where the original PSI report measured only 18.1 KiB for the three CSS responses instead of their roughly 55 KiB uncompressed source. The final comparison negotiates gzip for HTML/CSS/JS/JSON/SVG on **both** baseline and candidate servers using the same handler; WOFF2 and images pass through unchanged. A decoded byte comparison verifies the CSS response. This changes the benchmark transport, not Vercel configuration or application content. The LCP <3 s and CLS ≤0.1 budgets remain unchanged. Public PSI must still verify the merged deployment; gzip simulation does not reproduce CDN latency or field conditions.
+
+The existing public catalog endpoint returned HTTP 503 with `catalog_unavailable` during the read-only check after main enabled the gate. The HTTP regression and performance fixture reproduce that failure response and verify that current prices/stock become “por confirmar”; no database health or successful production hydration is claimed. The main gate is preserved, not silently disabled. Vercel subsequently reported a deployment quota limit (retry in 24 hours); code integration does not imply a new public deployment.

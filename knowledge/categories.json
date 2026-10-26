@@ -4,7 +4,7 @@
     "name": "Soportes",
     "slug": "soportes",
     "collectionId": "collection:accesorios-puros",
-    "visibility": "public_preview",
+    "visibility": "public",
     "displayOrder": 1
   },
   {
@@ -12,7 +12,7 @@
     "name": "Encendedores",
     "slug": "encendedores",
     "collectionId": "collection:accesorios-puros",
-    "visibility": "public_preview",
+    "visibility": "public",
     "displayOrder": 2
   },
   {
@@ -20,7 +20,7 @@
     "name": "Humidores",
     "slug": "humidores",
     "collectionId": "collection:accesorios-puros",
-    "visibility": "public_preview",
+    "visibility": "public",
     "displayOrder": 3
   },
   {
@@ -28,7 +28,7 @@
     "name": "Ceniceros",
     "slug": "ceniceros",
     "collectionId": "collection:accesorios-puros",
-    "visibility": "public_preview",
+    "visibility": "public",
     "displayOrder": 4
   },
   {
@@ -36,7 +36,7 @@
     "name": "Estuches",
     "slug": "estuches",
     "collectionId": "collection:accesorios-puros",
-    "visibility": "public_preview",
+    "visibility": "public",
     "displayOrder": 5
   },
   {
@@ -44,7 +44,7 @@
     "name": "Cortadores",
     "slug": "cortadores",
     "collectionId": "collection:accesorios-puros",
-    "visibility": "public_preview",
+    "visibility": "public",
     "displayOrder": 6
   }
 ]

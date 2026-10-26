@@ -1,0 +1,44 @@
+[
+  {
+    "file": "cormorant-garamond-latin.woff2",
+    "bytes": 37776,
+    "sha256": "5d618c462b7a5b74f442e1548880086af71764d9cc7d35c16ab45353da934621",
+    "family": "Cormorant Garamond Light",
+    "axes": [
+      [
+        "wght",
+        300.0,
+        700.0
+      ]
+    ],
+    "sourceUrl": "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYqXtKky2F7g.woff2"
+  },
+  {
+    "file": "manrope-latin.woff2",
+    "bytes": 24576,
+    "sha256": "e310b55a7fd9677f5e3555e6c6c4d064fa1f1d24393f0ddbe217cea12a8c432f",
+    "family": "Manrope ExtraLight",
+    "axes": [
+      [
+        "wght",
+        200.0,
+        800.0
+      ]
+    ],
+    "sourceUrl": "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSvfedN4.woff2"
+  },
+  {
+    "file": "cormorant-garamond-italic-latin.woff2",
+    "bytes": 39304,
+    "sha256": "e6d6d1d73858aa9b66f3a3539f9dec22faab2276e61ad1d813bc04dd59c9c122",
+    "family": "Cormorant Garamond Light",
+    "axes": [
+      [
+        "wght",
+        300.0,
+        700.0
+      ]
+    ],
+    "sourceUrl": "https://fonts.gstatic.com/s/cormorantgaramond/v21/co3ZmX5slCNuHLi8bLeY9MK7whWMhyjYrEtImSqn7B6D.woff2"
+  }
+]

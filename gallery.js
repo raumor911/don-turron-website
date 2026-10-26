@@ -233,10 +233,11 @@
       slide.dataset.nativePhotoIndex=String(index);
       slide.setAttribute('aria-label','Ampliar fotografía '+(index+1)+' de '+total+': '+photo.label);
       const image=document.createElement('img');
-      image.src=photo.src;
       image.alt='Fotografía de '+product.name+': '+photo.label;
       image.loading=index===0?'eager':'lazy';
       image.decoding='async';
+      image.fetchPriority=index===0?'high':'low';
+      image.src=photo.src;
       image.draggable=false;
       slide.appendChild(image);
       carousel.appendChild(slide);

@@ -1,3 +1,5 @@
+> **Actualización 2026-10-26: producción.** El estado vigente procede de `semantic-release.json`: indexación habilitada en `https://www.donturron.com.mx`, canonicals y sitemap generados desde las fuentes canónicas. Consultas y coordinación comercial por WhatsApp; sin checkout integrado, Offers ni IndexNow. Las notas históricas de prelanzamiento que siguen describen versiones anteriores. Ver [auditoría móvil](docs/MOBILE_PRODUCTION_AUDIT.md) y [release gates](docs/DT_SEO_RELEASE_GATES.md).
+
 # Don Turrón — Sitio editorial y catálogo de accesorios
 
 Primera versión **demostrable y responsive** de una boutique de accesorios para puros. Diseño inspirado directamente en el emblema y monograma aportados. Investigación y decisiones documentadas con el **núcleo AETHRYON DRAFT v2.0.0**.

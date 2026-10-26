@@ -4,18 +4,18 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 PROJECT=Path(__file__).resolve().parents[1]
 assets={}
-for path in list((PROJECT/'assets').iterdir()) + list((PROJECT/'assets'/'products').glob('*.webp')):
- if path.suffix in ('.jpg','.png','.svg','.webp'):
-  mime={'jpg':'image/jpeg','png':'image/png','svg':'image/svg+xml','webp':'image/webp'}[path.suffix.lstrip('.')]
-  assets['assets/'+('products/' if path.parent.name == 'products' else '')+path.name]=f'data:{mime};base64,'+base64.b64encode(path.read_bytes()).decode()
+for path in list((PROJECT/'assets').rglob('*')):
+ if path.suffix in ('.jpg','.png','.svg','.webp','.woff2','.avif'):
+  mime={'jpg':'image/jpeg','png':'image/png','svg':'image/svg+xml','webp':'image/webp','woff2':'font/woff2','avif':'image/avif'}[path.suffix.lstrip('.')]
+  assets[path.relative_to(PROJECT).as_posix()]=f'data:{mime};base64,'+base64.b64encode(path.read_bytes()).decode()
 html=(PROJECT/'index.html').read_text()
-css=(PROJECT/'styles.css').read_text()
+css=(PROJECT/'site.css').read_text()
 premium_css=(PROJECT/'premium.css').read_text()
 for name,uri in assets.items():
  html=html.replace(name,uri)
  css=css.replace(name,uri)
  premium_css=premium_css.replace(name,uri)
-html=html.replace('<link rel="stylesheet" href="styles.css" />','<style>'+css+'</style>')
+html=html.replace('<link rel="stylesheet" href="site.css" />','<style>'+css+'</style>')
 html=html.replace('<link rel="stylesheet" href="premium.css" />','<style>'+premium_css+'</style>')
 html=html.replace('<link rel="stylesheet" href="gallery.css" />','<style>'+(PROJECT/'gallery.css').read_text()+'</style>')
 html=re.sub(r'<script defer src="[^\"]+"></script>', '', html)
@@ -36,7 +36,7 @@ with sync_playwright() as p:
   page.evaluate("window.__dtEvents=[];window.addEventListener('dt:interaction',e=>window.__dtEvents.push(e.detail))")
   page.add_script_tag(content=(PROJECT/'telemetry-client.js').read_text())
   # Scripts de la app generan src relativos; en el entorno de pruebas se sustituyen por data URI.
-  page.evaluate('''(assets)=>{window.fixAssets=()=>{document.querySelectorAll('img[src^="assets/"]').forEach(im=>{const src=im.getAttribute('src');if(assets[src]) im.src=assets[src]})};window.fixAssets();new MutationObserver(()=>window.fixAssets()).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['src']})}''',assets)
+  page.evaluate('''(assets)=>{window.fixAssets=()=>{document.querySelectorAll('img[src^="assets/"]').forEach(im=>{const src=im.getAttribute('src');if(assets[src]){im.removeAttribute('srcset');im.src=assets[src]}})};window.fixAssets();new MutationObserver(()=>window.fixAssets()).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['src']})}''',assets)
   page.locator('#age-yes').click()
   page.wait_for_timeout(350)
   page.screenshot(path=str(PROJECT/f'tests/{name}.png'),full_page=True)

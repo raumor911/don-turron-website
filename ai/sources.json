@@ -2,7 +2,7 @@
   "sources": [
     {
       "id": "source:brand-home",
-      "name": "Identidad y prelanzamiento de Don Turrón",
+      "name": "Identidad y operación digital de Don Turrón",
       "type": "site_copy",
       "path": "index.html",
       "visibility": "public"
@@ -19,56 +19,56 @@
       "name": "Descripción documental de humidor-viaje-5-puros",
       "type": "supplier_material",
       "path": "docs/HUMIDOR_VIAJE_5_PUROS.md",
-      "visibility": "public_preview"
+      "visibility": "public"
     },
     {
       "id": "source:cenicero-mesa",
       "name": "Descripción documental de cenicero-mesa",
       "type": "supplier_material",
       "path": "docs/SET_CENICERO_PORTATIL.md",
-      "visibility": "public_preview"
+      "visibility": "public"
     },
     {
       "id": "source:estuche-viaje",
       "name": "Descripción documental de estuche-viaje",
       "type": "supplier_material",
       "path": "docs/ESTUCHE_VIAJE_6_PUROS.md",
-      "visibility": "public_preview"
+      "visibility": "public"
     },
     {
       "id": "source:estuche-kit-viaje",
       "name": "Descripción documental de estuche-kit-viaje",
       "type": "supplier_material",
       "path": "docs/ESTUCHE_PORTATIL_4_A_8_PUROS.md",
-      "visibility": "public_preview"
+      "visibility": "public"
     },
     {
       "id": "source:reposa-puros-plegable",
       "name": "Descripción documental de reposa-puros-plegable",
       "type": "supplier_material",
       "path": "docs/REPOSA_PUROS_PLEGABLE.md",
-      "visibility": "public_preview"
+      "visibility": "public"
     },
     {
       "id": "source:cortador-v-geometrico",
       "name": "Ficha descriptiva e imágenes aportadas para cortapuros en V",
       "type": "supplier_material",
       "path": "docs/CORTADOR_V_GEOMETRICO.md",
-      "visibility": "public_preview"
+      "visibility": "public"
     },
     {
       "id": "source:encendedor-sarike-butano",
       "name": "Ficha proporcionada e imágenes de encendedor Parike de butano",
       "type": "supplier_material",
       "path": "docs/ENCENDEDOR_SARIKE_BUTANO.md",
-      "visibility": "public_preview"
+      "visibility": "public"
     },
     {
       "id": "source:encendedor-honest-punch",
       "name": "Imágenes y descripción del encendedor HONEST con punch aportadas por el titular",
       "type": "supplier_material",
       "path": "docs/ENCENDEDOR_HONEST_PUNCH.md",
-      "visibility": "public_preview"
+      "visibility": "public"
     }
   ]
 }

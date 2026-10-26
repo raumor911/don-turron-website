@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "mode": "prelaunch",
-  "verifiedDomain": null,
-  "enableIndexing": false,
+  "mode": "production",
+  "verifiedDomain": "https://www.donturron.com.mx",
+  "enableIndexing": true,
   "enableCommerce": false,
   "publishOffers": false,
   "indexNow": false

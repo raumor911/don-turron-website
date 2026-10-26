@@ -7,7 +7,7 @@ export function loadSemantic(rootDir=root){
  const manifest=read('ai/content-manifest.json');
  const products=read('knowledge/products.json');
  const intents=read('knowledge/intents.json');
- if(manifest.releaseStatus!=='prelaunch'||!Array.isArray(manifest.files)||!manifest.knowledgeFingerprint)throw new Error('semantic_manifest_invalid');
+ if(!['prelaunch','production'].includes(manifest.releaseStatus)||!Array.isArray(manifest.files)||!manifest.knowledgeFingerprint)throw new Error('semantic_manifest_invalid');
  if(!Array.isArray(products)||products.length<6||new Set(products.map(p=>p.id)).size!==products.length||products.some(p=>p.id==='encendedor-jet')||!products.every(p=>['documented','verified'].includes(p.contentStatus)))throw new Error('semantic_contract_invalid');
  return {manifest,products,intents};
 }

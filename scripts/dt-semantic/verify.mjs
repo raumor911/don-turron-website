@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { load,validate } from './validate.mjs';
+import { release,robots,validateRelease } from './release.mjs';
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const read=rel=>fs.readFileSync(path.join(ROOT,rel),'utf8');
 const k=load();validate(k);
@@ -26,7 +27,7 @@ for(const p of k.products){
   }else if(publicRecord?.retailPrice!=null)throw new Error('Unpriced launch exposed as priced '+p.id);
 }
 if(json.products.length!==k.products.length||kg.nodes.filter(n=>n.type==='Product').length!==k.products.length)throw new Error('Graph/catalog count mismatch');
-if(!home.includes('noindex, nofollow')||!read('robots.txt').includes('Disallow: /'))throw new Error('Index gate lost');
+if(!home.includes('content="'+robots+'"'))throw new Error('Index gate diverges');
 if(!home.includes('DT-JSONLD-START'))throw new Error('Homepage JSON-LD missing');
 const schema=JSON.parse(home.match(/<!-- DT-JSONLD-START -->\s*<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
 if(schema['@graph'].some(n=>['Offer','AggregateRating','Review'].includes(n['@type'])))throw new Error('Unsupported markup');
@@ -44,7 +45,7 @@ const documented=k.products.filter(p=>p.contentStatus==='documented');
 for(const p of documented){
   const route='productos/'+p.id+'/index.html';
   const h=read(route);
-  if(!h.includes('<h1')||!h.includes(p.name)||!h.includes('noindex, nofollow'))throw new Error('Product HTML missing or not gated: '+route);
+  if(!h.includes('<h1')||!h.includes(p.name)||!h.includes(robots))throw new Error('Product HTML missing or not gated: '+route);
   if(!p.images.every(x=>h.includes(x.src)))throw new Error('Missing image in '+route);
   if(p.retailPrice&&!h.includes('$'+p.retailPrice.amount.toLocaleString('es-MX')+' MXN'))throw new Error('Price missing on product page '+p.id);
   if(p.retailPrice&&(!h.includes('IVA incluido')||!h.includes('Envío no incluido')))throw new Error('Tax/shipping note missing '+p.id);
@@ -69,8 +70,25 @@ for(const item of visibleFaq){
 }
 const puros=visibleFaq.filter(x=>x.id==='faq:puros');
 if(puros.length!==1||puros[0].question!=='¿Don Turrón vende puros?'||puros[0].answer!=='El alcance de este sitio es la exhibición de accesorios para puros. No se ofrecen puros ni tabaco a través de este catálogo.')throw new Error('Original puros FAQ was altered');
-if(!read('guia/estuche-o-humidor/index.html').includes('noindex, nofollow'))throw new Error('Guide not gated');
-const gate=JSON.parse(read('semantic-release.json'));
-if(gate.mode!=='prelaunch'||gate.enableIndexing!==false||gate.enableCommerce!==false||gate.verifiedDomain!==null)throw new Error('Invalid release gate');
-if(fs.existsSync(path.join(ROOT,'sitemap.xml')))throw new Error('Sitemap prohibited before domain verified');
+validateRelease(release);
+const routes=['/',...documented.map(p=>'/productos/'+p.id+'/'),'/guia/estuche-o-humidor/'];
+for(const route of routes){
+  const html=read(route==='/'?'index.html':route.slice(1)+'index.html');
+  if(!html.includes('content="'+robots+'"'))throw new Error('Robots mismatch '+route);
+  if(release.enableIndexing){
+    const canonical=release.verifiedDomain+route;
+    if(!html.includes('<link rel="canonical" href="'+canonical+'">'))throw new Error('Canonical mismatch '+route);
+    if(!read('sitemap.xml').includes('<loc>'+canonical+'</loc>'))throw new Error('Sitemap missing '+route);
+    if(/prelanzamiento|antes de abrir las ventas/i.test(html))throw new Error('Stale public launch state '+route);
+  }
+  for(const match of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)){
+    const ld=JSON.parse(match[1]);
+    if(/"(?:Offer|AggregateOffer|Review|AggregateRating)"|"InStock"/.test(JSON.stringify(ld)))throw new Error('Unsupported schema '+route);
+  }
+}
+if(release.enableIndexing){
+  if(!read('robots.txt').includes('Allow: /')||read('robots.txt').includes('Disallow: /'))throw new Error('Production crawl blocked');
+  if((read('sitemap.xml').match(/<loc>/g)||[]).length!==routes.length)throw new Error('Sitemap route count differs');
+  for(const rel of publicFiles)if(/prelanzamiento|prelaunch/i.test(read(rel)))throw new Error('Stale AI state '+rel);
+}else if(fs.existsSync(path.join(ROOT,'sitemap.xml')))throw new Error('Prelaunch sitemap prohibited');
 console.log('DT semantic artifacts VALID: '+publicFiles.length+' AI outputs, '+k.products.length+' IDs, '+documented.length+' documented');

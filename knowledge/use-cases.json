@@ -8,7 +8,7 @@
       "estuche-viaje",
       "estuche-kit-viaje"
     ],
-    "visibility": "public_preview"
+    "visibility": "public"
   },
   {
     "id": "usecase:conservar-humedad",
@@ -18,7 +18,7 @@
       "humidor-viaje-5-puros",
       "estuche-viaje"
     ],
-    "visibility": "public_preview"
+    "visibility": "public"
   },
   {
     "id": "usecase:corte",
@@ -29,7 +29,7 @@
       "cortador-v-geometrico",
       "encendedor-honest-punch"
     ],
-    "visibility": "public_preview"
+    "visibility": "public"
   },
   {
     "id": "usecase:apoyo",
@@ -39,7 +39,7 @@
       "reposa-puros-plegable",
       "cenicero-mesa"
     ],
-    "visibility": "public_preview"
+    "visibility": "public"
   },
   {
     "id": "usecase:regalo",
@@ -50,7 +50,7 @@
       "reposa-puros-plegable",
       "estuche-viaje"
     ],
-    "visibility": "public_preview"
+    "visibility": "public"
   },
   {
     "id": "usecase:encendido",
@@ -60,6 +60,6 @@
       "encendedor-sarike-butano",
       "encendedor-honest-punch"
     ],
-    "visibility": "public_preview"
+    "visibility": "public"
   }
 ]

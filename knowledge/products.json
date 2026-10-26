@@ -17,7 +17,7 @@
     "categoryId": "category:humidores",
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation",
-    "visibility": "public_preview",
+    "visibility": "public",
     "sourceIds": [
       "source:humidor-viaje-5-puros"
     ],
@@ -69,7 +69,7 @@
     "categoryId": "category:ceniceros",
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation",
-    "visibility": "public_preview",
+    "visibility": "public",
     "sourceIds": [
       "source:cenicero-mesa"
     ],
@@ -126,7 +126,7 @@
     "categoryId": "category:estuches",
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation",
-    "visibility": "public_preview",
+    "visibility": "public",
     "sourceIds": [
       "source:estuche-viaje"
     ],
@@ -183,7 +183,7 @@
     "categoryId": "category:estuches",
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation",
-    "visibility": "public_preview",
+    "visibility": "public",
     "sourceIds": [
       "source:estuche-kit-viaje"
     ],
@@ -228,7 +228,7 @@
     "categoryId": "category:soportes",
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation",
-    "visibility": "public_preview",
+    "visibility": "public",
     "sourceIds": [
       "source:reposa-puros-plegable"
     ],
@@ -289,7 +289,7 @@
     "categoryId": "category:cortadores",
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation",
-    "visibility": "public_preview",
+    "visibility": "public",
     "sourceIds": [
       "source:cortador-v-geometrico"
     ],
@@ -356,7 +356,7 @@
     "categoryId": "category:encendedores",
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation",
-    "visibility": "public_preview",
+    "visibility": "public",
     "sourceIds": [
       "source:encendedor-sarike-butano"
     ],
@@ -419,7 +419,7 @@
     "categoryId": "category:encendedores",
     "contentStatus": "documented",
     "commercialStatus": "pending_confirmation",
-    "visibility": "public_preview",
+    "visibility": "public",
     "sourceIds": [
       "source:encendedor-honest-punch"
     ],

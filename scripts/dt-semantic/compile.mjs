@@ -4,8 +4,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { load, validate } from './validate.mjs';
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
-const release=JSON.parse(fs.readFileSync(path.join(ROOT,'semantic-release.json'),'utf8'));
-if(release.mode!=='prelaunch'||release.enableIndexing!==false||release.enableCommerce!==false||release.publishOffers!==false||release.indexNow!==false||release.verifiedDomain!==null)throw new Error('Release gate: only prelaunch without domain or commerce is authorized in V1');
+import { release, publishMetadata, absoluteSchema } from './release.mjs';
 const out=(rel,data)=>{const file=path.join(ROOT,rel);fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,typeof data==='string'?data:JSON.stringify(data,null,2)+'\n','utf8');};
 const stable=o=>Array.isArray(o)?o.map(stable):o&&typeof o==='object'?Object.fromEntries(Object.keys(o).sort().map(k=>[k,stable(o[k])])):o;
 const hash=o=>crypto.createHash('sha256').update(JSON.stringify(stable(o))).digest('hex');
@@ -53,7 +52,7 @@ function writeAi(k,fingerprint,graph){
   const documented=k.products.filter(p=>p.contentStatus!=='conceptual'&&publicItem(p));
   const publicProducts=k.products.filter(publicItem).map(p=>({id:p.id,name:p.name,description:p.description,features:p.features,images:p.images,category:p.category,contentStatus:p.contentStatus,commercialStatus:p.commercialStatus,retailPrice:p.retailPrice??null,manufacturerBrand:p.manufacturerBrand??null,variants:p.variants,stock:p.stock??null,launchWindow:p.launchWindow??null,sourceIds:p.sourceIds}));
   const asMd=items=>items.map(x=>'## '+x.question+'\n\n'+x.answer+'\n\nFuentes: '+x.sourceIds.join(', ')).join('\n\n');
-  const intro='# Don Turrón\n\n'+k.brand.description+'\n\nLema: '+k.brand.tagline+'\n\nEstado: catálogo digital de prelanzamiento sin checkout ni cobros dentro del sitio. Las solicitudes de compra se coordinan por WhatsApp y los métodos de pago se comunican tras confirmar existencias y costo total. Cinco accesorios tienen precio final al público en MXN con IVA incluido y envío por separado. Inventario registrado: set portátil de cenicero y cortadores (1 unidad), estuche porta puros con humidificador (1 unidad), estuche portátil para 4 a 8 puros (1 unidad) y reposa puros plegable (Plata 2; Negro 1). Las demás existencias siguen por confirmar. Tres próximos lanzamientos carecen todavía de precio.\n';
+  const intro='# Don Turrón\n\n'+k.brand.description+'\n\nLema: '+k.brand.tagline+'\n\nEstado: catálogo digital en producción sin checkout ni cobros dentro del sitio. Las solicitudes de compra se coordinan por WhatsApp y los métodos de pago se comunican tras confirmar existencias y costo total. Cinco accesorios tienen precio final al público en MXN con IVA incluido y envío por separado. Inventario registrado: set portátil de cenicero y cortadores (1 unidad), estuche porta puros con humidificador (1 unidad), estuche portátil para 4 a 8 puros (1 unidad) y reposa puros plegable (Plata 2; Negro 1). Las demás existencias siguen por confirmar. Tres próximos lanzamientos carecen todavía de precio.\n';
   const links=doc=>'- ['+doc.name+'](/productos/'+doc.id+'/)'+(doc.retailPrice?' — $'+doc.retailPrice.amount+' MXN, IVA incluido; envío no incluido.':'')+(doc.launchWindow?' — '+doc.launchWindow.label+'; precio por confirmar.':'');
   const brandMd=intro+'\n'+documented.length+' artículos cuentan con fichas documentadas. Cuatro productos informan existencias registradas; ninguna ficha activa pedidos ni reservas. Las consultas para adquirirlos pueden iniciarse por WhatsApp.\n';
   const catalogMd=intro+'\n## Accesorios documentados\n'+documented.map(links).join('\n')+'\n';
@@ -66,13 +65,13 @@ function writeAi(k,fingerprint,graph){
   out('ai/knowledge-graph.json',graph);out('ai/intents.json',{notice:'Ejemplos hipotéticos sin volúmenes de búsqueda comprobados',intents:intentList});
   out('ai/canonical-answers.md','# Respuestas canónicas — Don Turrón\n\n'+asMd(k['canonical-answers'].filter(publicItem))+'\n');
   out('ai/terminology.md',termMd);out('ai/sources.json',{sources:sourceList});
-  out('llms.txt','# Don Turrón\n\n'+k.brand.description+'\n\n> Catálogo digital en prelanzamiento sin checkout ni cobros dentro del sitio. Consultas de compra por WhatsApp; envíos en CDMX y zona metropolitana por $500 MXN, con entrega el mismo día para pagos y existencias confirmados antes de las 15:00 horas. Inventario registrado: set portátil de cenicero y cortadores (1 unidad), estuche porta puros con humidificador (1 unidad), estuche portátil para 4 a 8 puros (1 unidad) y reposa puros plegable (Plata 2; Negro 1). Las demás existencias siguen por confirmar. Cinco productos con precio público final (IVA incluido, envío no incluido); tres próximos lanzamientos sin precio.\n\n- [Marca](/ai/brand.md)\n- [Catálogo](/ai/catalog.md)\n- [Preguntas frecuentes](/ai/faq.md)\n- [Productos](/ai/products.json)\n- [Respuestas](/ai/canonical-answers.md)\n- [Fuentes](/ai/sources.json)\n');
+  out('llms.txt','# Don Turrón\n\n'+k.brand.description+'\n\n> Catálogo digital en producción sin checkout ni cobros dentro del sitio. Consultas de compra por WhatsApp; envíos en CDMX y zona metropolitana por $500 MXN, con entrega el mismo día para pagos y existencias confirmados antes de las 15:00 horas. Inventario registrado: set portátil de cenicero y cortadores (1 unidad), estuche porta puros con humidificador (1 unidad), estuche portátil para 4 a 8 puros (1 unidad) y reposa puros plegable (Plata 2; Negro 1). Las demás existencias siguen por confirmar. Cinco productos con precio público final (IVA incluido, envío no incluido); tres próximos lanzamientos sin precio.\n\n- [Marca](/ai/brand.md)\n- [Catálogo](/ai/catalog.md)\n- [Preguntas frecuentes](/ai/faq.md)\n- [Productos](/ai/products.json)\n- [Respuestas](/ai/canonical-answers.md)\n- [Fuentes](/ai/sources.json)\n');
   out('llms-full.txt',brandMd+'\n'+catalogMd+'\n'+faqMd+'\n'+asMd(k['canonical-answers'].filter(publicItem))+'\n');
-  out('ai/content-manifest.json',{version:1,knowledgeFingerprint:fingerprint,releaseStatus:'prelaunch',files:paths.filter(x=>x!=='ai/content-manifest.json'),generatedFrom:'knowledge/*.json',crawlerNote:'No atribuir visitas ni recomendaciones a asistentes sin evidencia de origen.'});
+  out('ai/content-manifest.json',{version:1,knowledgeFingerprint:fingerprint,releaseStatus:release.mode,files:paths.filter(x=>x!=='ai/content-manifest.json'),generatedFrom:'knowledge/*.json',crawlerNote:'No atribuir visitas ni recomendaciones a asistentes sin evidencia de origen.'});
 }
 function writeHomepage(schema,k){
   const file=path.join(ROOT,'index.html');let html=fs.readFileSync(file,'utf8');
-  const block='<!-- DT-JSONLD-START -->\n<script type="application/ld+json">'+JSON.stringify(schema)+'</script>\n<!-- DT-JSONLD-END -->';
+  const block='<!-- DT-JSONLD-START -->\n<script type="application/ld+json">'+JSON.stringify(absoluteSchema(schema, '/'))+'</script>\n<!-- DT-JSONLD-END -->';
   if(html.includes('<!-- DT-JSONLD-START -->'))html=html.replace(/<!-- DT-JSONLD-START -->[\s\S]*?<!-- DT-JSONLD-END -->/,block);
   else{
     const source=/<script type="application\/ld\+json">[\s\S]*?<\/script>/;
@@ -85,8 +84,7 @@ function writeHomepage(schema,k){
   const faqRegion=/<div class="faq-items">[\s\S]*?<\/div>/;
   if(!faqRegion.test(html))throw new Error('Homepage FAQ container missing');
   html=html.replace(faqRegion,faqBlock);
-  if(!html.includes('name="robots" content="noindex, nofollow"'))throw new Error('Prelaunch noindex gate missing');
-  out('index.html',html);
+  out('index.html',publishMetadata(html, '/'));
 }
 export function generateSitemap(siteUrl,paths=[]){
   if(!siteUrl) return null;
@@ -102,8 +100,14 @@ export function compile(){
   writeAi(k,fingerprint,graph);
   const schema=generalSchema(k);
   writeHomepage(schema,k);
-  // Release gate: do not output sitemap/canonical while siteUrl is unknown.
-  if(fs.existsSync(path.join(ROOT,'sitemap.xml')))throw new Error('Prelaunch prohibits sitemap.xml without verified domain');
+  const routes=['/',...k.products.filter(p=>p.contentStatus==='documented'&&p.visibility!=='internal').map(p=>'/productos/'+p.id+'/'),'/guia/estuche-o-humidor/'];
+  if(release.enableIndexing){
+    out('sitemap.xml',generateSitemap(release.verifiedDomain,routes));
+    out('robots.txt','User-agent: *\nAllow: /\n\nSitemap: '+release.verifiedDomain+'/sitemap.xml\n');
+  }else{
+    if(fs.existsSync(path.join(ROOT,'sitemap.xml')))fs.unlinkSync(path.join(ROOT,'sitemap.xml'));
+    out('robots.txt','User-agent: *\nDisallow: /\n');
+  }
   console.log('DT-SC-002 compiled; knowledge fingerprint '+fingerprint);
   return {fingerprint,k,graph};
 }

@@ -1,0 +1,58 @@
+name: Mobile performance and production semantics
+on:
+  push:
+    branches: [perf/mobile-production-core, main]
+    paths: ['**.js','**.mjs','**.css','**.html','knowledge/**','assets/**','semantic-release.json','tests/**','.github/workflows/mobile-performance.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Compile and check committed output
+        run: |
+          npm run build:semantic
+          git diff --exit-code
+          node --check app.js
+          node --check gallery.js
+          npm run test:observability
+          npm run test:inventory
+          node --test tests/release.test.mjs
+          node --test telemetry/tests.mjs telemetry/receiver.test.mjs telemetry/client.test.mjs
+      - name: Browser tools
+        run: |
+          python -m pip install playwright
+          python -m playwright install chromium
+          npm install --prefix /tmp/dt-audit --no-save lighthouse@13.5.0
+      - name: Existing visual and interaction regression tests
+        run: |
+          python tests/qa_browser.py
+          python tests/qa_semantic_nojs.py
+          python tests/qa_favicon.py
+          python tests/qa_rauvia_footer.py
+          python tests/qa_mobile_http.py
+      - name: Mobile before and after on identical runner
+        env:
+          LIGHTHOUSE_CLI: /tmp/dt-audit/node_modules/lighthouse/cli/index.js
+        run: |
+          mkdir -p /tmp/dt-baseline
+          git archive b358c90b6c50cdf5dd818d082e6f3a2683aecff1 | tar -x -C /tmp/dt-baseline
+          python tests/serve_compressed.py --port 8128 --directory /tmp/dt-baseline > /tmp/dt-before.log 2>&1 &
+          python tests/serve_compressed.py --port 8127 > /tmp/dt-after.log 2>&1 &
+          curl --retry 5 --retry-connrefused --retry-delay 1 --silent --show-error --compressed http://127.0.0.1:8127/site.css | cmp site.css -
+          node tests/lighthouse-mobile.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-evidence
+          path: |
+            tests/*.png
+            tests/performance/*.json
