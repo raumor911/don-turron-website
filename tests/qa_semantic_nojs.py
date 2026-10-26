@@ -31,7 +31,8 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
         assert 'Las condiciones, cobertura y costos de envío todavía no están confirmados' not in faq_text,'Sin envío obsoleto'
 
         assert page.locator('.product-card[data-id="encendedor-jet"]').count()==0,'Sin ficha ficticia'
-        assert 'noindex' in page.locator('meta[name=robots]').get_attribute('content')
+        assert page.locator('meta[name=robots]').get_attribute('content')=='index, follow'
+        assert page.locator('link[rel=canonical]').get_attribute('href')=='https://www.donturron.com.mx/'
         for item in ('cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch'):
             card=page.locator(f'.product-card[data-id="{item}"]')
             assert card.locator('.product-badge').inner_text()=='PRÓXIMAMENTE',item
@@ -75,13 +76,18 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
                 assert 'IVA incluido' in page.locator('.dt-retail-price').inner_text(),product_id
                 assert 'Envío no incluido' in page.locator('.dt-retail-price').inner_text(),product_id
             assert page.locator('.dt-images img').count()>=2,f'Fotografías {product_id}'
-            assert page.locator('meta[name=robots]').get_attribute('content')=='noindex, nofollow'
+            assert page.locator('meta[name=robots]').get_attribute('content')=='index, follow'
             assert page.locator('script[type="application/ld+json"]').count()==1
             assert page.locator('a[href="../../index.html#coleccion"]').count()>0
         assert page.request.get(base+'/productos/encendedor-jet/').status==404,'Conceptual no debe tener página'
         response=page.goto(base+'/guia/estuche-o-humidor/',wait_until='domcontentloaded')
         assert response.status==200 and page.locator('h1').count()==1
-        assert page.locator('meta[name=robots]').get_attribute('content')=='noindex, nofollow'
-        print('DT static no-JS: 8 cards, 8 product routes, 1 guide, noindex OK')
+        assert page.locator('meta[name=robots]').get_attribute('content')=='index, follow'
+        assert page.locator('link[rel=canonical]').get_attribute('href')=='https://www.donturron.com.mx/guia/estuche-o-humidor/'
+        sitemap=page.request.get(base+'/sitemap.xml')
+        assert sitemap.status==200 and sitemap.text.count('<loc>')==10
+        robots=page.request.get(base+'/robots.txt')
+        assert robots.status==200 and 'Sitemap: https://www.donturron.com.mx/sitemap.xml' in robots.text
+        print('DT static no-JS: 8 cards, 8 product routes, 1 guide, indexable OK')
         context.close();browser.close()
     server.shutdown()
