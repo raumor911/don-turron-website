@@ -4,6 +4,6 @@ Don Turrón es una marca mexicana de accesorios y estilo de vida que comienza co
 
 Lema: El arte está en los detalles.
 
-Estado: prelanzamiento sin pedidos ni pagos. Cinco accesorios tienen precio final al público en MXN con IVA incluido y envío por separado. Inventario registrado únicamente para el reposa puros: Plata (2 unidades) y Negro (1 unidad); demás existencias por confirmar. Tres próximos lanzamientos carecen todavía de precio.
+Estado: prelanzamiento sin pedidos ni pagos. Cinco accesorios tienen precio final al público en MXN con IVA incluido y envío por separado. Inventario registrado: set portátil de cenicero y cortadores (1 unidad), estuche porta puros con humidificador (1 unidad), estuche portátil para 4 a 8 puros (1 unidad) y reposa puros plegable (Plata 2; Negro 1). Las demás existencias siguen por confirmar. Tres próximos lanzamientos carecen todavía de precio.
 
-8 artículos cuentan con fichas documentadas. Solo la ficha del reposa puros informa existencias registradas; ninguna ficha activa pedidos ni reservas.
+8 artículos cuentan con fichas documentadas. Cuatro productos informan existencias registradas; ninguna ficha activa pedidos ni reservas. Las consultas para adquirirlos pueden iniciarse por WhatsApp.

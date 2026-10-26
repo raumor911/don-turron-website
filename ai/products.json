@@ -38,6 +38,7 @@
       },
       "manufacturerBrand": null,
       "variants": [],
+      "stock": null,
       "launchWindow": null,
       "sourceIds": [
         "source:humidor-viaje-5-puros"
@@ -85,6 +86,7 @@
       },
       "manufacturerBrand": null,
       "variants": [],
+      "stock": 1,
       "launchWindow": null,
       "sourceIds": [
         "source:cenicero-mesa"
@@ -132,6 +134,7 @@
       },
       "manufacturerBrand": null,
       "variants": [],
+      "stock": 1,
       "launchWindow": null,
       "sourceIds": [
         "source:estuche-viaje"
@@ -167,6 +170,7 @@
       },
       "manufacturerBrand": null,
       "variants": [],
+      "stock": 1,
       "launchWindow": null,
       "sourceIds": [
         "source:estuche-kit-viaje"
@@ -217,6 +221,7 @@
           "stock": 1
         }
       ],
+      "stock": null,
       "launchWindow": null,
       "sourceIds": [
         "source:reposa-puros-plegable"
@@ -270,6 +275,7 @@
           "status": "pending_confirmation"
         }
       ],
+      "stock": null,
       "launchWindow": {
         "status": "planned",
         "month": "2027-01",
@@ -324,6 +330,7 @@
           "status": "pending_confirmation"
         }
       ],
+      "stock": null,
       "launchWindow": {
         "status": "planned",
         "month": "2027-01",
@@ -382,6 +389,7 @@
           "status": "pending_confirmation"
         }
       ],
+      "stock": null,
       "launchWindow": {
         "status": "planned",
         "month": "2027-01",
