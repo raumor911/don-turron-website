@@ -30,10 +30,11 @@ if(!home.includes('noindex, nofollow')||!read('robots.txt').includes('Disallow: 
 if(!home.includes('DT-JSONLD-START'))throw new Error('Homepage JSON-LD missing');
 const schema=JSON.parse(home.match(/<!-- DT-JSONLD-START -->\s*<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
 if(schema['@graph'].some(n=>['Offer','AggregateRating','Review'].includes(n['@type'])))throw new Error('Unsupported markup');
-const publicFiles=['llms.txt','llms-full.txt','ai/brand.md','ai/catalog.md','ai/products.json','ai/knowledge-graph.json','ai/intents.json','ai/canonical-answers.md','ai/terminology.md','ai/sources.json','ai/content-manifest.json'];
+const publicFiles=['llms.txt','llms-full.txt','ai/brand.md','ai/catalog.md','ai/faq.md','ai/products.json','ai/knowledge-graph.json','ai/intents.json','ai/canonical-answers.md','ai/terminology.md','ai/sources.json','ai/content-manifest.json'];
 for(const file of publicFiles){if(!fs.existsSync(path.join(ROOT,file)))throw new Error('Missing output '+file);}
 for(const file of ['ai/products.json','ai/knowledge-graph.json','ai/intents.json','ai/sources.json','ai/content-manifest.json'])JSON.parse(read(file));
 for(const file of publicFiles){const s=read(file);if(/sk-proj-|BEGIN PRIVATE KEY|acquisitionCost|grossMargin|example\.com/i.test(s))throw new Error('Private value in '+file);}
+for(const item of k.faq.filter(x=>x.visibility==='public'||x.visibility==='public_preview'))if(!read('ai/faq.md').includes('## '+item.question+'\n\n'+item.answer))throw new Error('Public AI FAQ out of sync '+item.id);
 const retired='encendedor-jet';
 if(k.products.some(p=>p.id===retired))throw new Error('Removed phantom product returned in Semantic Core');
 for(const rel of ['catalog.js','index.html','ai/products.json','ai/catalog.md','ai/brand.md','llms-full.txt','ai/knowledge-graph.json']){
