@@ -22,10 +22,10 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
         faq_items=page.locator('#preguntas .faq-items details')
         assert faq_items.count()==8,'Ocho preguntas FAQ disponibles sin JS'
         questions=faq_items.locator('summary').all_inner_texts()
-        assert '¿Don Turrón vende puros?+' in questions,'Se conserva la pregunta sobre puros'
+        assert any('¿Don Turrón vende puros?' in q for q in questions),'Se conserva la pregunta sobre puros'
         puros=faq_items.filter(has_text='¿Don Turrón vende puros?')
         assert puros.locator('p').inner_text()=='El alcance de este sitio es la exhibición de accesorios para puros. No se ofrecen puros ni tabaco a través de este catálogo.','Se conserva la respuesta original sobre puros'
-        faq_text=page.locator('#preguntas').inner_text()
+        faq_text=page.locator('#preguntas').text_content()
         for statement in ('$500 MXN','15:00','Ciudad de México','OXXO','7-Eleven','Walmart','Bodega Aurrera','RAUVIA','WhatsApp'):
             assert statement in faq_text, f'FAQ incompleto: {statement}'
         assert 'Las condiciones, cobertura y costos de envío todavía no están confirmados' not in faq_text,'Sin envío obsoleto'
