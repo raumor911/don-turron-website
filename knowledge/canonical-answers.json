@@ -3,7 +3,7 @@
     "id": "answer:marca",
     "intentId": "intent:marca",
     "question": "¿Qué es Don Turrón?",
-    "answer": "Don Turrón es una marca mexicana de accesorios y estilo de vida que comienza con una colección de accesorios para puros.",
+    "answer": "Don Turrón es una marca mexicana de accesorios y estilo de vida, operada por RAUVIA. Actualmente funciona mediante canales digitales desde la Ciudad de México, sin tienda boutique física.",
     "claimIds": [
       "claim:brand-mexico"
     ],
