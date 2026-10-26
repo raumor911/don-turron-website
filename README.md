@@ -2,7 +2,7 @@
 
 Primera versión **demostrable y responsive** de una boutique de accesorios para puros. Diseño inspirado directamente en el emblema y monograma aportados. Investigación y decisiones documentadas con el **núcleo AETHRYON DRAFT v2.0.0**.
 
-> **ESTADO: PRELANZAMIENTO.** El sitio **no vende, no cobra, no reserva inventario y no acepta pedidos**. Su catálogo contiene fichas documentadas de accesorios, sin ventas habilitadas. `noindex` está activo hasta contar con información comercial validada.
+> **ESTADO: PRODUCCIÓN.** El catálogo es público e indexable en https://www.donturron.com.mx/. Las consultas comerciales se atienden por WhatsApp. **No existe checkout ni cobro automático en la web; agregar productos a una selección no reserva inventario.**
 
 ## Qué incluye
 
