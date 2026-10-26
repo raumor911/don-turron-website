@@ -3,6 +3,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { load,validate } from './validate.mjs';
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
+const release=JSON.parse(fs.readFileSync(path.join(ROOT,'semantic-release.json'),'utf8'));
+if(release.mode!=='production'||release.enableIndexing!==true||release.verifiedDomain!=='www.donturron.com.mx')throw new Error('Product page publication gate missing');
+const publicOrigin='https://'+release.verifiedDomain;
 const out=(p,text)=>{const dest=path.join(ROOT,p);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,text,'utf8');};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const jsonld=obj=>JSON.stringify(obj).replace(/</g,'\\u003c');
@@ -18,11 +21,11 @@ function relatedProducts(p,k){
   };
   return visible.map(x=>({product:x,score:score(x)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||a.product.name.localeCompare(b.product.name,'es')).slice(0,3).map(x=>x.product);
 }
-const frame=(title,body,description,ld)=>`<!doctype html>
+const frame=(title,body,description,ld,route)=>`<!doctype html>
 <html lang="es-MX">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="index, follow">\n<link rel="canonical" href="${esc(publicOrigin+route)}">
 <meta name="description" content="${esc(description)}">
 <meta name="theme-color" content="#17130f">
 <title>${esc(title)} | Don Turrón</title>
@@ -67,7 +70,7 @@ const frame=(title,body,description,ld)=>`<!doctype html>
 </head><body class="dt-page">
 <header class="dt-bar"><a class="dt-logo" href="../../index.html">DON TURRÓN</a><span>El arte está en los detalles.</span></header>
 ${body}
-<footer class="dt-footer"><span>Don Turrón · Catálogo en prelanzamiento · Sin compras habilitadas</span><span class="dt-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="RAUVIA Consulting (abre en otra pestaña)"><strong>RAUVIA Consulting</strong></a></span></footer>
+<footer class="dt-footer"><span>Don Turrón · Catálogo digital · Consultas por WhatsApp · Sin checkout en línea</span><span class="dt-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="RAUVIA Consulting (abre en otra pestaña)"><strong>RAUVIA Consulting</strong></a></span></footer>
 </body></html>`;
 function productPage(p,k){
   const images=p.images.map((x,i)=>`<figure><img src="../../${esc(x.src)}" alt="${esc(x.label)}" width="620" height="620" decoding="async" loading="${i?'lazy':'eager'}" fetchpriority="${i?'low':'high'}"><figcaption>${esc(x.label)}</figcaption></figure>`).join('');
@@ -87,13 +90,13 @@ function productPage(p,k){
    {'@type':'Product','@id':'#product',name:p.name,description:p.description+(p.launchWindow?' '+p.launchWindow.label+'.':''),image:p.images.map(x=>'../../'+x.src),category:p.categoryLabel,brand:{'@type':'Brand',name:p.manufacturerBrand||'Don Turrón'},...(p.retailPrice?{additionalProperty:[{'@type':'PropertyValue',name:'Precio público informativo (IVA incluido, envío no incluido)',value:retailText(p)}]}:{})},
    {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'Inicio',item:'../../index.html'},{'@type':'ListItem',position:2,name:'Colección',item:'../../index.html#coleccion'},{'@type':'ListItem',position:3,name:p.name}]}
   ]};
-  return frame(p.name,body,p.description.slice(0,170),ld);
+  return frame(p.name,body,p.description.slice(0,170),ld,'/productos/'+p.id+'/');
 }
 function guidePage(k){
   const answer=k['canonical-answers'].find(x=>x.id==='answer:humidor-estuche');
   const pids=['humidor-viaje-5-puros','estuche-viaje','estuche-kit-viaje'];
   const body=`<main class="dt-main"><nav class="dt-breadcrumb"><a href="../../index.html">Inicio</a> / Guías</nav><p class="dt-kicker">Guía de nuestra primera colección</p><h1 class="dt-title">¿Estuche o humidor de viaje?</h1><p class="dt-description">${esc(answer.answer)}</p><p class="dt-note">No se afirman resultados de conservación ni humedad controlada sin ensayos. Las características se basan en las fichas documentadas de los productos.</p><section class="dt-related"><h2>Fichas relacionadas</h2><ul>${pids.map(id=>{const p=k.products.find(x=>x.id===id);return `<li><a href="../../productos/${esc(id)}/">${esc(p.name)}</a></li>`;}).join('')}</ul></section></main>`;
-  return frame('Estuche o humidor de viaje',body,answer.answer.slice(0,170),{'@context':'https://schema.org','@type':'WebPage',name:'¿Estuche o humidor de viaje?',description:answer.answer});
+  return frame('Estuche o humidor de viaje',body,answer.answer.slice(0,170),{'@context':'https://schema.org','@type':'WebPage',name:'¿Estuche o humidor de viaje?',description:answer.answer},'/guia/estuche-o-humidor/');
 }
 function prerenderHome(k){
   const cards=k.products.map(p=>{
