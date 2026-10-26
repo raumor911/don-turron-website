@@ -77,6 +77,7 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
                 assert 'Envío no incluido' in page.locator('.dt-retail-price').inner_text(),product_id
             assert page.locator('.dt-images img').count()>=2,f'Fotografías {product_id}'
             assert page.locator('meta[name=robots]').get_attribute('content')=='index, follow'
+            assert page.locator('link[rel=canonical]').get_attribute('href')==f'https://www.donturron.com.mx/productos/{product_id}/'
             assert page.locator('script[type="application/ld+json"]').count()==1
             assert page.locator('a[href="../../index.html#coleccion"]').count()>0
         assert page.request.get(base+'/productos/encendedor-jet/').status==404,'Conceptual no debe tener página'
