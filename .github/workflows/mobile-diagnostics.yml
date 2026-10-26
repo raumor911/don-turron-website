@@ -1,0 +1,29 @@
+name: Diagnose mobile LCP
+on:
+  push:
+    branches: [perf/mobile-production-core]
+    paths: ['.github/workflows/mobile-diagnostics.yml']
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: npm install --prefix /tmp/dt-audit --no-save lighthouse@13.5.0
+      - name: Capture critical-path evidence
+        run: |
+          python -m http.server 8127 --bind 127.0.0.1 > /tmp/dt.log 2>&1 &
+          node /tmp/dt-audit/node_modules/lighthouse/cli/index.js http://127.0.0.1:8127/ --chrome-flags='--headless --no-sandbox' --only-categories=performance --output=json --output-path=/tmp/report.json --quiet
+          node --input-type=module - <<'JS'
+          import fs from 'node:fs';
+          const r=JSON.parse(fs.readFileSync('/tmp/report.json'));
+          for(const id of ['largest-contentful-paint','lcp-breakdown-insight','lcp-discovery-insight','render-blocking-insight','network-dependency-tree-insight','network-requests'])console.log('DIAGNOSTIC '+id+' '+JSON.stringify(r.audits[id]));
+          JS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcp-diagnostic
+          path: /tmp/report.json
