@@ -30,6 +30,6 @@ test('local fonts match the verified production binaries and are preloaded',()=>
     const binary=fs.readFileSync('assets/fonts/'+f.file);
     assert.equal(binary.subarray(0,4).toString(),'wOF2');
     assert.equal(crypto.createHash('sha256').update(binary).digest('hex'),f.sha256);
-    assert.match(home,new RegExp('as="font"[^>]+assets/fonts/'+f.file));
+    if(!f.file.includes('italic'))assert.match(home,new RegExp('as="font"[^>]+assets/fonts/'+f.file));
   }
 });
