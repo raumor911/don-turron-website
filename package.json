@@ -9,9 +9,13 @@
     "validate:artifacts": "node scripts/dt-semantic/verify.mjs",
     "build:semantic": "npm run validate:knowledge && npm run compile:knowledge && node scripts/dt-semantic/pages.mjs && npm run validate:artifacts",
     "test:observability": "node scripts/dt-semantic/observability.test.mjs",
-    "test:nojs": "python tests/qa_semantic_nojs.py"
+    "test:nojs": "python tests/qa_semantic_nojs.py",
+    "test:inventory": "node tests/qa_inventory_contract.mjs"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "mysql2": "^3.24.4"
   }
 }
