@@ -2,7 +2,7 @@
   {
     "id": "claim:brand-mexico",
     "subjectId": "brand:don-turron",
-    "statement": "Don Turrón se presenta como marca mexicana en prelanzamiento.",
+    "statement": "Don Turrón se presenta como marca mexicana de accesorios para puros.",
     "status": "verified",
     "sourceIds": [
       "source:brand-home"

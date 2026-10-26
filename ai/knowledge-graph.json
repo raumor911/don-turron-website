@@ -1,7 +1,7 @@
 {
   "name": "Don Turrón Semantic Knowledge Graph",
   "version": "1.0.0",
-  "fingerprint": "d63eb039c11ed86399cfe8bb86171b3ea6102f4ec1951ea04da956c8eb281ac6",
+  "fingerprint": "282c455cfa40280b7e28f367319e9820125ef202f21194774f9350c4402e2737",
   "nodes": [
     {
       "id": "brand:don-turron",
@@ -429,7 +429,7 @@
     {
       "id": "source:brand-home",
       "type": "Source",
-      "name": "Identidad y prelanzamiento de Don Turrón",
+      "name": "Identidad y operación digital de Don Turrón",
       "status": "site_copy"
     },
     {
@@ -489,7 +489,7 @@
     {
       "id": "claim:brand-mexico",
       "type": "Claim",
-      "name": "Don Turrón se presenta como marca mexicana en prelanzamiento.",
+      "name": "Don Turrón se presenta como marca mexicana de accesorios para puros.",
       "status": "verified"
     },
     {

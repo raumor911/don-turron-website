@@ -2,6 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { load,validate } from './validate.mjs';
+import { publishMetadata, absoluteSchema } from './release.mjs';
+import { cardSources } from './images.mjs';
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const out=(p,text)=>{const dest=path.join(ROOT,p);fs.mkdirSync(path.dirname(dest),{recursive:true});fs.writeFileSync(dest,text,'utf8');};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -18,7 +20,7 @@ function relatedProducts(p,k){
   };
   return visible.map(x=>({product:x,score:score(x)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score||a.product.name.localeCompare(b.product.name,'es')).slice(0,3).map(x=>x.product);
 }
-const frame=(title,body,description,ld)=>`<!doctype html>
+const frame=(title,body,description,ld,route)=>publishMetadata(`<!doctype html>
 <html lang="es-MX">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -63,12 +65,12 @@ const frame=(title,body,description,ld)=>`<!doctype html>
 :focus-visible{outline:3px solid #b38650;outline-offset:3px}
 @media(max-width:760px){.dt-layout{grid-template-columns:1fr}.dt-images{order:-1}.dt-main{padding-top:20px}}
 </style>
-<script type="application/ld+json">${jsonld(ld)}</script>
+<script type="application/ld+json">${jsonld(absoluteSchema(ld, route))}</script>
 </head><body class="dt-page">
 <header class="dt-bar"><a class="dt-logo" href="../../index.html">DON TURRÓN</a><span>El arte está en los detalles.</span></header>
 ${body}
-<footer class="dt-footer"><span>Don Turrón · Catálogo en prelanzamiento · Sin compras habilitadas</span><span class="dt-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="RAUVIA Consulting (abre en otra pestaña)"><strong>RAUVIA Consulting</strong></a></span></footer>
-</body></html>`;
+<footer class="dt-footer"><span>Don Turrón · Catálogo digital · Consultas por WhatsApp</span><span class="dt-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="RAUVIA Consulting (abre en otra pestaña)"><strong>RAUVIA Consulting</strong></a></span></footer>
+</body></html>`,route);
 function productPage(p,k){
   const images=p.images.map((x,i)=>`<figure><img src="../../${esc(x.src)}" alt="${esc(x.label)}" width="620" height="620" decoding="async" loading="${i?'lazy':'eager'}" fetchpriority="${i?'low':'high'}"><figcaption>${esc(x.label)}</figcaption></figure>`).join('');
   const related=relatedProducts(p,k);
@@ -79,7 +81,7 @@ function productPage(p,k){
     ${p.launchWindow?`<p class="dt-launch">${esc(p.launchWindow.label)}</p>`:''}
     <h2>Características descritas</h2><ul class="dt-features">${p.features.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
     ${Number.isInteger(p.stock)?`<p>Inventario registrado: ${p.stock} ${p.stock===1?'unidad':'unidades'}. Este inventario no constituye una reserva.</p>`:''}${p.variants.length?`<p>${hasRecordedStock(p)?'Inventario registrado por acabado: '+esc(stockText(p))+'. Las unidades no están reservadas.':'Acabados descritos: '+p.variants.map(v=>esc(v.label)).join(' y ')+'. Las existencias por acabado están pendientes.'}</p>`:''}
-    <p class="dt-note">${p.launchWindow?'Disponibilidad prevista para enero de 2027. Esta página presenta el producto y todavía no recibe pedidos.':(hasRecordedStock(p)||Number.isInteger(p.stock))?'Precio final al público con IVA incluido; envío por separado. Inventario registrado sujeto a cambios; seleccionar no reserva unidades y este sitio todavía no recibe pedidos.':'Precio final al público con IVA incluido; el envío se calcula por separado. Existencias por confirmar. Esta página informa sobre el producto; todavía no recibe pedidos.'}</p></div>
+    <p class="dt-note">${p.launchWindow?'Disponibilidad prevista para enero de 2027. Esta página presenta el producto y no procesa pagos directamente; consulta existencias por WhatsApp.':(hasRecordedStock(p)||Number.isInteger(p.stock))?'Precio final al público con IVA incluido; envío por separado. Inventario registrado sujeto a cambios; seleccionar no reserva unidades y la compra se coordina por WhatsApp tras confirmar existencias y costo total.':'Precio final al público con IVA incluido; el envío se calcula por separado. Existencias por confirmar. Esta página informa sobre el producto; no procesa pagos directamente; consulta existencias por WhatsApp.'}</p></div>
     <div class="dt-images" aria-label="Fotografías del producto">${images}</div></section>
     <section class="dt-related"><h2>También puedes conocer</h2><ul>${related.map(x=>`<li><a href="../${esc(x.id)}/">${esc(x.name)}</a></li>`).join('')||'<li><a href="../../index.html#coleccion">Explorar la colección</a></li>'}</ul><p><a href="../../index.html#coleccion">Volver a la colección</a> · <a href="../../guia/estuche-o-humidor/">Estuche o humidor: qué cambia</a></p></section>
   </main>`;
@@ -87,17 +89,17 @@ function productPage(p,k){
    {'@type':'Product','@id':'#product',name:p.name,description:p.description+(p.launchWindow?' '+p.launchWindow.label+'.':''),image:p.images.map(x=>'../../'+x.src),category:p.categoryLabel,brand:{'@type':'Brand',name:p.manufacturerBrand||'Don Turrón'},...(p.retailPrice?{additionalProperty:[{'@type':'PropertyValue',name:'Precio público informativo (IVA incluido, envío no incluido)',value:retailText(p)}]}:{})},
    {'@type':'BreadcrumbList',itemListElement:[{'@type':'ListItem',position:1,name:'Inicio',item:'../../index.html'},{'@type':'ListItem',position:2,name:'Colección',item:'../../index.html#coleccion'},{'@type':'ListItem',position:3,name:p.name}]}
   ]};
-  return frame(p.name,body,p.description.slice(0,170),ld);
+  return frame(p.name,body,p.description.slice(0,170),ld,'/productos/'+p.id+'/');
 }
 function guidePage(k){
   const answer=k['canonical-answers'].find(x=>x.id==='answer:humidor-estuche');
   const pids=['humidor-viaje-5-puros','estuche-viaje','estuche-kit-viaje'];
   const body=`<main class="dt-main"><nav class="dt-breadcrumb"><a href="../../index.html">Inicio</a> / Guías</nav><p class="dt-kicker">Guía de nuestra primera colección</p><h1 class="dt-title">¿Estuche o humidor de viaje?</h1><p class="dt-description">${esc(answer.answer)}</p><p class="dt-note">No se afirman resultados de conservación ni humedad controlada sin ensayos. Las características se basan en las fichas documentadas de los productos.</p><section class="dt-related"><h2>Fichas relacionadas</h2><ul>${pids.map(id=>{const p=k.products.find(x=>x.id===id);return `<li><a href="../../productos/${esc(id)}/">${esc(p.name)}</a></li>`;}).join('')}</ul></section></main>`;
-  return frame('Estuche o humidor de viaje',body,answer.answer.slice(0,170),{'@context':'https://schema.org','@type':'WebPage',name:'¿Estuche o humidor de viaje?',description:answer.answer});
+  return frame('Estuche o humidor de viaje',body,answer.answer.slice(0,170),{'@context':'https://schema.org','@type':'WebPage',name:'¿Estuche o humidor de viaje?',description:answer.answer},'/guia/estuche-o-humidor/');
 }
 function prerenderHome(k){
   const cards=k.products.map(p=>{
-    const img=p.images.length?`<img class="travel-photo travel-photo-card" data-product-id="${esc(p.id)}" src="${esc(p.images[0].src)}" alt="Fotografía de ${esc(p.name)}; ${esc(p.images[0].label)}" loading="lazy" decoding="async" fetchpriority="low" width="620" height="620">`:`<img src="assets/${esc(p.art)}.svg" alt="Ilustración conceptual de ${esc(p.name)}" loading="lazy">`;
+    const img=p.images.length?`<img class="travel-photo travel-photo-card" data-product-id="${esc(p.id)}" src="${esc(p.images[0].src)}" ${cardSources(p.images[0].src)} alt="Fotografía de ${esc(p.name)}; ${esc(p.images[0].label)}" loading="lazy" decoding="async" fetchpriority="low" width="620" height="620">`:`<img src="assets/${esc(p.art)}.svg" alt="Ilustración conceptual de ${esc(p.name)}" loading="lazy">`;
     return `<article class="product-card" data-id="${esc(p.id)}"><div class="product-art art-${esc(p.art)}">${p.badge?`<span class="product-badge">${esc(p.badge)}</span>`:''}<button type="button" class="product-image-trigger" data-open-photo="${esc(p.id)}" aria-label="Ver detalles de ${esc(p.name)}">${img}</button><button type="button" class="product-quick" data-detail="${esc(p.id)}" aria-label="Ver detalles de ${esc(p.name)}">↗</button></div><div class="product-details"><div class="product-category">${esc(p.categoryLabel.toUpperCase())}</div><h3>${esc(p.name)}</h3><p class="product-subtitle">${esc(p.subtitle)}</p>${stockCard(p)}${p.launchWindow?`<p class="product-availability">${esc(p.launchWindow.label)}</p>`:''}<div class="product-buy">${p.retailPrice?`<span class="product-price product-price-set"><strong>${esc(retailText(p))}</strong><small>IVA incluido</small></span>`:`<span class="product-price">Precio por confirmar</span>`}<button type="button" class="add-product" data-add="${esc(p.id)}">Seleccionar <span>＋</span></button></div></div></article>`;
   }).join('\n');
   let html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');

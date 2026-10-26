@@ -7,5 +7,5 @@ window.DON_TURRON_CONFIG = {
   contactEmail: '', // Ej. contacto@dominio-propio.mx, cuando exista una cuenta real.
   currency: 'MXN',
   catalogMode: 'inquiry', // Solo consultas. No acepta ni cobra pedidos.
-  siteUrl: '' // Completar con dominio definitivo y retirar noindex al lanzamiento.
+  siteUrl: 'https://www.donturron.com.mx' // Dominio verificado en Vercel; checkout no integrado.
 };

@@ -10,7 +10,8 @@
   // Las imágenes proceden exclusivamente de knowledge/products.json (catálogo generado).
   const photosOf = p => Array.isArray(p.images) && p.images.length ? p.images : null;
   function productPicture(p, placement) {
-    const priority = placement === 'modal' ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" fetchpriority="low"';
+    const photos = photosOf(p);
+    const priority = placement === 'modal' || !photos ? 'loading="eager" fetchpriority="high"' : `loading="lazy" fetchpriority="low" srcset="${photos[0].src.replace(/\.webp$/, '-320.webp').replace('assets/products/', 'assets/responsive/')} 320w, ${photos[0].src.replace(/\.webp$/, '-640.webp').replace('assets/products/', 'assets/responsive/')} 640w" sizes="(max-width:580px) calc((100vw - 47px)/2), (max-width:960px) 45vw, 360px"`;
     if (!photosOf(p)) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" decoding="async" ${priority} />`;
     return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${photosOf(p)[0].src}" alt="Fotografía de ${html(p.name)}; ${html(photosOf(p)[0].label)}" decoding="async" ${priority} width="620" height="620" />`;
   }

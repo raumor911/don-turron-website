@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "knowledgeFingerprint": "d63eb039c11ed86399cfe8bb86171b3ea6102f4ec1951ea04da956c8eb281ac6",
-  "releaseStatus": "prelaunch",
+  "knowledgeFingerprint": "282c455cfa40280b7e28f367319e9820125ef202f21194774f9350c4402e2737",
+  "releaseStatus": "production",
   "files": [
     "llms.txt",
     "llms-full.txt",
