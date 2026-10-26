@@ -19,6 +19,17 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
         response=page.goto(base+'/',wait_until='domcontentloaded')
         assert response.status==200
         assert page.locator('.product-card').count()==8,'Ocho productos reales sin JS'
+        faq_items=page.locator('#preguntas .faq-items details')
+        assert faq_items.count()==8,'Ocho preguntas FAQ disponibles sin JS'
+        questions=faq_items.locator('summary').all_inner_texts()
+        assert '¿Don Turrón vende puros?+' in questions,'Se conserva la pregunta sobre puros'
+        puros=faq_items.filter(has_text='¿Don Turrón vende puros?')
+        assert puros.locator('p').inner_text()=='El alcance de este sitio es la exhibición de accesorios para puros. No se ofrecen puros ni tabaco a través de este catálogo.','Se conserva la respuesta original sobre puros'
+        faq_text=page.locator('#preguntas').inner_text()
+        for statement in ('$500 MXN','15:00','Ciudad de México','OXXO','7-Eleven','Walmart','Bodega Aurrera','RAUVIA','WhatsApp'):
+            assert statement in faq_text, f'FAQ incompleto: {statement}'
+        assert 'Las condiciones, cobertura y costos de envío todavía no están confirmados' not in faq_text,'Sin envío obsoleto'
+
         assert page.locator('.product-card[data-id="encendedor-jet"]').count()==0,'Sin ficha ficticia'
         assert 'noindex' in page.locator('meta[name=robots]').get_attribute('content')
         for item in ('cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch'):
