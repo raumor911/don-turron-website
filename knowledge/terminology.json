@@ -3,24 +3,24 @@
     "id": "term:humidor",
     "term": "humidor de viaje",
     "definition": "Estuche con componente de humidificación descrito en su ficha; no implica humedad garantizada.",
-    "visibility": "public_preview"
+    "visibility": "public"
   },
   {
     "id": "term:estuche",
     "term": "estuche porta puros",
     "definition": "Accesorio para llevar puros; sus características varían por modelo.",
-    "visibility": "public_preview"
+    "visibility": "public"
   },
   {
     "id": "term:punch",
     "term": "punzón (punch)",
     "definition": "Herramienta de perforación para puros incluida en el set documentado.",
-    "visibility": "public_preview"
+    "visibility": "public"
   },
   {
     "id": "term:documented",
     "term": "ficha documentada",
     "definition": "Datos descriptivos aportados; no equivale a inventario o comprobación técnica independiente.",
-    "visibility": "public_preview"
+    "visibility": "public"
   }
 ]

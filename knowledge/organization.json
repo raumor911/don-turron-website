@@ -4,7 +4,7 @@
   "description": "Don Turrón es una marca mexicana de accesorios para puros, operada por RAUVIA. Opera de forma digital desde CDMX, con envíos a la Ciudad de México y zona metropolitana.",
   "brandId": "brand:don-turron",
   "commercialStatus": "inquiry",
-  "visibility": "public_preview",
+  "visibility": "public",
   "sourceIds": [
     "source:brand-home"
   ]

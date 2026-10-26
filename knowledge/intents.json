@@ -24,7 +24,7 @@
       "usecase:apoyo"
     ],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   },
   {
@@ -43,7 +43,7 @@
       "usecase:conservar-humedad"
     ],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   },
   {
@@ -63,7 +63,7 @@
       "usecase:guardar-viaje"
     ],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   },
   {
@@ -82,7 +82,7 @@
       "usecase:corte"
     ],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   },
   {
@@ -101,7 +101,7 @@
       "usecase:apoyo"
     ],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   },
   {
@@ -123,7 +123,7 @@
       "usecase:guardar-viaje"
     ],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   },
   {
@@ -144,7 +144,7 @@
       "usecase:guardar-viaje"
     ],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   },
   {
@@ -164,7 +164,7 @@
       "usecase:regalo"
     ],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   },
   {
@@ -179,7 +179,7 @@
     "productIds": [],
     "useCaseIds": [],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   },
   {
@@ -199,7 +199,7 @@
       "usecase:corte"
     ],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   },
   {
@@ -219,7 +219,7 @@
       "usecase:encendido"
     ],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   },
   {
@@ -240,7 +240,7 @@
       "usecase:corte"
     ],
     "status": "hypothesis",
-    "visibility": "public_preview",
+    "visibility": "public",
     "searchVolumeEvidence": false
   }
 ]

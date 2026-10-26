@@ -14,7 +14,7 @@
     "collection:accesorios-puros"
   ],
   "status": "documented",
-  "visibility": "public_preview",
+  "visibility": "public",
   "sourceIds": [
     "source:brand-home"
   ]

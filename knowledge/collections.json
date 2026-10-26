@@ -4,7 +4,7 @@
     "name": "Primera selección de accesorios para puros",
     "description": "Accesorios presentados en el catálogo digital.",
     "status": "documented",
-    "visibility": "public_preview",
+    "visibility": "public",
     "categoryIds": [
       "category:soportes",
       "category:encendedores",
