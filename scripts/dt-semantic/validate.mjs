@@ -41,7 +41,7 @@ export function validate(data=load()){
       check(/^assets\/products\/[a-z0-9-]+\.webp$/.test(image.src),p.id+': invalid image path');
       check(fs.existsSync(path.join(ROOT,image.src)),p.id+': missing image '+image.src);
     }
-    if(p.id==='reposa-puros-plegable')check(p.variants.map(x=>x.label).join('|')==='Plata|Negro' && p.variants.every(x=>!x.sku&&!x.stock), 'unconfirmed variants');
+    if(p.id==='reposa-puros-plegable')check(p.variants.map(x=>x.label).join('|')==='Plata|Negro' && p.variants[0]?.stock===2 && p.variants[1]?.stock===1 && p.variants.every(x=>x.status==='confirmed'&&!x.sku) && p.commercialStatus==='pending_confirmation', 'invalid confirmed stock or prelaunch gate for reposa puros');
     if(p.id==='cortador-v-geometrico')check(p.variants.map(x=>x.label).join('|')==='Plateado|Dorado' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed cortador variants');
     if(p.id==='encendedor-sarike-butano')check(p.variants.map(x=>x.label).join('|')==='Plata|Dorado' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed Parike variants');
     if(p.id==='encendedor-honest-punch')check(p.variants.map(x=>x.label).join('|')==='Negro|Rojo' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed HONEST variants');

@@ -25,12 +25,57 @@
   const retailText = p => p.retailPrice ? '$'+Number(p.retailPrice.amount).toLocaleString('es-MX')+' MXN' : null;
   const priceMarkup = p => p.retailPrice ? `<span class="product-price product-price-set"><strong>${retailText(p)}</strong><small>IVA incluido</small></span>` : '<span class="product-price">Precio por confirmar</span>';
   const asInt = (x) => Number.isFinite(Number(x)) ? Math.max(0, Math.min(MAX_QUANTITY, Math.floor(Number(x)))) : 0;
+  const hasRecordedStock = p => !!p && p.id === 'reposa-puros-plegable' && Array.isArray(p.variants) && p.variants.length === 2 && p.variants.every(v => Number.isInteger(v.stock) && v.stock >= 0);
+  const keyFor = (p, label) => hasRecordedStock(p) ? p.id + '::' + label : p.id;
+  function entryFor(key) {
+    const [id, label, extra] = key.split('::');
+    if (extra !== undefined) return null;
+    const p = productById(id);
+    if (!p) return null;
+    if (!hasRecordedStock(p)) return label === undefined ? {p, variant:null} : null;
+    const variant = p.variants.find(v => v.label === label);
+    return variant ? {p, variant} : null;
+  }
+  const maxFor = entry => entry.variant ? Math.min(MAX_QUANTITY, entry.variant.stock) : MAX_QUANTITY;
+  const stockLine = p => p.variants.map(v => v.label + ': ' + v.stock + ' ' + (v.stock === 1 ? 'disponible' : 'disponibles')).join(' · ');
+  function variantPicker(p) {
+    if (!hasRecordedStock(p)) return '';
+    return `<div class="variant-picker" data-variant-product="${html(p.id)}"><label>Color<select data-variant-color aria-label="Color del reposa puros">${p.variants.map(v => `<option value="${html(v.label)}">${html(v.label)}</option>`).join('')}</select></label><label>Cantidad<select data-variant-qty aria-label="Cantidad del reposa puros"><option value="1">1</option><option value="2">2</option></select></label><p class="variant-remaining" data-variant-remaining aria-live="polite"></p></div>`;
+  }
+  function syncVariantPicker(root) {
+    if (!root) return;
+    const p = productById(root.dataset.variantProduct);
+    if (!hasRecordedStock(p)) return;
+    const color = root.querySelector('[data-variant-color]')?.value;
+    const variant = p.variants.find(v => v.label === color);
+    if (!variant) return;
+    const qty = root.querySelector('[data-variant-qty]');
+    const available = Math.max(0, variant.stock - (cart[keyFor(p, color)] || 0));
+    const previous = Number(qty.value) || 1;
+    qty.innerHTML = available ? Array.from({length:available},(_,i) => `<option value="${i+1}">${i+1}</option>`).join('') : '<option value="0">0</option>';
+    qty.value = String(available ? Math.min(previous,available) : 0);
+    qty.disabled = available === 0;
+    const button = root.closest('.product-card, .modal-text')?.querySelector('[data-add]');
+    if (button) button.disabled = available === 0;
+    root.querySelector('[data-variant-remaining]').textContent = available ? available + (available === 1 ? ' unidad restante para agregar' : ' unidades restantes para agregar') : 'Todas las unidades de este color ya están en tu selección';
+  }
+  const syncAllVariantPickers = () => document.querySelectorAll('[data-variant-product]').forEach(syncVariantPicker);
+  function addFromButton(button) {
+    const p = productById(button.dataset.add);
+    if (!p) return;
+    if (!hasRecordedStock(p)) return changeQuantity(p.id, 1);
+    const picker = button.closest('.product-card, .modal-text')?.querySelector('[data-variant-product]');
+    if (!picker) return;
+    const label = picker.querySelector('[data-variant-color]').value;
+    const qty = Number(picker.querySelector('[data-variant-qty]').value);
+    if (Number.isInteger(qty) && qty > 0) changeQuantity(keyFor(p, label), qty);
+  }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch (e) { /* optional persistence */ } };
   function load() {
     try {
       const saved = JSON.parse(localStorage.getItem(KEY) || '{}');
       if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
-        Object.entries(saved).forEach(([id, count]) => { if (productById(id) && asInt(count)) cart[id] = asInt(count); });
+        Object.entries(saved).forEach(([key, value]) => { const entry=entryFor(key); if (entry && asInt(value)) cart[key] = Math.min(asInt(value), maxFor(entry)); });
       }
     } catch(e) { cart = {}; }
   }
@@ -59,7 +104,7 @@
           <button type="button" class="product-quick" data-detail="${html(p.id)}" aria-label="Ver detalles de ${html(p.name)}">↗</button>
         </div>
         <div class="product-details"><div class="product-category">${html(p.categoryLabel.toUpperCase())}</div>
-          <h3>${html(p.name)}</h3><p class="product-subtitle">${html(p.subtitle)}</p>${p.launchWindow ? `<p class="product-availability">${html(p.launchWindow.label)}</p>` : ''}
+          <h3>${html(p.name)}</h3><p class="product-subtitle">${html(p.subtitle)}</p>${hasRecordedStock(p) ? `<p class="product-stock">${html(stockLine(p))}</p>${variantPicker(p)}` : ''}${p.launchWindow ? `<p class="product-availability">${html(p.launchWindow.label)}</p>` : ''}
           <div class="product-buy">${priceMarkup(p)}<button type="button" class="add-product" data-add="${html(p.id)}">Seleccionar <span>＋</span></button></div>
         </div>
       </article>`).join('');
@@ -75,6 +120,7 @@
       const product = catalog[index];
       if (!product || card.dataset.id !== product.id) return false;
       const visiblePrice = card.querySelector('.product-price strong')?.textContent?.trim();
+      if (hasRecordedStock(product) && (!card.querySelector('[data-variant-product]') || !card.textContent.includes(stockLine(product)))) return false;
       return product.retailPrice ? visiblePrice === retailText(product) : !!card.querySelector('.product-price');
     });
   }
@@ -89,6 +135,7 @@
       btn.setAttribute('aria-pressed', String(active));
     });
     renderProducts();
+    syncAllVariantPickers();
     if (filter!==previousFilter) emit('category_filter',{filter});
     if (scroll) setTimeout(() => $('coleccion').scrollIntoView({behavior:'smooth'}), 30);
   }
@@ -97,34 +144,40 @@
     $('cart-count').textContent = count();
     $('drawer-count').textContent = `(${count()})`;
   }
-  function changeQuantity(id, by) {
-    if (!productById(id)) return;
-    const beforeQuantity = cart[id] || 0;
-    const newQuantity = asInt(beforeQuantity + by);
-    if (newQuantity > 0) cart[id] = newQuantity;
-    else delete cart[id];
-    save();
-    updateCounters();
-    renderDrawer();
-    if (newQuantity !== beforeQuantity) emit(newQuantity>beforeQuantity?'selection_add':'selection_remove',{product_id:id});
-    if (by > 0) toast('Agregamos el accesorio a tu selección.');
+  function changeQuantity(key, by) {
+    const entry = entryFor(key);
+    if (!entry) return;
+    const beforeQuantity = cart[key] || 0;
+    const newQuantity = Math.min(maxFor(entry), asInt(beforeQuantity + by));
+    if (newQuantity > 0) cart[key] = newQuantity;
+    else delete cart[key];
+    if (newQuantity !== beforeQuantity) {
+      save();
+      updateCounters();
+      renderDrawer();
+      emit(newQuantity > beforeQuantity ? 'selection_add' : 'selection_remove', {product_id:entry.p.id, variant:entry.variant?.label, quantity:Math.abs(newQuantity-beforeQuantity)});
+    }
+    syncAllVariantPickers();
+    if (by > 0) toast(newQuantity > beforeQuantity ? 'Agregamos el accesorio a tu selección.' : 'Ya tienes el máximo registrado para este color.');
   }
   function renderDrawer() {
     const contents = $('drawer-contents');
-    const items = Object.entries(cart).map(([id, qty]) => ({product:productById(id),qty})).filter(v => v.product);
+    const items = Object.entries(cart).map(([key,qty]) => ({key,entry:entryFor(key),qty})).filter(v => v.entry);
     if (!items.length) contents.innerHTML = `<div class="drawer-empty"><span class="empty-signet">✦</span><h3>Tu selección está vacía.</h3><p>Puedes guardar aquí los accesorios que te interesen.</p></div>`;
-    else contents.innerHTML = items.map(({product:p,qty}) => `
-      <div class="drawer-line"><div class="drawer-art">${productPicture(p, "drawer")}</div>
-        <div class="drawer-line-text"><h3>${html(p.name)}</h3><p>${p.retailPrice ? retailText(p)+' · IVA incluido, envío aparte · Disponibilidad por confirmar' : 'PRECIO Y DISPONIBILIDAD POR CONFIRMAR'}</p>
-          <div class="qty-controls"><button type="button" data-qty="-1" data-id="${html(p.id)}" aria-label="Quitar una unidad de ${html(p.name)}">−</button><span>${qty}</span><button type="button" data-qty="1" data-id="${html(p.id)}" aria-label="Agregar una unidad de ${html(p.name)}">+</button></div>
-          <button type="button" class="remove-line" data-remove="${html(p.id)}">Eliminar</button>
-        </div></div>`).join('');
+    else contents.innerHTML = items.map(({key,entry,qty}) => {
+      const p = entry.p, variant = entry.variant;
+      return `<div class="drawer-line"><div class="drawer-art">${productPicture(p, "drawer")}</div>
+        <div class="drawer-line-text"><h3>${html(p.name)}</h3>${variant ? `<p class="drawer-variant">Color: ${html(variant.label)}</p>` : ''}<p>${p.retailPrice ? retailText(p)+' · IVA incluido, envío aparte · '+(variant?'Inventario registrado, sin reserva':'Disponibilidad por confirmar') : 'PRECIO Y DISPONIBILIDAD POR CONFIRMAR'}</p>
+          <div class="qty-controls"><button type="button" data-qty="-1" data-id="${html(key)}" aria-label="Quitar una unidad de ${html(p.name)}${variant?' en '+html(variant.label):''}" ${qty <= 0 ? 'disabled' : ''}>−</button><span>${qty}</span><button type="button" data-qty="1" data-id="${html(key)}" aria-label="Agregar una unidad de ${html(p.name)}${variant?' en '+html(variant.label):''}" ${qty >= maxFor(entry) ? 'disabled' : ''}>+</button></div>
+          <button type="button" class="remove-line" data-remove="${html(key)}">Eliminar</button>
+        </div></div>`;
+    }).join('');
     $('copy-selection').disabled = !items.length;
     $('request-selection').hidden = !items.length || !validEmail(config.contactEmail);
   }
   function validEmail(email) { return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
   function selectionText() {
-    const lines = ['Don Turrón — Consulta de disponibilidad', '', ...Object.entries(cart).filter(([id]) => productById(id)).map(([id,qty]) => `• ${productById(id).name} × ${qty}${productById(id).retailPrice ? ' · '+retailText(productById(id))+' c/u (IVA incluido)' : ' · precio por confirmar'}`),'','Los precios publicados incluyen IVA; envío por separado. Solicito confirmar existencias y opciones de entrega.','Esta lista no constituye un pedido ni una reserva.'];
+    const lines = ['Don Turrón — Consulta de disponibilidad', '', ...Object.entries(cart).filter(([key]) => entryFor(key)).map(([key,qty]) => { const {p,variant}=entryFor(key); return `• ${p.name}${variant ? ' · Color: '+variant.label : ''} × ${qty}${p.retailPrice ? ' · '+retailText(p)+' c/u (IVA incluido)' : ' · precio por confirmar'}`; }),'','Los precios publicados incluyen IVA; envío por separado. Solicito confirmar existencias y opciones de entrega.','Esta lista no constituye un pedido ni una reserva.'];
     return lines.join('\n');
   }
   async function copySelection() {
@@ -171,7 +224,7 @@
     emit('selection_open');
   }
   function modalDisclosure(p) {
-    if (p.retailPrice) return '<p class="modal-caption">Envío no incluido. Existencias por confirmar. Este catálogo aún no acepta pedidos.</p>';
+    if (p.retailPrice) return '<p class="modal-caption">Envío no incluido. '+(hasRecordedStock(p)?'Inventario registrado sujeto a cambios; seleccionar no reserva unidades.':'Existencias por confirmar.')+' Este catálogo aún no acepta pedidos.</p>';
     if (p.id === 'encendedor-honest-punch') return '';
     if (p.id === 'encendedor-sarike-butano') return '';
     if (p.id === 'cortador-v-geometrico') return '<p class="modal-caption">Precio por confirmar.</p>';
@@ -180,7 +233,8 @@
   function openProduct(id, trigger) {
     const p = productById(id);
     if (!p) return;
-    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p>${p.launchWindow ? `<p class="modal-availability">${html(p.launchWindow.label)}</p>` : ''}${p.retailPrice ? `<p class="modal-retail-price"><strong>${retailText(p)}</strong><small>IVA incluido · Envío no incluido</small></p>` : ''}<ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul>${modalDisclosure(p)}<button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
+    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p>${p.launchWindow ? `<p class="modal-availability">${html(p.launchWindow.label)}</p>` : ''}${p.retailPrice ? `<p class="modal-retail-price"><strong>${retailText(p)}</strong><small>IVA incluido · Envío no incluido</small></p>` : ''}<ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul>${modalDisclosure(p)}${variantPicker(p)}<button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
+    syncVariantPicker($('product-modal-content').querySelector('[data-variant-product]'));
     openDialog($('product-modal'), $('product-modal-backdrop'), trigger);
     emit('product_view',{product_id:id});
   }
@@ -215,9 +269,9 @@
   function bind() {
     $('filters').addEventListener('click', e => { const btn = e.target.closest('[data-filter]'); if (btn) setFilter(btn.dataset.filter); });
     document.querySelectorAll('[data-category]').forEach(link => link.addEventListener('click', () => setFilter(link.dataset.category)));
-    $('product-grid').addEventListener('click', e => { const add=e.target.closest('[data-add]'), detail=e.target.closest('[data-detail], [data-open-photo]'); if(add) changeQuantity(add.dataset.add,1); if(detail) openProduct(detail.dataset.detail || detail.dataset.openPhoto,detail); });
+    $('product-grid').addEventListener('click', e => { const add=e.target.closest('[data-add]'), detail=e.target.closest('[data-detail], [data-open-photo]'); if(add) addFromButton(add); if(detail) openProduct(detail.dataset.detail || detail.dataset.openPhoto,detail); });
     $('product-modal-content').addEventListener('click', e => {
-      const add=e.target.closest('[data-add]'); if (add) changeQuantity(add.dataset.add,1);
+      const add=e.target.closest('[data-add]'); if (add) addFromButton(add);
       const view=e.target.closest('[data-photo-index]');
       if (view) {
         const frame=e.currentTarget.querySelector('.travel-photo-modal');
@@ -233,6 +287,9 @@
         if(changed) emit('gallery_navigation',{product_id:selectedProduct.id,image_index:i});
       }
     });
+    ['product-grid','product-modal-content'].forEach(id => $(id).addEventListener('change', e => {
+      if (e.target.matches('[data-variant-color]')) syncVariantPicker(e.target.closest('[data-variant-product]'));
+    }));
     $('open-selection').addEventListener('click', e=>openSelection(e.currentTarget));
     $('close-selection').addEventListener('click', closeDialog);
     $('drawer-backdrop').addEventListener('click',closeDialog);
@@ -241,7 +298,7 @@
     $('drawer-contents').addEventListener('click',e=>{
       const qty=e.target.closest('[data-qty]'); const remove=e.target.closest('[data-remove]');
       if(qty) changeQuantity(qty.dataset.id,Number(qty.dataset.qty));
-      if(remove) {const id=remove.dataset.remove;const existed=Boolean(cart[id]);delete cart[id];save();updateCounters();renderDrawer();if(existed)emit('selection_remove',{product_id:id});}
+      if(remove) {const key=remove.dataset.remove;const entry=entryFor(key);const existed=Boolean(cart[key]);delete cart[key];save();updateCounters();renderDrawer();syncAllVariantPickers();if(existed&&entry)emit('selection_remove',{product_id:entry.p.id,variant:entry.variant?.label});}
     });
     $('copy-selection').addEventListener('click',copySelection);
     $('request-selection').addEventListener('click', () => {
@@ -267,5 +324,5 @@
   load();
   if (!prerenderMatchesCatalog()) renderProducts();
   else $('result-count').textContent = singular(catalog.length);
-  renderDrawer();updateCounters();bind();initAgeGate();
+  renderDrawer();updateCounters();bind();syncAllVariantPickers();initAgeGate();
 })();

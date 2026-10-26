@@ -249,11 +249,13 @@
     "variants": [
       {
         "label": "Plata",
-        "status": "pending_confirmation"
+        "status": "confirmed",
+        "stock": 2
       },
       {
         "label": "Negro",
-        "status": "pending_confirmation"
+        "status": "confirmed",
+        "stock": 1
       }
     ],
     "sortOrder": 6,
