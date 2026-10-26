@@ -1,12 +1,13 @@
 {
   "version": 1,
-  "knowledgeFingerprint": "4f76e13103ee86f22fc116654c0a5ea421871d6db7d8fd5acc7ba5fdf81e426e",
+  "knowledgeFingerprint": "d63eb039c11ed86399cfe8bb86171b3ea6102f4ec1951ea04da956c8eb281ac6",
   "releaseStatus": "prelaunch",
   "files": [
     "llms.txt",
     "llms-full.txt",
     "ai/brand.md",
     "ai/catalog.md",
+    "ai/faq.md",
     "ai/products.json",
     "ai/knowledge-graph.json",
     "ai/intents.json",
