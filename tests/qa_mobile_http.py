@@ -24,6 +24,7 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
             page.screenshot(path=str(ROOT/f'tests/http-home-{width}.png'),full_page=True)
             assert page.locator('link[rel=canonical]').get_attribute('href')=='https://www.donturron.com.mx/'
             assert page.locator('meta[name=robots]').get_attribute('content')=='index, follow'
+            assert page.evaluate("document.fonts.check('400 16px Manrope') && document.fonts.check('italic 400 16px \"Cormorant Garamond\"')"), 'Original local fonts not loaded'
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), 'Horizontal overflow'
             card=page.locator('[data-id="cenicero-mesa"]')
             card.locator('[data-add]').click()

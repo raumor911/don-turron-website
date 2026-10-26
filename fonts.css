@@ -1,0 +1,4 @@
+/* Exact Latin variable fonts observed in the production baseline; OFL licenses in assets/fonts/. */
+@font-face{font-family:'Manrope';font-style:normal;font-weight:200 800;font-display:swap;src:url('assets/fonts/manrope-latin.woff2') format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300 700;font-display:swap;src:url('assets/fonts/cormorant-garamond-latin.woff2') format('woff2')}
+@font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:300 700;font-display:swap;src:url('assets/fonts/cormorant-garamond-italic-latin.woff2') format('woff2')}
