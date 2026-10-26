@@ -23,6 +23,7 @@ jobs:
           npm run build:semantic
           node --check catalog.js
           node --check app.js
+          npm run test:inventory
       - name: Confirmar salida determinista
         shell: bash
         run: |

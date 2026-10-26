@@ -10,9 +10,13 @@
     "build:semantic": "npm run build:css && npm run validate:knowledge && npm run compile:knowledge && node scripts/dt-semantic/pages.mjs && npm run validate:artifacts",
     "test:observability": "node scripts/dt-semantic/observability.test.mjs",
     "test:nojs": "python tests/qa_semantic_nojs.py",
-    "build:css": "node scripts/build-css.mjs"
+    "build:css": "node scripts/build-css.mjs",
+    "test:inventory": "node tests/qa_inventory_contract.mjs"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "mysql2": "^3.24.4"
   }
 }

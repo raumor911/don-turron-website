@@ -10,7 +10,7 @@ LCP element: `.hero-photo`. The report identifies about 1950 ms of element rende
 
 ## Implementation
 
-- A native responsive picture delivers the emblem in AVIF with a WebP fallback; WebP derivatives serve the transparent monogram and first photograph of each product; originals remain available to galleries and zoom. Cards retain native lazy loading and use 320/640 px variants after filtering as well as in static HTML.
+- A native responsive picture delivers the emblem in AVIF with a WebP fallback and 512/640/1024 px candidates selected by pixel density; WebP derivatives serve the transparent monogram and first photograph of each product; originals remain available to galleries and zoom. Cards retain native lazy loading and use 320/640 px variants after filtering as well as in static HTML.
 - One stylesheet with exactly the original cascade order instead of three requests. The three exact Latin variable font binaries observed in the baseline are served locally; the two primary faces are preloaded, while italic is discovered by CSS to keep the emblem ahead in the critical queue. Their glyph coverage (including Spanish), weight axes and SHA-256 were verified with fontTools; the unmodified fonts retain their OFL licenses. This removes the external font CSS/request chain while preserving typography. Both asynchronous external loading (CLS 0.115) and blocking external loading (LCP 3.76 s) were rejected before merge.
 - Essential mobile hero elements no longer wait for entrance animations. Desktop styling and motion remain available. The hidden duplicate emblem image was removed.
 - Carousel loading/priority hints are set before assigning image sources. No gallery prefetch is added to the initial path. Selection storage, quantities, WhatsApp number and message construction are retained.
@@ -20,3 +20,7 @@ LCP element: `.hero-photo`. The report identifies about 1950 ms of element rende
 ## Verification and limits
 
 The local environment denies listening sockets, browser processes and outbound shell network access. Static generation, artifact validation, JavaScript syntax and non-network telemetry tests can run locally. GitHub Actions runs the existing visual/interaction suite, HTTP mobile checks, no-JS routes, favicon/footer checks, receiver tests, and three cold Lighthouse runs per source on the same runner. A CLS budget of 0.1 guards visual stability. Raw JSON reports and screenshots are retained as `mobile-evidence`. The script prints all samples and medians; local HTTP comparisons exclude CDN conditions. Public PageSpeed measurement must be repeated after the automatically deployed SHA is confirmed. The <3 s objective applies to LCP/essential content; below-fold images intentionally load on demand.
+
+## Concurrent main changes preserved
+
+Main advanced to `20ed3de51e59163170de90da253d196730004527` during the audit, adding the gated inventory API and catalog client. These changes are integrated without activating `liveCatalogEnabled`, executing migrations or configuring database secrets. Responsive card hints apply only to the known compiled derivatives; future database-managed images fall back to their original URL. The inventory contract is included in validation.

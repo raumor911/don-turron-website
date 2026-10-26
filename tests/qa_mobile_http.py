@@ -13,8 +13,8 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
     base=os.environ.get('DT_LIVE_URL',f'http://127.0.0.1:{server.server_port}')
     with sync_playwright() as p:
         browser=p.chromium.launch(headless=True,args=['--no-sandbox'])
-        for width,height in [(390,844),(360,780),(1440,900)]:
-            page=browser.new_page(viewport={'width':width,'height':height},is_mobile=width<600,has_touch=width<600,device_scale_factor=2)
+        for width,height in [(390,844),(360,780),(412,823),(1440,900)]:
+            page=browser.new_page(viewport={'width':width,'height':height},is_mobile=width<600,has_touch=width<600,device_scale_factor=1.75 if width==412 else 2)
             errors=[]
             page.on('pageerror',lambda e: errors.append(str(e)))
             assert page.goto(base+'/',wait_until='networkidle').status==200
@@ -22,6 +22,8 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
             if width<600:
                 assert page.locator('.hero h1 .dt-title-line').evaluate_all("nodes=>nodes.every(n=>getComputedStyle(n).animationName==='none')"), 'Essential title still waits for animation'
             assert page.locator('.hero-photo img').evaluate("img=>img.complete && img.naturalWidth>0"), 'Hero image failed to decode'
+            if width==412:
+                assert page.locator('.hero-photo img').evaluate("img=>img.currentSrc.endsWith('emblema-512.avif')"), 'Hero source does not match mobile pixel density'
             logo=page.locator('.brand-icon img').bounding_box()
             assert abs(logo['width']/logo['height']-520/461)<0.02, 'Monogram aspect ratio changed'
             page.screenshot(path=str(ROOT/f'tests/http-home-{width}.png'),full_page=True)

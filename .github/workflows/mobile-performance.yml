@@ -24,6 +24,7 @@ jobs:
           node --check app.js
           node --check gallery.js
           npm run test:observability
+          npm run test:inventory
           node --test tests/release.test.mjs
           node --test telemetry/tests.mjs telemetry/receiver.test.mjs telemetry/client.test.mjs
       - name: Browser tools
