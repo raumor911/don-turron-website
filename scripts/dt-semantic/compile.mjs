@@ -65,7 +65,7 @@ function writeAi(k,fingerprint,graph){
   out('ai/knowledge-graph.json',graph);out('ai/intents.json',{notice:'Ejemplos hipotéticos sin volúmenes de búsqueda comprobados',intents:intentList});
   out('ai/canonical-answers.md','# Respuestas canónicas — Don Turrón\n\n'+asMd(k['canonical-answers'].filter(publicItem))+'\n');
   out('ai/terminology.md',termMd);out('ai/sources.json',{sources:sourceList});
-  out('llms.txt','# Don Turrón\n\n'+k.brand.description+'\n\n> Prelanzamiento sin pagos ni inventario confirmado. Cinco productos con precio público final (IVA incluido, envío no incluido); tres próximos lanzamientos sin precio.\n\n- [Marca](/ai/brand.md)\n- [Catálogo](/ai/catalog.md)\n- [Productos](/ai/products.json)\n- [Respuestas](/ai/canonical-answers.md)\n- [Fuentes](/ai/sources.json)\n');
+  out('llms.txt','# Don Turrón\n\n'+k.brand.description+'\n\n> Prelanzamiento sin pagos ni reservas. Inventario registrado del reposa puros: Plata (2 unidades) y Negro (1 unidad); las demás existencias siguen por confirmar. Cinco productos con precio público final (IVA incluido, envío no incluido); tres próximos lanzamientos sin precio.\n\n- [Marca](/ai/brand.md)\n- [Catálogo](/ai/catalog.md)\n- [Productos](/ai/products.json)\n- [Respuestas](/ai/canonical-answers.md)\n- [Fuentes](/ai/sources.json)\n');
   out('llms-full.txt',brandMd+'\n'+catalogMd+'\n'+asMd(k['canonical-answers'].filter(publicItem))+'\n');
   out('ai/content-manifest.json',{version:1,knowledgeFingerprint:fingerprint,releaseStatus:'prelaunch',files:paths.filter(x=>x!=='ai/content-manifest.json'),generatedFrom:'knowledge/*.json',crawlerNote:'No atribuir visitas ni recomendaciones a asistentes sin evidencia de origen.'});
 }
