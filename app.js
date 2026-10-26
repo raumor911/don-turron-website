@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const catalog = window.DON_TURRON_CATALOG || [];
+  let catalog = window.DON_TURRON_CATALOG || [];
   const config = window.DON_TURRON_CONFIG || {};
   const $ = (id) => document.getElementById(id);
   const emit = (event, properties={}) => { try { window.dispatchEvent(new CustomEvent('dt:interaction',{detail:{event,...properties}})); } catch {} };
@@ -12,7 +12,7 @@
   function productPicture(p, placement) {
     const priority = placement === 'modal' ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" fetchpriority="low"';
     if (!photosOf(p)) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" decoding="async" ${priority} />`;
-    return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${photosOf(p)[0].src}" alt="Fotografía de ${html(p.name)}; ${html(photosOf(p)[0].label)}" decoding="async" ${priority} width="620" height="620" />`;
+    return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${html(photosOf(p)[0].src)}" alt="Fotografía de ${html(p.name)}; ${html(photosOf(p)[0].label)}" decoding="async" ${priority} width="620" height="620" />`;
   }
   let selectedFilter = 'todos';
   let lastFocused = null;
@@ -334,8 +334,95 @@
     });
     $('year').textContent=String(new Date().getFullYear());
   }
+
+  // La fuente de verdad para campos comerciales y disponibilidad es MySQL
+  // cuando se activa el release gate. Esta consulta NO bloquea la primera pintura.
+  // El HTML y las fichas estáticas siguen existiendo para bots/no-JS.
+  const imageAllowed = /^assets\\/products\\/[a-z0-9-]+\\.webp$/;
+  const nonempty = (value, max) => typeof value === 'string' ? value.slice(0,max) : '';
+  function remoteProduct(remote, current) {
+    if (!remote || remote.id !== current.id || !Array.isArray(remote.features) || !Array.isArray(remote.images) || !Array.isArray(remote.variants)) return null;
+    const images = remote.images.filter(image => image && typeof image.label === 'string' && imageAllowed.test(image.src))
+      .map(image => ({src:image.src,label:nonempty(image.label,200)}));
+    if (!images.length) return null;
+    const stock = Number.isInteger(remote.stock) && remote.stock>=0 ? remote.stock : undefined;
+    const variants = current.variants.map(v => {
+      const record = remote.variants.find(r => r && r.label === v.label);
+      if (!record) return {...v,stock:undefined,status:'pending_confirmation'};
+      const count=Number.isInteger(record.stock)&&record.stock>=0?record.stock:undefined;
+      return {...v,stock:count,status:count===undefined?'pending_confirmation':'confirmed'};
+    });
+    const incomingLaunch=remote.launchWindow;
+    const launchWindow=incomingLaunch && current.launchWindow?.month===incomingLaunch.month &&
+      current.launchWindow?.label===incomingLaunch.label ? current.launchWindow : incomingLaunch || undefined;
+    const price=remote.retailPrice && Number.isFinite(remote.retailPrice.amount) && remote.retailPrice.amount>=0 &&
+      remote.retailPrice.currency==='MXN' ? remote.retailPrice : undefined;
+    return {...current,
+      name:nonempty(remote.name,200),category:nonempty(remote.category,64),
+      categoryLabel:nonempty(remote.categoryLabel,100),
+      subtitle:nonempty(remote.subtitle,250),description:nonempty(remote.description,10000),
+      features:remote.features.filter(v=>typeof v==='string').slice(0,24).map(v=>nonempty(v,500)),
+      images,art:/^[a-z0-9-]+$/.test(remote.art)?remote.art:current.art,
+      badge:nonempty(remote.badge,80),stock,variants,retailPrice:price,launchWindow};
+  }
+  function refreshSelectionAfterCatalog() {
+    for (const [key,qty] of Object.entries(cart)) {
+      const entry=entryFor(key);
+      if (!entry) delete cart[key];
+      else {
+        const adjusted=Math.min(qty,maxFor(entry));
+        if (adjusted>0)cart[key]=adjusted;
+        else delete cart[key];
+      }
+    }
+    save();updateCounters();renderDrawer();syncAllStockControls();
+  }
+  function useRemoteCatalog() {
+    // El flag se habilita solo tras migración, variables privadas y prueba de API.
+    if (config.liveCatalogEnabled !== true || !/^https?:$/.test(location.protocol)) return;
+    const abort = new AbortController();
+    const deadline = setTimeout(()=>abort.abort(),2600);
+    fetch('/api/catalog',{method:'GET',credentials:'omit',signal:abort.signal,cache:'no-store'})
+      .then(async response=>{
+        if(!response.ok)throw new Error('catalog_unavailable');
+        return response.json();
+      })
+      .then(data=>{
+        if(data?.version!==1 || data?.source!=='don-turron-inventory' ||
+          !Array.isArray(data.products)||data.products.length!==catalog.length)throw new Error('catalog_incomplete');
+        const byId=new Map(data.products.map(p=>[p?.id,p]));
+        if(byId.size!==catalog.length || catalog.some(p=>!byId.has(p.id)))throw new Error('catalog_mismatch');
+        const latest=catalog.map(p=>remoteProduct(byId.get(p.id),p));
+        if(latest.some(p=>!p))throw new Error('catalog_invalid');
+        const hasChange=JSON.stringify(latest)!==JSON.stringify(catalog);
+        catalog=latest;
+        if(hasChange){
+          const existingDialog=currentDialog?.el?.id === 'product-modal';
+          const openedId=existingDialog ? $('product-modal-content')?.querySelector('[data-product-id]')?.dataset.productId : null;
+          renderProducts();
+          if(openedId && productById(openedId)){
+            // Mantener el diálogo y el foco; la galería vuelve a cargar al siguiente acceso.
+            const refreshed=productById(openedId);
+            const heading=$('product-modal-name');
+            if(heading)heading.textContent=refreshed.name;
+          }
+        }
+        refreshSelectionAfterCatalog();
+        emit('catalog_hydrated',{source:'mysql',products:latest.length});
+      })
+      .catch(()=>{
+        // Sin BD disponible, jamás presentar como confirmados los stocks del build.
+        catalog=catalog.map(p=>({...p,stock:undefined,retailPrice:undefined,
+          variants:p.variants.map(v=>({...v,stock:undefined,status:'pending_confirmation'}))}));
+        renderProducts();
+        refreshSelectionAfterCatalog();
+        emit('catalog_unavailable');
+      })
+      .finally(()=>clearTimeout(deadline));
+  }
+
   load();
   if (!prerenderMatchesCatalog()) renderProducts();
   else $('result-count').textContent = singular(catalog.length);
-  renderDrawer();updateCounters();bind();syncAllStockControls();initAgeGate();
+  renderDrawer();updateCounters();bind();syncAllStockControls();initAgeGate();useRemoteCatalog();
 })();
