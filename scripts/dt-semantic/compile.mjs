@@ -114,7 +114,7 @@ export function compile(){
   // El sitemap sólo incluye la home, fichas documentadas y la guía pública.
   const publicRoutes=['/',...k.products.filter(p=>p.contentStatus==='documented'&&publicItem(p)).map(p=>'/productos/'+p.id+'/'),'/guia/estuche-o-humidor/'];
   out('sitemap.xml',generateSitemap(PUBLIC_ORIGIN,publicRoutes));
-  out('robots.txt','User-agent: *\\nAllow: /\\n\\nSitemap: '+PUBLIC_ORIGIN+'/sitemap.xml\\n');
+  out('robots.txt','User-agent: *\nAllow: /\n\nSitemap: '+PUBLIC_ORIGIN+'/sitemap.xml\n');
   console.log('DT-SC-002 compiled; knowledge fingerprint '+fingerprint);
   return {fingerprint,k,graph};
 }
