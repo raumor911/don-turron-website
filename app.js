@@ -183,7 +183,11 @@
           <button type="button" class="remove-line" data-remove="${html(key)}">Eliminar</button>
         </div></div>`;
     }).join('');
-    $('whatsapp-selection').disabled = !items.length;
+    const whatsapp=$('whatsapp-selection');
+    if(items.length)whatsapp.href='https://wa.me/525586494076?text='+encodeURIComponent(selectionText());
+    else whatsapp.removeAttribute('href');
+    whatsapp.setAttribute('aria-disabled',String(!items.length));
+    whatsapp.tabIndex=items.length?0:-1;
     $('request-selection').hidden = !items.length || !validEmail(config.contactEmail);
   }
   function validEmail(email) { return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
@@ -204,12 +208,6 @@
     if(priced.length)lines.push((priced.length===items.length?'Subtotal de productos: ':'Subtotal parcial de productos con precio: ')+subtotal.toLocaleString('es-MX',{style:'currency',currency:'MXN'})+' (IVA incluido; envío no incluido).');
     lines.push('¿Podrían confirmarme las existencias, el costo de envío y los pasos para completar la compra?','Entiendo que este mensaje no constituye un pedido confirmado ni una reserva.');
     return lines.join('\n');
-  }
-  function sendSelectionWhatsApp() {
-    if(!count())return;
-    const url='https://wa.me/525586494076?text='+encodeURIComponent(selectionText());
-    window.open(url,'_blank','noopener,noreferrer');
-    emit('selection_whatsapp',{item_count:count()});
   }
 
   function lockPage(state) { document.body.classList.toggle('locked', state); }
@@ -315,7 +313,7 @@
       if(qty) changeQuantity(qty.dataset.id,Number(qty.dataset.qty));
       if(remove) {const key=remove.dataset.remove;const entry=entryFor(key);const existed=Boolean(cart[key]);delete cart[key];save();updateCounters();renderDrawer();syncAllStockControls();if(existed&&entry)emit('selection_remove',{product_id:entry.p.id,variant:entry.variant?.label});}
     });
-    $('whatsapp-selection').addEventListener('click',sendSelectionWhatsApp);
+    $('whatsapp-selection').addEventListener('click',()=>{if(count())emit('selection_whatsapp',{item_count:count()});});
     $('request-selection').addEventListener('click', () => {
       if(!validEmail(config.contactEmail) || !count()) return;
       const subject=encodeURIComponent('Consulta de accesorios — Don Turrón');
