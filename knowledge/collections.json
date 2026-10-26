@@ -2,7 +2,7 @@
   {
     "id": "collection:accesorios-puros",
     "name": "Primera selección de accesorios para puros",
-    "description": "Accesorios presentados en el catálogo de prelanzamiento.",
+    "description": "Accesorios documentados en el catálogo digital de Don Turrón.",
     "status": "documented",
     "visibility": "public_preview",
     "categoryIds": [
