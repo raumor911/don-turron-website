@@ -8,5 +8,5 @@ window.DON_TURRON_CONFIG = {
   currency: 'MXN',
   catalogMode: 'inquiry', // Selección por WhatsApp, sin cobro en el sitio.
   liveCatalogEnabled: true, // Consume /api/catalog desde MySQL; si no responde, muestra estado por confirmar.
-  siteUrl: '' // Completar con dominio definitivo y retirar noindex al lanzamiento.
+  siteUrl: 'https://www.donturron.com.mx/' // Dominio principal y canónico de producción.
 };
