@@ -5,7 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { load, validate } from './validate.mjs';
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const release=JSON.parse(fs.readFileSync(path.join(ROOT,'semantic-release.json'),'utf8'));
-if(release.mode!=='prelaunch'||release.enableIndexing!==false||release.enableCommerce!==false||release.publishOffers!==false||release.indexNow!==false||release.verifiedDomain!==null)throw new Error('Release gate: only prelaunch without domain or commerce is authorized in V1');
+const PUBLIC_ORIGIN='https://www.donturron.com.mx';
+if(release.mode!=='production'||release.enableIndexing!==true||release.enableCommerce!==false||release.publishOffers!==false||release.indexNow!==false||release.verifiedDomain!=='www.donturron.com.mx')throw new Error('Release gate: verified production domain and indexing are required, commerce remains disabled');
 const out=(rel,data)=>{const file=path.join(ROOT,rel);fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,typeof data==='string'?data:JSON.stringify(data,null,2)+'\n','utf8');};
 const stable=o=>Array.isArray(o)?o.map(stable):o&&typeof o==='object'?Object.fromEntries(Object.keys(o).sort().map(k=>[k,stable(o[k])])):o;
 const hash=o=>crypto.createHash('sha256').update(JSON.stringify(stable(o))).digest('hex');
@@ -42,7 +43,7 @@ const generalSchema=k=>({
    {'@type':'Brand','@id':'#brand',name:k.brand.name,slogan:k.brand.tagline,description:k.brand.description},
    {'@type':'Organization','@id':'#organization',name:k.organization.name,description:k.organization.description,brand:{'@id':'#brand'}},
    {'@type':'WebSite','@id':'#website',name:k.brand.name,inLanguage:'es-MX',description:k.brand.description},
-   {'@type':'CollectionPage','@id':'#collection',name:'La colección de Don Turrón',description:k.collections[0].description,isPartOf:{'@id':'#website'},mainEntity:{'@id':'#catalog-list'}},
+   {'@type':'CollectionPage','@id':'#collection',name:'La colección de Don Turrón',description:'Colección de accesorios para puros de Don Turrón.',isPartOf:{'@id':'#website'},mainEntity:{'@id':'#catalog-list'}},
    {'@type':'ItemList','@id':'#catalog-list',name:'Accesorios documentados',numberOfItems:k.products.filter(p=>p.contentStatus!=='conceptual').length,itemListElement:k.products.filter(p=>p.contentStatus!=='conceptual').map((p,i)=>({'@type':'ListItem',position:i+1,name:p.name}))}
   ]});
 function writeCatalog(k){
@@ -53,7 +54,7 @@ function writeAi(k,fingerprint,graph){
   const documented=k.products.filter(p=>p.contentStatus!=='conceptual'&&publicItem(p));
   const publicProducts=k.products.filter(publicItem).map(p=>({id:p.id,name:p.name,description:p.description,features:p.features,images:p.images,category:p.category,contentStatus:p.contentStatus,commercialStatus:p.commercialStatus,retailPrice:p.retailPrice??null,manufacturerBrand:p.manufacturerBrand??null,variants:p.variants,stock:p.stock??null,launchWindow:p.launchWindow??null,sourceIds:p.sourceIds}));
   const asMd=items=>items.map(x=>'## '+x.question+'\n\n'+x.answer+'\n\nFuentes: '+x.sourceIds.join(', ')).join('\n\n');
-  const intro='# Don Turrón\n\n'+k.brand.description+'\n\nLema: '+k.brand.tagline+'\n\nEstado: catálogo digital de prelanzamiento sin checkout ni cobros dentro del sitio. Las solicitudes de compra se coordinan por WhatsApp y los métodos de pago se comunican tras confirmar existencias y costo total. Cinco accesorios tienen precio final al público en MXN con IVA incluido y envío por separado. Inventario registrado: set portátil de cenicero y cortadores (1 unidad), estuche porta puros con humidificador (1 unidad), estuche portátil para 4 a 8 puros (1 unidad) y reposa puros plegable (Plata 2; Negro 1). Las demás existencias siguen por confirmar. Tres próximos lanzamientos carecen todavía de precio.\n';
+  const intro='# Don Turrón\n\n'+k.brand.description+'\n\nLema: '+k.brand.tagline+'\n\nEstado: catálogo digital activo, con consultas de compra por WhatsApp; sin checkout ni cobros dentro del sitio. Las solicitudes de compra se coordinan por WhatsApp y los métodos de pago se comunican tras confirmar existencias y costo total. Cinco accesorios tienen precio final al público en MXN con IVA incluido y envío por separado. Inventario registrado: set portátil de cenicero y cortadores (1 unidad), estuche porta puros con humidificador (1 unidad), estuche portátil para 4 a 8 puros (1 unidad) y reposa puros plegable (Plata 2; Negro 1). Las demás existencias siguen por confirmar. Tres próximos lanzamientos carecen todavía de precio.\n';
   const links=doc=>'- ['+doc.name+'](/productos/'+doc.id+'/)'+(doc.retailPrice?' — $'+doc.retailPrice.amount+' MXN, IVA incluido; envío no incluido.':'')+(doc.launchWindow?' — '+doc.launchWindow.label+'; precio por confirmar.':'');
   const brandMd=intro+'\n'+documented.length+' artículos cuentan con fichas documentadas. Cuatro productos informan existencias registradas; ninguna ficha activa pedidos ni reservas. Las consultas para adquirirlos pueden iniciarse por WhatsApp.\n';
   const catalogMd=intro+'\n## Accesorios documentados\n'+documented.map(links).join('\n')+'\n';
@@ -66,9 +67,9 @@ function writeAi(k,fingerprint,graph){
   out('ai/knowledge-graph.json',graph);out('ai/intents.json',{notice:'Ejemplos hipotéticos sin volúmenes de búsqueda comprobados',intents:intentList});
   out('ai/canonical-answers.md','# Respuestas canónicas — Don Turrón\n\n'+asMd(k['canonical-answers'].filter(publicItem))+'\n');
   out('ai/terminology.md',termMd);out('ai/sources.json',{sources:sourceList});
-  out('llms.txt','# Don Turrón\n\n'+k.brand.description+'\n\n> Catálogo digital en prelanzamiento sin checkout ni cobros dentro del sitio. Consultas de compra por WhatsApp; envíos en CDMX y zona metropolitana por $500 MXN, con entrega el mismo día para pagos y existencias confirmados antes de las 15:00 horas. Inventario registrado: set portátil de cenicero y cortadores (1 unidad), estuche porta puros con humidificador (1 unidad), estuche portátil para 4 a 8 puros (1 unidad) y reposa puros plegable (Plata 2; Negro 1). Las demás existencias siguen por confirmar. Cinco productos con precio público final (IVA incluido, envío no incluido); tres próximos lanzamientos sin precio.\n\n- [Marca](/ai/brand.md)\n- [Catálogo](/ai/catalog.md)\n- [Preguntas frecuentes](/ai/faq.md)\n- [Productos](/ai/products.json)\n- [Respuestas](/ai/canonical-answers.md)\n- [Fuentes](/ai/sources.json)\n');
+  out('llms.txt','# Don Turrón\n\n'+k.brand.description+'\n\n> Catálogo digital activo, con consultas por WhatsApp; sin checkout ni cobros dentro del sitio. Consultas de compra por WhatsApp; envíos en CDMX y zona metropolitana por $500 MXN, con entrega el mismo día para pagos y existencias confirmados antes de las 15:00 horas. Inventario registrado: set portátil de cenicero y cortadores (1 unidad), estuche porta puros con humidificador (1 unidad), estuche portátil para 4 a 8 puros (1 unidad) y reposa puros plegable (Plata 2; Negro 1). Las demás existencias siguen por confirmar. Cinco productos con precio público final (IVA incluido, envío no incluido); tres próximos lanzamientos sin precio.\n\n- [Marca](/ai/brand.md)\n- [Catálogo](/ai/catalog.md)\n- [Preguntas frecuentes](/ai/faq.md)\n- [Productos](/ai/products.json)\n- [Respuestas](/ai/canonical-answers.md)\n- [Fuentes](/ai/sources.json)\n');
   out('llms-full.txt',brandMd+'\n'+catalogMd+'\n'+faqMd+'\n'+asMd(k['canonical-answers'].filter(publicItem))+'\n');
-  out('ai/content-manifest.json',{version:1,knowledgeFingerprint:fingerprint,releaseStatus:'prelaunch',files:paths.filter(x=>x!=='ai/content-manifest.json'),generatedFrom:'knowledge/*.json',crawlerNote:'No atribuir visitas ni recomendaciones a asistentes sin evidencia de origen.'});
+  out('ai/content-manifest.json',{version:1,knowledgeFingerprint:fingerprint,releaseStatus:'production',files:paths.filter(x=>x!=='ai/content-manifest.json'),generatedFrom:'knowledge/*.json',crawlerNote:'No atribuir visitas ni recomendaciones a asistentes sin evidencia de origen.'});
 }
 function writeHomepage(schema,k){
   const file=path.join(ROOT,'index.html');let html=fs.readFileSync(file,'utf8');
@@ -85,7 +86,15 @@ function writeHomepage(schema,k){
   const faqRegion=/<div class="faq-items">[\s\S]*?<\/div>/;
   if(!faqRegion.test(html))throw new Error('Homepage FAQ container missing');
   html=html.replace(faqRegion,faqBlock);
-  if(!html.includes('name="robots" content="noindex, nofollow"'))throw new Error('Prelaunch noindex gate missing');
+  if(!/name="robots" content="(?:noindex, nofollow|index, follow)"/.test(html))throw new Error('Homepage robots tag missing');
+  html=html.replace(/<meta name="robots" content="(?:noindex, nofollow|index, follow)"\s*\/>/,'<meta name="robots" content="index, follow" />');
+  const canonical='<link rel="canonical" href="'+PUBLIC_ORIGIN+'/" />';
+  if(html.includes('<link rel="canonical"'))html=html.replace(/<link rel="canonical"[^>]*>/,canonical);
+  else html=html.replace('<meta name="robots" content="index, follow" />','<meta name="robots" content="index, follow" />\n  '+canonical);
+  const ogUrl='<meta property="og:url" content="'+PUBLIC_ORIGIN+'/" />';
+  if(html.includes('<meta property="og:url"'))html=html.replace(/<meta property="og:url"[^>]*>/,ogUrl);
+  else html=html.replace('<meta property="og:type" content="website" />','<meta property="og:type" content="website" />\n  '+ogUrl);
+  html=html.replace('content="assets/don-turron-emblema.jpg"','content="'+PUBLIC_ORIGIN+'/assets/don-turron-emblema.jpg"');
   out('index.html',html);
 }
 export function generateSitemap(siteUrl,paths=[]){
@@ -102,8 +111,10 @@ export function compile(){
   writeAi(k,fingerprint,graph);
   const schema=generalSchema(k);
   writeHomepage(schema,k);
-  // Release gate: do not output sitemap/canonical while siteUrl is unknown.
-  if(fs.existsSync(path.join(ROOT,'sitemap.xml')))throw new Error('Prelaunch prohibits sitemap.xml without verified domain');
+  // El sitemap sólo incluye la home, fichas documentadas y la guía pública.
+  const publicRoutes=['/',...k.products.filter(p=>p.contentStatus==='documented'&&publicItem(p)).map(p=>'/productos/'+p.id+'/'),'/guia/estuche-o-humidor/'];
+  out('sitemap.xml',generateSitemap(PUBLIC_ORIGIN,publicRoutes));
+  out('robots.txt','User-agent: *\\nAllow: /\\n\\nSitemap: '+PUBLIC_ORIGIN+'/sitemap.xml\\n');
   console.log('DT-SC-002 compiled; knowledge fingerprint '+fingerprint);
   return {fingerprint,k,graph};
 }
