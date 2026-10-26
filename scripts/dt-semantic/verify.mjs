@@ -26,7 +26,8 @@ for(const p of k.products){
   }else if(publicRecord?.retailPrice!=null)throw new Error('Unpriced launch exposed as priced '+p.id);
 }
 if(json.products.length!==k.products.length||kg.nodes.filter(n=>n.type==='Product').length!==k.products.length)throw new Error('Graph/catalog count mismatch');
-if(!home.includes('noindex, nofollow')||!read('robots.txt').includes('Disallow: /'))throw new Error('Index gate lost');
+const origin='https://www.donturron.com.mx';
+if(!home.includes('name="robots" content="index, follow"')||!home.includes('rel="canonical" href="'+origin+'/"')||!read('robots.txt').includes('Allow: /')||read('robots.txt').includes('Disallow: /'))throw new Error('Production indexing gate missing');
 if(!home.includes('DT-JSONLD-START'))throw new Error('Homepage JSON-LD missing');
 const schema=JSON.parse(home.match(/<!-- DT-JSONLD-START -->\s*<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
 if(schema['@graph'].some(n=>['Offer','AggregateRating','Review'].includes(n['@type'])))throw new Error('Unsupported markup');
@@ -44,7 +45,7 @@ const documented=k.products.filter(p=>p.contentStatus==='documented');
 for(const p of documented){
   const route='productos/'+p.id+'/index.html';
   const h=read(route);
-  if(!h.includes('<h1')||!h.includes(p.name)||!h.includes('noindex, nofollow'))throw new Error('Product HTML missing or not gated: '+route);
+  if(!h.includes('<h1')||!h.includes(p.name)||!h.includes('name="robots" content="index, follow"')||!h.includes('rel="canonical" href="'+origin+'/productos/'+p.id+'/"'))throw new Error('Product HTML missing or not gated: '+route);
   if(!p.images.every(x=>h.includes(x.src)))throw new Error('Missing image in '+route);
   if(p.retailPrice&&!h.includes('$'+p.retailPrice.amount.toLocaleString('es-MX')+' MXN'))throw new Error('Price missing on product page '+p.id);
   if(p.retailPrice&&(!h.includes('IVA incluido')||!h.includes('Envío no incluido')))throw new Error('Tax/shipping note missing '+p.id);
@@ -69,8 +70,13 @@ for(const item of visibleFaq){
 }
 const puros=visibleFaq.filter(x=>x.id==='faq:puros');
 if(puros.length!==1||puros[0].question!=='¿Don Turrón vende puros?'||puros[0].answer!=='El alcance de este sitio es la exhibición de accesorios para puros. No se ofrecen puros ni tabaco a través de este catálogo.')throw new Error('Original puros FAQ was altered');
-if(!read('guia/estuche-o-humidor/index.html').includes('noindex, nofollow'))throw new Error('Guide not gated');
+if(!read('guia/estuche-o-humidor/index.html').includes('rel="canonical" href="'+origin+'/guia/estuche-o-humidor/"')||!read('guia/estuche-o-humidor/index.html').includes('name="robots" content="index, follow"'))throw new Error('Guide not indexable');
 const gate=JSON.parse(read('semantic-release.json'));
-if(gate.mode!=='prelaunch'||gate.enableIndexing!==false||gate.enableCommerce!==false||gate.verifiedDomain!==null)throw new Error('Invalid release gate');
-if(fs.existsSync(path.join(ROOT,'sitemap.xml')))throw new Error('Sitemap prohibited before domain verified');
+if(gate.mode!=='production'||gate.enableIndexing!==true||gate.enableCommerce!==false||gate.publishOffers!==false||gate.indexNow!==false||gate.verifiedDomain!=='www.donturron.com.mx')throw new Error('Invalid production release gate');
+const sitemap=read('sitemap.xml');
+const routes=['/',...documented.map(p=>'/productos/'+p.id+'/'),'/guia/estuche-o-humidor/'];
+if((sitemap.match(/<loc>/g)||[]).length!==routes.length)throw new Error('Sitemap route count incorrect');
+for(const route of routes)if(!sitemap.includes('<loc>'+origin+route+'</loc>'))throw new Error('Sitemap missing '+route);
+if(!read('robots.txt').includes('Sitemap: '+origin+'/sitemap.xml'))throw new Error('robots sitemap missing');
+if(JSON.parse(read('ai/content-manifest.json')).releaseStatus!=='production')throw new Error('AI manifest still prelaunch');
 console.log('DT semantic artifacts VALID: '+publicFiles.length+' AI outputs, '+k.products.length+' IDs, '+documented.length+' documented');
