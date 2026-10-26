@@ -86,9 +86,9 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
         assert page.locator('meta[name=robots]').get_attribute('content')=='index, follow'
         assert page.locator('link[rel=canonical]').get_attribute('href')=='https://www.donturron.com.mx/guia/estuche-o-humidor/'
         sitemap=page.request.get(base+'/sitemap.xml')
-        assert sitemap.status==200 and sitemap.text.count('<loc>')==10
+        assert sitemap.status==200 and sitemap.text().count('<loc>')==10
         robots=page.request.get(base+'/robots.txt')
-        assert robots.status==200 and 'Sitemap: https://www.donturron.com.mx/sitemap.xml' in robots.text
+        assert robots.status==200 and 'Sitemap: https://www.donturron.com.mx/sitemap.xml' in robots.text()
         print('DT static no-JS: 8 cards, 8 product routes, 1 guide, indexable OK')
         context.close();browser.close()
     server.shutdown()
