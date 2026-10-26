@@ -36,11 +36,24 @@ jobs:
               await page.evaluateOnNewDocument(()=>{window.lcps=[];new PerformanceObserver(l=>{for(const e of l.getEntries())window.lcps.push({time:e.startTime,url:e.url,element:e.element?.outerHTML.slice(0,250)})}).observe({type:'largest-contentful-paint',buffered:true});});
               await page.setRequestInterception(true);
               page.on('request',req=>req.url().endsWith('/site.css')?req.respond({status:200,contentType:'text/css',body:fs.readFileSync('site.css','utf8')+extra}):req.continue());
-              await page.goto('http://127.0.0.1:8127/',{waitUntil:'networkidle0'});await new Promise(r=>setTimeout(r,2800));
+              await page.goto('http://127.0.0.1:8127/',{waitUntil:'networkidle0'});await new Promise(r=>setTimeout(r,5500));
               console.log('BROWSER '+label+' '+JSON.stringify(await page.evaluate(()=>({width:innerWidth,lcps:window.lcps,art:[...document.querySelectorAll('.hero-art,.hero-photo,.dt-title-line')].map(n=>({class:n.className,animation:getComputedStyle(n).animationName,transition:getComputedStyle(n).transition,filter:getComputedStyle(n).filter})),animations:document.getAnimations().map(a=>({name:a.animationName,target:a.effect?.target?.className}))}))));await page.close();
             }
             await browser.close();
           })();
+          JS
+      - name: Lighthouse compositor isolation
+        run: |
+          cp site.css /tmp/dt-original.css
+          node --input-type=module - <<'JS'
+          import fs from 'node:fs';import {execFileSync} from 'node:child_process';
+          const base=fs.readFileSync('/tmp/dt-original.css','utf8');
+          for(const [label,extra] of [['no-blur','.age-overlay{backdrop-filter:none!important}'],['no-motion','*,*::before,*::after{animation:none!important;transition:none!important}'],['no-noise','.hero-noise{display:none!important}'],['no-filters','.hero-photo,.hero-art{filter:none!important;transition:none!important}']]){
+            fs.writeFileSync('site.css',base+extra);
+            execFileSync(process.execPath,['/tmp/dt-audit/node_modules/lighthouse/cli/index.js','http://127.0.0.1:8127/','--chrome-flags=--headless --no-sandbox','--only-categories=performance','--output=json','--output-path=/tmp/variant.json','--quiet']);
+            const r=JSON.parse(fs.readFileSync('/tmp/variant.json'));console.log('VARIANT '+label+' '+JSON.stringify({lcp:r.audits['largest-contentful-paint'].numericValue,fcp:r.audits['first-contentful-paint'].numericValue,cls:r.audits['cumulative-layout-shift'].numericValue,breakdown:r.audits['lcp-breakdown-insight'].details}));
+          }
+          fs.writeFileSync('site.css',base);
           JS
       - uses: actions/upload-artifact@v4
         with:
