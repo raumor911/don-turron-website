@@ -20,3 +20,6 @@ const summary={method:'Lighthouse default mobile simulated Slow 4G; 3 cold runs 
 fs.writeFileSync('tests/performance/summary.json',JSON.stringify(summary,null,2)+'\n');
 console.log('DT_MOBILE_METRICS '+JSON.stringify(summary));
 if(summary.median.lcp.after>summary.median.lcp.before+100)throw new Error('Mobile LCP regression');
+
+if(summary.median.cls.after>0.1)throw new Error('Mobile CLS exceeds 0.1');
+if(summary.median.lcp.after>=3000)throw new Error('Mobile median LCP objective not met');
