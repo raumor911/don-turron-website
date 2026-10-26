@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const catalog = window.DON_TURRON_CATALOG || [];
+  let catalog = window.DON_TURRON_CATALOG || [];
   const config = window.DON_TURRON_CONFIG || {};
   const $ = (id) => document.getElementById(id);
   const emit = (event, properties={}) => { try { window.dispatchEvent(new CustomEvent('dt:interaction',{detail:{event,...properties}})); } catch {} };
@@ -12,7 +12,7 @@
   function productPicture(p, placement) {
     const priority = placement === 'modal' ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" fetchpriority="low"';
     if (!photosOf(p)) return `<img src="assets/${html(p.art)}.svg" alt="Ilustración conceptual de ${html(p.name)}" decoding="async" ${priority} />`;
-    return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${photosOf(p)[0].src}" alt="Fotografía de ${html(p.name)}; ${html(photosOf(p)[0].label)}" decoding="async" ${priority} width="620" height="620" />`;
+    return `<img class="travel-photo travel-photo-${placement}" data-product-id="${html(p.id)}" src="${html(photosOf(p)[0].src)}" alt="Fotografía de ${html(p.name)}; ${html(photosOf(p)[0].label)}" decoding="async" ${priority} width="620" height="620" />`;
   }
   let selectedFilter = 'todos';
   let lastFocused = null;
@@ -25,7 +25,7 @@
   const retailText = p => p.retailPrice ? '$'+Number(p.retailPrice.amount).toLocaleString('es-MX')+' MXN' : null;
   const priceMarkup = p => p.retailPrice ? `<span class="product-price product-price-set"><strong>${retailText(p)}</strong><small>IVA incluido</small></span>` : '<span class="product-price">Precio por confirmar</span>';
   const asInt = (x) => Number.isFinite(Number(x)) ? Math.max(0, Math.min(MAX_QUANTITY, Math.floor(Number(x)))) : 0;
-  const hasRecordedStock = p => !!p && p.id === 'reposa-puros-plegable' && Array.isArray(p.variants) && p.variants.length === 2 && p.variants.every(v => Number.isInteger(v.stock) && v.stock >= 0);
+  const hasRecordedStock = p => !!p && Array.isArray(p.variants) && p.variants.length > 0 && p.variants.every(v => Number.isInteger(v.stock) && v.stock >= 0);
   const keyFor = (p, label) => hasRecordedStock(p) ? p.id + '::' + label : p.id;
   function entryFor(key) {
     const [id, label, extra] = key.split('::');
@@ -42,7 +42,7 @@
   const stockLine = p => p.variants.map(v => v.label + ': ' + v.stock + ' ' + (v.stock === 1 ? 'disponible' : 'disponibles')).join(' · ');
   function variantPicker(p) {
     if (!hasRecordedStock(p)) return '';
-    return `<div class="variant-picker" data-variant-product="${html(p.id)}"><label>Color<select data-variant-color aria-label="Color del reposa puros">${p.variants.map(v => `<option value="${html(v.label)}">${html(v.label)}</option>`).join('')}</select></label><label>Cantidad<select data-variant-qty aria-label="Cantidad del reposa puros"><option value="1">1</option><option value="2">2</option></select></label><p class="variant-remaining" data-variant-remaining aria-live="polite"></p></div>`;
+    return `<div class="variant-picker" data-variant-product="${html(p.id)}"><label>Color<select data-variant-color aria-label="Color de ${html(p.name)}">${p.variants.map(v => `<option value="${html(v.label)}">${html(v.label)}</option>`).join('')}</select></label><label>Cantidad<select data-variant-qty aria-label="Cantidad de ${html(p.name)}"><option value="1">1</option><option value="2">2</option></select></label><p class="variant-remaining" data-variant-remaining aria-live="polite"></p></div>`;
   }
   function syncVariantPicker(root) {
     if (!root) return;
@@ -246,7 +246,7 @@
   function openProduct(id, trigger) {
     const p = productById(id);
     if (!p) return;
-    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${item.label}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p>${hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${p.launchWindow ? `<p class="modal-availability">${html(p.launchWindow.label)}</p>` : ''}${p.retailPrice ? `<p class="modal-retail-price"><strong>${retailText(p)}</strong><small>IVA incluido · Envío no incluido</small></p>` : ''}<ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul>${modalDisclosure(p)}${variantPicker(p)}<button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
+    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${html(item.label)}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p>${hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${p.launchWindow ? `<p class="modal-availability">${html(p.launchWindow.label)}</p>` : ''}${p.retailPrice ? `<p class="modal-retail-price"><strong>${retailText(p)}</strong><small>IVA incluido · Envío no incluido</small></p>` : ''}<ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul>${modalDisclosure(p)}${variantPicker(p)}<button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
     syncAllStockControls();
     openDialog($('product-modal'), $('product-modal-backdrop'), trigger);
     emit('product_view',{product_id:id});
@@ -334,8 +334,102 @@
     });
     $('year').textContent=String(new Date().getFullYear());
   }
+
+  // La fuente de verdad para campos comerciales y disponibilidad es MySQL
+  // cuando se activa el release gate. Esta consulta NO bloquea la primera pintura.
+  // El HTML y las fichas estáticas siguen existiendo para bots/no-JS.
+  const imageAllowed = /^assets\/products\/[a-z0-9-]+\.webp$/;
+  const nonempty = (value, max) => typeof value === 'string' ? value.slice(0,max) : '';
+  function remoteProduct(remote, current) {
+    if (!remote || remote.id !== current.id || !Array.isArray(remote.features) || !Array.isArray(remote.images) || !Array.isArray(remote.variants)) return null;
+    const images = remote.images.filter(image => image && typeof image.label === 'string' && imageAllowed.test(image.src))
+      .map(image => ({src:image.src,label:nonempty(image.label,200)}));
+    if (!images.length) return null;
+    const stock = Number.isInteger(remote.stock) && remote.stock>=0 ? remote.stock : undefined;
+    // Incorporar altas/bajas de acabados desde dt_variants, conservando el
+    // orden de los colores conocidos para no alterar de golpe la experiencia.
+    const variants = remote.variants.filter(v=>v && typeof v.label==='string')
+      .sort((a,b)=>{
+        const ia=current.variants.findIndex(v=>v.label===a.label);
+        const ib=current.variants.findIndex(v=>v.label===b.label);
+        return (ia<0?999:ia)-(ib<0?999:ib);
+      }).map(record=>{
+        const prior=current.variants.find(v=>v.label===record.label)||{};
+        const count=Number.isInteger(record.stock)&&record.stock>=0?record.stock:undefined;
+        return {...prior,label:nonempty(record.label,80),stock:count,
+          status:count===undefined?'pending_confirmation':'confirmed'};
+      });
+    const incomingLaunch=remote.launchWindow;
+    const launchWindow=incomingLaunch && current.launchWindow?.month===incomingLaunch.month &&
+      current.launchWindow?.label===incomingLaunch.label ? current.launchWindow : incomingLaunch || undefined;
+    const price=remote.retailPrice && Number.isFinite(remote.retailPrice.amount) && remote.retailPrice.amount>=0 &&
+      remote.retailPrice.currency==='MXN' ? remote.retailPrice : undefined;
+    return {...current,
+      name:nonempty(remote.name,200),category:nonempty(remote.category,64),
+      categoryLabel:nonempty(remote.categoryLabel,100),
+      subtitle:nonempty(remote.subtitle,250),description:nonempty(remote.description,10000),
+      features:remote.features.filter(v=>typeof v==='string').slice(0,24).map(v=>nonempty(v,500)),
+      images,art:/^[a-z0-9-]+$/.test(remote.art)?remote.art:current.art,
+      badge:nonempty(remote.badge,80),stock,variants,retailPrice:price,launchWindow};
+  }
+  function refreshSelectionAfterCatalog() {
+    for (const [key,qty] of Object.entries(cart)) {
+      const entry=entryFor(key);
+      if (!entry) delete cart[key];
+      else {
+        const adjusted=Math.min(qty,maxFor(entry));
+        if (adjusted>0)cart[key]=adjusted;
+        else delete cart[key];
+      }
+    }
+    save();updateCounters();renderDrawer();syncAllStockControls();
+  }
+  function useRemoteCatalog() {
+    // El flag se habilita solo tras migración, variables privadas y prueba de API.
+    if (config.liveCatalogEnabled !== true || !/^https?:$/.test(location.protocol)) return;
+    const abort = new AbortController();
+    const deadline = setTimeout(()=>abort.abort(),2600);
+    fetch('/api/catalog',{method:'GET',credentials:'omit',signal:abort.signal,cache:'no-store'})
+      .then(async response=>{
+        if(!response.ok)throw new Error('catalog_unavailable');
+        return response.json();
+      })
+      .then(data=>{
+        if(data?.version!==1 || data?.source!=='don-turron-inventory' ||
+          !Array.isArray(data.products)||data.products.length!==catalog.length)throw new Error('catalog_incomplete');
+        const byId=new Map(data.products.map(p=>[p?.id,p]));
+        if(byId.size!==catalog.length || catalog.some(p=>!byId.has(p.id)))throw new Error('catalog_mismatch');
+        const latest=catalog.map(p=>remoteProduct(byId.get(p.id),p));
+        if(latest.some(p=>!p))throw new Error('catalog_invalid');
+        const hasChange=JSON.stringify(latest)!==JSON.stringify(catalog);
+        catalog=latest;
+        if(hasChange){
+          const existingDialog=currentDialog?.el?.id === 'product-modal';
+          const openedId=existingDialog ? $('product-modal-content')?.querySelector('[data-product-id]')?.dataset.productId : null;
+          renderProducts();
+          if(openedId && productById(openedId)){
+            // Mantener el diálogo y el foco; la galería vuelve a cargar al siguiente acceso.
+            const refreshed=productById(openedId);
+            const heading=$('product-modal-name');
+            if(heading)heading.textContent=refreshed.name;
+          }
+        }
+        refreshSelectionAfterCatalog();
+        emit('catalog_hydrated',{source:'mysql',products:latest.length});
+      })
+      .catch(()=>{
+        // Sin BD disponible, jamás presentar como confirmados los stocks del build.
+        catalog=catalog.map(p=>({...p,stock:undefined,retailPrice:undefined,
+          variants:p.variants.map(v=>({...v,stock:undefined,status:'pending_confirmation'}))}));
+        renderProducts();
+        refreshSelectionAfterCatalog();
+        emit('catalog_unavailable');
+      })
+      .finally(()=>clearTimeout(deadline));
+  }
+
   load();
   if (!prerenderMatchesCatalog()) renderProducts();
   else $('result-count').textContent = singular(catalog.length);
-  renderDrawer();updateCounters();bind();syncAllStockControls();initAgeGate();
+  renderDrawer();updateCounters();bind();syncAllStockControls();initAgeGate();useRemoteCatalog();
 })();
