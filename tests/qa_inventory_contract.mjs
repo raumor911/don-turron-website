@@ -12,7 +12,9 @@ for(const product of products){
   for(const photo of product.images)assert.ok(sql.includes(photo.src),'Missing photograph: '+photo.src);
 }
 assert.ok(!/DROP TABLE|TRUNCATE TABLE|DELETE FROM|UPDATE dt_inventory/i.test(sql));
-assert.ok(api.includes("process.env.DT_DB_NAME===expectedDatabase"));
+assert.ok(api.includes("database:String(env.DT_DB_NAME||'').trim()"));
+assert.ok(api.includes('catalogConfig'));
+assert.ok(api.includes('catalog_data'));
 assert.ok(api.includes('res.status(503)'));
 assert.ok(api.includes('publication_status'));
 assert.ok(browser.includes("fetch('/api/catalog'"));
