@@ -5,7 +5,7 @@ const root='https://www.donturron.com.mx';
 const price=p=>p.retailPrice?'$'+Number(p.retailPrice.amount).toLocaleString('es-MX')+' MXN':null;
 const known=p=>p.variants.length>0&&p.variants.every(v=>Number.isInteger(v.stock)&&v.stock>=0);
 const soldOut=p=>p.stock===0||(known(p)&&p.variants.every(v=>v.stock===0));
-const imgSrc=src=>src.startsWith('https://')?src:'/'+src;
+const imgSrc=src=>src.startsWith('https://')||src.startsWith('/')?src:'/'+src;
 function card(p){
   const first=p.images?.[0];
   const image=first?'<img class="travel-photo travel-photo-card" data-product-id="'+esc(p.id)+'" src="'+esc(imgSrc(first.src))+'" alt="'+esc(p.name)+': '+esc(first.label)+'" loading="lazy" decoding="async" width="620" height="620">'
