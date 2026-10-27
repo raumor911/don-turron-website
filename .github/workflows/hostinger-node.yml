@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'server.js'
+      - 'server/catalog-public.js'
       - 'scripts/build-hostinger.cjs'
       - 'scripts/prepare-hostinger.cjs'
       - '.gitignore'
@@ -20,6 +21,7 @@ on:
     branches: [main, fix/hostinger-node-express-start]
     paths:
       - 'server.js'
+      - 'server/catalog-public.js'
       - 'scripts/build-hostinger.cjs'
       - 'scripts/prepare-hostinger.cjs'
       - '.gitignore'
