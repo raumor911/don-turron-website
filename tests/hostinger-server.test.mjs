@@ -112,6 +112,8 @@ test('SSR, product URLs, sitemaps and LLMO recognize MySQL product additions and
   const hidden=await fetch(url+'/productos/cenicero-mesa/');
   assert.equal(hidden.status,404);
   assert.equal(hidden.headers.get('x-robots-tag'),'noindex');
+  assert.equal((await fetch(url+'/productos/cenicero-mesa/index.html')).status,404,
+    'Legacy static product URL must never expose a hidden product');
   const xml=await (await fetch(url+'/sitemap.xml')).text();
   assert.match(xml,/productos\/nuevo-accesorio\//);
   assert.doesNotMatch(xml,/productos\/cenicero-mesa\//);
