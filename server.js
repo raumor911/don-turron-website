@@ -86,6 +86,9 @@ export function createApp({readCatalog=readCatalogSnapshot}={}){
     return res.type('html').send(renderProductPage(p,products,template));
   }));
   app.get('/sitemap.xml',(req,res)=>live(res,p=>res.type('application/xml').send(publicSitemap(p))));
+  app.get('/catalog.js',(req,res)=>live(res,p=>res.type('application/javascript').send(
+    'window.DON_TURRON_CATALOG='+JSON.stringify(p).replace(/</g,'\\u003c')+';'
+  )));
   app.get('/ai/products.json',(req,res)=>live(res,p=>res.json({products:p})));
   app.get('/ai/knowledge-graph.json',(req,res)=>live(res,p=>res.json(liveGraph(p))));
   app.get('/ai/catalog.md',(req,res)=>live(res,p=>res.type('text/markdown').send(catalogMarkdown(p))));
@@ -98,9 +101,14 @@ export function createApp({readCatalog=readCatalogSnapshot}={}){
   const mediaDir=process.env.DT_MEDIA_DIR;
   if(mediaDir && path.isAbsolute(mediaDir) && path.basename(path.normalize(mediaDir))==='products' &&
      fs.existsSync(mediaDir)){
-    app.use('/media/products',express.static(mediaDir,{
-      dotfiles:'deny',index:false,fallthrough:false,maxAge:'5m'
-    }));
+    app.get('/media/products/:file',(req,res)=>{
+      if(!/^[a-z0-9-]+\\.(?:webp|avif|jpg|jpeg|png)$/.test(req.params.file)){
+        return res.status(404).end();
+      }
+      return res.sendFile(path.join(mediaDir,req.params.file),{
+        dotfiles:'deny',headers:{'Cache-Control':'public, max-age=300'}
+      },error=>{if(error&&!res.headersSent)res.status(error.status||404).end();});
+    });
   }
   for(const directory of ['assets','productos','guia','ai']){
     app.use('/'+directory,express.static(path.join(PUBLIC_ROOT,directory),staticOptions));
