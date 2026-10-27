@@ -56,3 +56,20 @@ test('sin existencias registradas, el precio de cada artículo es independiente'
   assert.equal(pouch.retailPrice.amount,299);
   assert.equal(result.products.find(p=>p.id==='humidor-viaje-5-puros').retailPrice.amount,649);
 });
+
+test('un alta válida en MySQL no depende de la lista inicial de ocho',()=>{
+  const newRow={...rows[0],product_id:'accesorio-nuevo',name:'Nueva alta',
+    publication_status:'listed',retail_price:'390.00',sku:'accesorio-nuevo:default'};
+  const result=buildPublicCatalog([...rows,newRow]);
+  assert.equal(result.products.length,9);
+  assert.equal(result.products.find(p=>p.id==='accesorio-nuevo').retailPrice.amount,390);
+  assert.equal(result.products.find(p=>p.id==='cenicero-mesa').retailPrice.amount,549);
+});
+test('inventario cero no equivale a producto oculto ni a precio no confirmado',()=>{
+  const modified=rows.map(p=>p.product_id==='cenicero-mesa'?{...p,on_hand_qty:0}:p);
+  const result=buildPublicCatalog(modified);
+  const product=result.products.find(p=>p.id==='cenicero-mesa');
+  assert.ok(product);
+  assert.equal(product.stock,0);
+  assert.equal(product.retailPrice.amount,549);
+});
