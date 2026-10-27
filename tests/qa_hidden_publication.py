@@ -51,6 +51,7 @@ with sync_playwright() as p:
   else:
    state['products']=products
   page.add_script_tag(content=(ROOT/'app.js').read_text())
+  page.locator('#age-yes').click()
   if scenario == 'hidden':
    page.wait_for_function("document.querySelectorAll('.product-card').length===7",timeout=6000)
    assert page.locator(f'.product-card[data-id="{hidden_id}"]').count()==0
