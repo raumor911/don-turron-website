@@ -59,6 +59,10 @@ const frame=(title,body,description,ld,route)=>publishMetadata(`<!doctype html>
 .dt-related h2{font:500 32px Georgia,serif}
 .dt-related ul{line-height:2.3}
 .dt-footer{background:#18130f;color:#d6ba90;padding:25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;text-align:left;font-size:12px}
+.dt-contact{display:flex;align-items:center;gap:8px 18px;flex-wrap:wrap;font-style:normal;min-width:0}
+.dt-contact a{color:#e5c38d;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.dt-contact a:hover{color:#fff0d6}
+.dt-contact a:focus-visible{outline:3px solid #b38650;outline-offset:3px}
 .dt-credit{display:inline-block;margin-left:auto;color:#baa78e;font-size:11px;text-align:right}
 .dt-credit a{color:#e5c38d;text-decoration:underline;text-underline-offset:3px}
 .dt-credit a:hover{color:#fff0d6}
@@ -69,7 +73,7 @@ const frame=(title,body,description,ld,route)=>publishMetadata(`<!doctype html>
 </head><body class="dt-page">
 <header class="dt-bar"><a class="dt-logo" href="../../index.html">DON TURRÓN</a><span>El arte está en los detalles.</span></header>
 ${body}
-<footer class="dt-footer"><span>Don Turrón · Catálogo digital · Consultas por WhatsApp</span><span class="dt-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="RAUVIA Consulting (abre en otra pestaña)"><strong>RAUVIA Consulting</strong></a></span></footer>
+<footer class="dt-footer"><span>Don Turrón · Catálogo digital · Consultas por WhatsApp</span><address class="dt-contact" aria-label="Contacto de Don Turrón"><a href="mailto:hola@donturron.com.mx">hola@donturron.com.mx</a><a href="tel:+525586494076">55 8649 4076</a></address><span class="dt-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer" aria-label="RAUVIA Consulting (abre en otra pestaña)"><strong>RAUVIA Consulting</strong></a></span></footer>
 </body></html>`,route);
 function productPage(p,k){
   const images=p.images.map((x,i)=>`<figure><img src="../../${esc(x.src)}" alt="${esc(x.label)}" width="620" height="620" decoding="async" loading="${i?'lazy':'eager'}" fetchpriority="${i?'low':'high'}"><figcaption>${esc(x.label)}</figcaption></figure>`).join('');

@@ -132,6 +132,7 @@ export function renderProductPage(p,products,template=''){
       '<li><a href="/#coleccion">Explorar el catálogo</a></li>')+
     '</ul><p><a href="/#coleccion">Volver a la colección</a></p></section></main>'+
     '<footer class="dt-footer"><span>Don Turrón · Catálogo digital · Consultas por WhatsApp</span>'+
+    '<address class="dt-contact" aria-label="Contacto de Don Turrón"><a href="mailto:hola@donturron.com.mx">hola@donturron.com.mx</a><a href="tel:+525586494076">55 8649 4076</a></address>'+
     '<span class="dt-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer"><strong>RAUVIA Consulting</strong></a></span></footer>'+
     '</body></html>';
 }

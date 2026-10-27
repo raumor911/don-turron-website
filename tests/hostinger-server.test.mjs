@@ -38,6 +38,11 @@ test('Hostinger Node.js serves SEO pages, catalog API and public assets without 
   const productHtml=await product.text();
   assert.match(productHtml,/name="robots" content="index, follow"/);
   assert.match(productHtml,/rel="canonical"/);
+  for(const [pageName,pageHtml] of [['portada',html],['producto',productHtml],['guía',await guide.text()]]){
+    assert.match(pageHtml,/href="mailto:hola@donturron\.com\.mx"/,'Email de contacto en '+pageName);
+    assert.match(pageHtml,/href="tel:\+525586494076"/,'Teléfono clicable en '+pageName);
+    assert.match(pageHtml,/55 8649 4076/,'Teléfono visible en '+pageName);
+  }
   assert.equal((await sitemap.text()).match(/<loc>/g).length,seed.length+2);
   assert.match(await robots.text(),/Allow: \/\s/);
   assert.doesNotMatch(await (await request('/robots.txt')).text(),/Disallow: \/\s/);
