@@ -10,6 +10,7 @@ on:
       - 'api/**'
       - 'package.json'
       - 'tests/hostinger-server.test.mjs'
+      - 'tests/catalog-api.test.mjs'
       - 'telemetry/**'
       - '.github/workflows/hostinger-node.yml'
   push:
@@ -23,6 +24,7 @@ on:
       - 'api/**'
       - 'package.json'
       - 'tests/hostinger-server.test.mjs'
+      - 'tests/catalog-api.test.mjs'
       - 'telemetry/**'
       - '.github/workflows/hostinger-node.yml'
   workflow_dispatch:
@@ -52,5 +54,7 @@ jobs:
           node --check scripts/prepare-hostinger.cjs
       - name: Exercise Express HTTP routes and private-file boundaries
         run: npm run test:hostinger
+      - name: Verify catalog against mocked MySQL contracts
+        run: node --test tests/catalog-api.test.mjs
       - name: Verify inventory contract remains independent
         run: npm run test:inventory
