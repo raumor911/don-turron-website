@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS dt_products (
   name VARCHAR(200) NOT NULL,
   retail_price DECIMAL(12,2) NULL,
   currency CHAR(3) NOT NULL DEFAULT 'MXN',
-  publication_status ENUM('listed','coming_soon','hidden') NOT NULL DEFAULT 'hidden',
+  publication_status ENUM('listed','coming_soon','hidden','Out of stock') NOT NULL DEFAULT 'hidden',
   launch_month CHAR(7) NULL,
   created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
