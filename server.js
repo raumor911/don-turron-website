@@ -113,7 +113,10 @@ export function createApp({readCatalog=readCatalogSnapshot}={}){
       },error=>{if(error&&!res.headersSent)res.status(error.status||404).end();});
     });
   }
-  for(const directory of ['assets','productos','guia','ai']){
+  // Do not expose old prerendered /productos/*/index.html from dist/public:
+  // a hidden product must not survive through an alternate static URL.
+  app.use('/productos',(_req,res)=>res.status(404).set('X-Robots-Tag','noindex').end());
+  for(const directory of ['assets','guia','ai']){
     app.use('/'+directory,express.static(path.join(PUBLIC_ROOT,directory),staticOptions));
   }
   for(const name of PUBLIC_ROOT_FILES){
