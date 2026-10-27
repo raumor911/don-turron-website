@@ -7,10 +7,12 @@
  */
 import express from 'express';
 import path from 'node:path';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import catalogHandler from './api/catalog.js';
 
 const ROOT=path.dirname(fileURLToPath(import.meta.url));
+const PUBLIC_ROOT=path.join(ROOT,'dist','public');
 const PUBLIC_ROOT_FILES=new Set([
   'favicon.ico','fonts.css','styles.css','site.css','premium.css','gallery.css',
   'config.js','catalog.js','app.js','premium.js','gallery.js','telemetry-client.js',
@@ -19,6 +21,12 @@ const PUBLIC_ROOT_FILES=new Set([
 const staticOptions={dotfiles:'deny',index:['index.html'],redirect:true,fallthrough:false,maxAge:'5m'};
 
 export function createApp(){
+  // Production always serves the verified public build; no silent source fallback.
+  for(const file of ['index.html','robots.txt','sitemap.xml']){
+    if(!fs.existsSync(path.join(PUBLIC_ROOT,file))){
+      throw new Error('DT_HOSTINGER_BUILD_MISSING: '+file+' — run npm run build or enable postinstall');
+    }
+  }
   const app=express();
   app.disable('x-powered-by');
   app.use((_req,res,next)=>{res.setHeader('X-Content-Type-Options','nosniff');next();});
@@ -46,14 +54,14 @@ export function createApp(){
   app.use('/api',(_req,res)=>res.status(404).json({error:'not_found'}));
 
   for(const directory of ['assets','productos','guia','ai']){
-    app.use('/'+directory,express.static(path.join(ROOT,directory),staticOptions));
+    app.use('/'+directory,express.static(path.join(PUBLIC_ROOT,directory),staticOptions));
   }
   for(const name of PUBLIC_ROOT_FILES){
-    app.get('/'+name,(req,res)=>res.sendFile(path.join(ROOT,name),{
+    app.get('/'+name,(req,res)=>res.sendFile(path.join(PUBLIC_ROOT,name),{
       headers:{'Cache-Control':name.endsWith('.xml')||name.endsWith('.txt')?'no-cache':'public, max-age=300'}
     }));
   }
-  app.get(['/', '/index.html'],(_req,res)=>res.sendFile(path.join(ROOT,'index.html'),{
+  app.get(['/', '/index.html'],(_req,res)=>res.sendFile(path.join(PUBLIC_ROOT,'index.html'),{
     headers:{'Cache-Control':'no-cache'}
   }));
   // Deliberately do not expose repository root through express.static(ROOT).
