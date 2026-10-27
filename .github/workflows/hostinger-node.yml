@@ -10,6 +10,8 @@ on:
       - 'api/**'
       - 'app.js'
       - 'tests/catalog-cache.test.mjs'
+      - 'tests/catalog-publication.test.mjs'
+      - 'tests/qa_hidden_publication.py'
       - 'package.json'
       - 'tests/hostinger-server.test.mjs'
       - 'telemetry/**'
@@ -25,6 +27,8 @@ on:
       - 'api/**'
       - 'app.js'
       - 'tests/catalog-cache.test.mjs'
+      - 'tests/catalog-publication.test.mjs'
+      - 'tests/qa_hidden_publication.py'
       - 'package.json'
       - 'tests/hostinger-server.test.mjs'
       - 'telemetry/**'
@@ -56,6 +60,8 @@ jobs:
           node --check scripts/prepare-hostinger.cjs
       - name: Exercise Express HTTP routes and private-file boundaries
         run: npm run test:hostinger
+      - name: Verify independent publication status and catalog pricing
+        run: node --test tests/catalog-publication.test.mjs
       - name: Verify efficient MySQL reads and cache expiry
         run: node --test tests/catalog-cache.test.mjs
       - name: Verify inventory contract remains independent
