@@ -72,19 +72,9 @@ export function buildPublicCatalog(rows){
   return {version:1,source:'don-turron-inventory',products:[...grouped.values()]};
 }
 
-export default async function handler(req,res){
-  res.setHeader('X-Content-Type-Options','nosniff');
-  res.setHeader('Access-Control-Allow-Origin','https://www.donturron.com.mx');
-  if(req.method!=='GET'){
-    res.setHeader('Allow','GET');
-    return res.status(405).json({error:'method_not_allowed'});
-  }
-  if (!configured){
-    res.setHeader('Cache-Control','no-store');
-    return res.status(503).json({error:'catalog_unavailable'});
-  }
-  try {
-    const snapshot=await snapshotCache.read(async()=>{
+export function readCatalogSnapshot(){
+  if(!configured)throw new Error('catalog_configuration_unavailable');
+  return snapshotCache.read(async()=>{
     const db=connection();
     const [rows]=await db.query(`
       SELECT p.product_id,p.name,p.retail_price,p.publication_status,p.launch_month,
@@ -102,7 +92,21 @@ export default async function handler(req,res){
     const body=buildPublicCatalog(rows);
     const etag='"'+createHash('sha256').update(JSON.stringify(body)).digest('hex')+'"';
     return {body,etag};
-    });
+  });
+}
+export default async function handler(req,res){
+  res.setHeader('X-Content-Type-Options','nosniff');
+  res.setHeader('Access-Control-Allow-Origin','https://www.donturron.com.mx');
+  if(req.method!=='GET'){
+    res.setHeader('Allow','GET');
+    return res.status(405).json({error:'method_not_allowed'});
+  }
+  if (!configured){
+    res.setHeader('Cache-Control','no-store');
+    return res.status(503).json({error:'catalog_unavailable'});
+  }
+  try {
+    const snapshot=await readCatalogSnapshot();
     // Both browser and Hostinger receive at most ~5s of fresh cache.
     // Expired inventory is never served after a failed refresh (HTTP 503).
     res.setHeader('Cache-Control','public, max-age=5, s-maxage=5, must-revalidate');
