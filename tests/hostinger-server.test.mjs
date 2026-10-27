@@ -123,6 +123,10 @@ test('SSR, product URLs, sitemaps and LLMO recognize MySQL product additions and
   assert.doesNotMatch(md,/cenicero-mesa/);
   const graph=await (await fetch(url+'/ai/knowledge-graph.json')).json();
   assert.ok(graph.nodes.some(n=>n.name==='Nuevo accesorio de Kyberion'));
+  assert.ok(graph.nodes.some(n=>n.type==='UseCase'),'Preserve AETHRYON use cases');
+  assert.ok(graph.nodes.some(n=>n.type==='Source'),'Preserve AETHRYON supporting sources');
+  assert.ok(!graph.nodes.some(n=>n.type==='Product'&&n.id==='cenicero-mesa'),
+    'Hidden product must not survive in knowledge graph');
   products=[];
   const empty=await (await fetch(url+'/sitemap.xml')).text();
   assert.doesNotMatch(empty,/\/productos\//);
