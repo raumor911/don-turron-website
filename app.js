@@ -393,8 +393,9 @@
     // El flag se habilita solo tras migración, variables privadas y prueba de API.
     if (config.liveCatalogEnabled !== true || !/^https?:$/.test(location.protocol)) return;
     const abort = new AbortController();
-    const deadline = setTimeout(()=>abort.abort(),2600);
-    fetch('/api/catalog',{method:'GET',credentials:'omit',signal:abort.signal,cache:'no-store'})
+    // Consulta no bloqueante; tolerar temporalmente conexiones frías de MySQL.
+    const deadline = setTimeout(()=>abort.abort(),5500);
+    fetch('/api/catalog',{method:'GET',credentials:'omit',signal:abort.signal,cache:'default'})
       .then(async response=>{
         if(!response.ok)throw new Error('catalog_unavailable');
         return response.json();
