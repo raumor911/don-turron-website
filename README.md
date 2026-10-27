@@ -4,11 +4,11 @@
 
 Primera versión **demostrable y responsive** de una boutique de accesorios para puros. Diseño inspirado directamente en el emblema y monograma aportados. Investigación y decisiones documentadas con el **núcleo AETHRYON DRAFT v2.0.0**.
 
-> **ESTADO: PRELANZAMIENTO.** El sitio **no vende, no cobra, no reserva inventario y no acepta pedidos**. Su catálogo contiene fichas documentadas de accesorios, sin ventas habilitadas. `noindex` está activo hasta contar con información comercial validada.
+> **ESTADO: PRODUCCIÓN.** Don Turrón es un catálogo público e indexable. Las consultas comerciales se realizan por WhatsApp; no hay checkout, cobros automáticos ni reserva de inventario desde la web.
 
 ## Despliegue Hostinger Web App Node.js
 
-Don Turrón ahora incluye un servidor Express en `server.js` para la publicación desde GitHub como aplicación Node.js de Hostinger. Usar **Entry file: `server.js`**, **Start: `npm start`**, **Build: `npm run build`** y configurar en hPanel las credenciales `DT_DB_*` (productos) por separado de `DB_*`/`TELEMETRY_*` (telemetría). El servidor sirve HTML SEO y `/api/catalog` sin permitir acceso público a migraciones, fuentes privadas ni archivos de configuración. [Configuración y pruebas Hostinger](docs/HOSTINGER_NODE_DEPLOY.md).
+Don Turrón utiliza el patrón operativo de RAUVIA: **`npm install` ejecuta `postinstall`**, genera `dist/public/` con el frontend y crea `dist/server.cjs` como entrada del backend Express. En Hostinger configurar **Entry file: `dist/server.cjs`**, **Start: `npm start`** y **Build: `npm run build`** (redundante de forma segura con `postinstall`). Las credenciales `DT_DB_*` (productos) permanecen independientes de `DB_*`/`TELEMETRY_*` (telemetría). [Configuración y diagnóstico Hostinger](docs/HOSTINGER_NODE_DEPLOY.md).
 
 ## Qué incluye
 

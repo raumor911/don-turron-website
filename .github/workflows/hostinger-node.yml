@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
       - 'server.js'
+      - 'scripts/build-hostinger.cjs'
+      - 'scripts/prepare-hostinger.cjs'
+      - '.gitignore'
+      - 'docs/HOSTINGER_NODE_DEPLOY.md'
       - 'api/**'
       - 'package.json'
       - 'tests/hostinger-server.test.mjs'
@@ -12,6 +16,10 @@ on:
     branches: [main, fix/hostinger-node-express-start]
     paths:
       - 'server.js'
+      - 'scripts/build-hostinger.cjs'
+      - 'scripts/prepare-hostinger.cjs'
+      - '.gitignore'
+      - 'docs/HOSTINGER_NODE_DEPLOY.md'
       - 'api/**'
       - 'package.json'
       - 'tests/hostinger-server.test.mjs'
@@ -30,12 +38,18 @@ jobs:
         with:
           node-version: '22'
       - name: Install Node dependencies
-        run: npm install --ignore-scripts --no-audit --no-fund
-      - name: Build production semantic assets and check JS
+        run: npm install --no-audit --no-fund
+      - name: Check postinstall artifacts and idempotent production build
         run: |
+          test -f dist/server.cjs
+          test -f dist/public/index.html
+          test -f dist/public/sitemap.xml
           npm run build
+          node --check dist/server.cjs
           node --check server.js
           node --check api/catalog.js
+          node --check scripts/build-hostinger.cjs
+          node --check scripts/prepare-hostinger.cjs
       - name: Exercise Express HTTP routes and private-file boundaries
         run: npm run test:hostinger
       - name: Verify inventory contract remains independent

@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "build": "npm run build:semantic",
+    "start": "node dist/server.cjs",
+    "build": "npm run build:semantic && node scripts/build-hostinger.cjs",
     "validate:knowledge": "node scripts/dt-semantic/validate.mjs",
     "compile:knowledge": "node scripts/dt-semantic/compile.mjs",
     "validate:artifacts": "node scripts/dt-semantic/verify.mjs",
@@ -14,7 +14,8 @@
     "test:nojs": "python tests/qa_semantic_nojs.py",
     "build:css": "node scripts/build-css.mjs",
     "test:inventory": "node tests/qa_inventory_contract.mjs",
-    "test:hostinger": "node --test tests/hostinger-server.test.mjs"
+    "test:hostinger": "node --test tests/hostinger-server.test.mjs",
+    "postinstall": "node scripts/prepare-hostinger.cjs"
   },
   "engines": {
     "node": ">=20"
