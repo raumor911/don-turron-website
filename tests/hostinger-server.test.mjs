@@ -22,6 +22,8 @@ test('Hostinger Node.js serves SEO pages, catalog API and public assets without 
   const html=await home.text();
   assert.match(html,/name="robots" content="index, follow"/);
   assert.match(html,/rel="canonical" href="https:\/\/www.donturron.com.mx\//);
+  assert.match(html,/<script defer src="app\.js\?v=[a-f0-9]{12}"><\/script>/,
+    'Versioned app.js must bypass previously cached selection logic');
   assert.equal((await request('/index.html')).status,200);
 
   const [product,guide,sitemap,robots,image,css,client,ai,llms]=await Promise.all([
@@ -176,4 +178,34 @@ test('Out of stock remains publicly visible without stale availability claims',a
   assert.match(sitemap,/\/productos\/cenicero-mesa\//);
   const ai=await (await fetch(url+'/ai/catalog.md')).text();
   assert.match(ai,/Agotado/);
+});
+
+test('humidor Out of stock overrides NUEVA PIEZA on SSR and blocks selection while keeping price',async t=>{
+  const id='humidor-viaje-5-puros';
+  const products=seed.map(p=>p.id===id?{
+    ...p,publicationStatus:'Out of stock',stock:null,
+    retailPrice:{amount:649,currency:'MXN',taxIncluded:true,shippingIncluded:false}
+  }:p);
+  const app=createApp({readCatalog:async()=>catalogSnapshot(products)});
+  const server=await new Promise(resolve=>{const listener=app.listen(0,'127.0.0.1',()=>resolve(listener));});
+  t.after(()=>new Promise(resolve=>server.close(resolve)));
+  const base='http://127.0.0.1:'+server.address().port;
+  const homeResponse=await fetch(base+'/');
+  assert.equal(homeResponse.status,200);
+  const html=await homeResponse.text();
+  const card=html.match(/<article class="product-card" data-id="humidor-viaje-5-puros">[\s\S]*?<\/article>/)?.[0]||'';
+  assert.match(card,/<span class="product-badge">AGOTADO<\/span>/);
+  assert.doesNotMatch(card,/NUEVA PIEZA/);
+  assert.match(card,/\$649 MXN/);
+  assert.match(card,/data-add="humidor-viaje-5-puros" disabled title="Agotado"/);
+  assert.match(card,/>Agotado <span>/);
+  const unaffected=html.match(/<article class="product-card" data-id="estuche-viaje">[\s\S]*?<\/article>/)?.[0]||'';
+  assert.match(unaffected,/>NUEVA PIEZA</);
+  assert.match(unaffected,/\$299 MXN/);
+  assert.doesNotMatch(unaffected,/data-add="estuche-viaje" disabled/);
+  const js=await fetch(base+'/app.js');
+  assert.match(js.headers.get('cache-control')||'',/no-cache/);
+  const product=await fetch(base+'/productos/humidor-viaje-5-puros/');
+  assert.equal(product.status,200);
+  assert.match(await product.text(),/Agotado/);
 });

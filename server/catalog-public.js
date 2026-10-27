@@ -6,13 +6,14 @@ const price=p=>p.retailPrice?'$'+Number(p.retailPrice.amount).toLocaleString('es
 const known=p=>p.variants.length>0&&p.variants.every(v=>Number.isInteger(v.stock)&&v.stock>=0);
 const explicitlySoldOut=p=>p.publicationStatus==='Out of stock';
 const soldOut=p=>explicitlySoldOut(p)||p.stock===0||(known(p)&&p.variants.every(v=>v.stock===0));
+const visibleBadge=p=>soldOut(p)?'AGOTADO':(p.badge||'');
 const imgSrc=src=>src.startsWith('https://')||src.startsWith('/')?src:'/'+src;
 function card(p){
   const first=p.images?.[0];
   const image=first?'<img class="travel-photo travel-photo-card" data-product-id="'+esc(p.id)+'" src="'+esc(imgSrc(first.src))+'" alt="'+esc(p.name)+': '+esc(first.label)+'" loading="lazy" decoding="async" width="620" height="620">'
     :'<img src="/assets/case.svg" alt="Ilustración de '+esc(p.name)+'" loading="lazy">';
   return '<article class="product-card" data-id="'+esc(p.id)+'"><div class="product-art art-'+esc(p.art)+'">'+
-    (p.badge?'<span class="product-badge">'+esc(p.badge)+'</span>':'')+
+    (visibleBadge(p)?'<span class="product-badge">'+esc(visibleBadge(p))+'</span>':'')+
     '<button type="button" class="product-image-trigger" data-open-photo="'+esc(p.id)+'" aria-label="Ver detalles de '+esc(p.name)+'">'+image+'</button>'+
     '<button type="button" class="product-quick" data-detail="'+esc(p.id)+'" aria-label="Ver detalles de '+esc(p.name)+'">↗</button></div>'+
     '<div class="product-details"><div class="product-category">'+esc(p.categoryLabel.toUpperCase())+'</div><h3>'+esc(p.name)+'</h3><p class="product-subtitle">'+esc(p.subtitle)+'</p>'+

@@ -25,6 +25,8 @@
   const isUnavailable = p => p && (explicitlySoldOut(p) ||
     hasProductStock(p) && p.stock===0 ||
     hasRecordedStock(p) && p.variants.every(v=>v.stock===0));
+  // El estado comercial tiene prioridad sobre etiquetas editoriales como NUEVA PIEZA.
+  const visibleBadge = p => isUnavailable(p) ? 'AGOTADO' : (p.badge || '');
   function productPicture(p, placement) {
     const photos = photosOf(p);
     const hints = placement === 'modal' ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" fetchpriority="low"';
@@ -128,7 +130,7 @@
     $('product-grid').innerHTML = visible.map(p => `
       <article class="product-card" data-id="${html(p.id)}">
         <div class="product-art art-${html(p.art)}">
-          ${p.badge ? `<span class="product-badge">${html(p.badge)}</span>` : ''}
+          ${visibleBadge(p) ? `<span class="product-badge">${html(visibleBadge(p))}</span>` : ''}
           <button type="button" class="product-image-trigger" data-open-photo="${html(p.id)}" aria-label="Ver detalles de ${html(p.name)}">
             ${productPicture(p, "card")}
           </button>
@@ -151,6 +153,8 @@
       const product = catalog[index];
       if (!product || card.dataset.id !== product.id) return false;
       const visiblePrice = card.querySelector('.product-price strong')?.textContent?.trim();
+      const currentBadge=card.querySelector('.product-badge')?.textContent?.trim()||'';
+      if(currentBadge!==visibleBadge(product))return false;
       if (hasRecordedStock(product) && !card.querySelector('[data-variant-product]')) return false;
       if (!explicitlySoldOut(product) && hasRecordedStock(product) && !card.textContent.includes(stockLine(product))) return false;
       if (!explicitlySoldOut(product) && hasProductStock(product) && card.querySelector('.product-stock')?.textContent !== productStockText(product)) return false;
