@@ -70,10 +70,10 @@ export function createApp(){
       return res.set('Cache-Control','public, max-age=0, s-maxage=5, must-revalidate').type('html').send(html);
     }catch{
       let html=fs.readFileSync(path.join(PUBLIC_ROOT,'index.html'),'utf8');
-      html=html.replace(/<div class="product-grid" id="product-grid"><!-- DT-CATALOG-START -->[\\s\\S]*?<!-- DT-CATALOG-END --><\\/div>/,
+      html=html.replace(/<div class="product-grid" id="product-grid"><!-- DT-CATALOG-START -->[\s\S]*?<!-- DT-CATALOG-END --><\/div>/,
         '<div class="product-grid" id="product-grid"></div>');
       html=html.replace('<script defer src="catalog.js"></script>','<script>window.DON_TURRON_CATALOG=[];</script>');
-      html=html.replace(/<script type="application\\/ld\\+json">[\\s\\S]*?<\\/script>/,'');
+      html=html.replace(/<script type="application\/ld\+json">[\\s\\S]*?<\/script>/,'');
       return res.set('Cache-Control','no-store').set('X-Robots-Tag','noindex').type('html').send(html);
     }
   });
@@ -90,7 +90,7 @@ export function createApp(){
   app.get('/ai/knowledge-graph.json',(req,res)=>live(res,p=>res.json(liveGraph(p))));
   app.get('/ai/catalog.md',(req,res)=>live(res,p=>res.type('text/markdown').send(catalogMarkdown(p))));
   app.get('/llms.txt',(req,res)=>live(res,p=>res.type('text/plain').send(
-    '# Don Turrón\\n\\nCatálogo vigente: /ai/catalog.md\\nProductos: /ai/products.json\\n\nConsultas por WhatsApp; sin reservas automáticas.')));
+    '# Don Turrón\n\nCatálogo vigente: /ai/catalog.md\nProductos: /ai/products.json\n\nConsultas por WhatsApp; sin reservas automáticas.')));
   app.get('/llms-full.txt',(req,res)=>live(res,p=>res.type('text/plain').send(catalogMarkdown(p))));
 
   for(const directory of ['assets','productos','guia','ai']){
