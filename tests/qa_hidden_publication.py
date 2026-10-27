@@ -38,13 +38,13 @@ with sync_playwright() as p:
   page.add_script_tag(content=(ROOT/'catalog.js').read_text())
   products = page.evaluate("window.DON_TURRON_CATALOG")
   assert len(products)==8
-  hidden_id='reposa-puros-plegable'
+  hidden_id='cenicero-mesa'
   if scenario == 'hidden':
    state['products']=[product for product in products if product['id']!=hidden_id]
    # Un artículo oculto seleccionado antes de refrescar el catálogo no debe
    # sobrevivir en carrito ni conservar un enlace de WhatsApp incorrecto.
    page.evaluate("""() => localStorage.setItem(
-      'dt-selection-v1', JSON.stringify({'reposa-puros-plegable':1,'humidor-viaje-5-puros':1})
+      'dt-selection-v1', JSON.stringify({'cenicero-mesa':1,'humidor-viaje-5-puros':1})
    )""")
   elif scenario == 'all_hidden':
    state['products']=[]
