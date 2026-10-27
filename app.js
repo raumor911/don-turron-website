@@ -377,7 +377,7 @@
   // La fuente de verdad para campos comerciales y disponibilidad es MySQL
   // cuando se activa el release gate. Esta consulta NO bloquea la primera pintura.
   // El HTML y las fichas estáticas siguen existiendo para bots/no-JS.
-  const imageAllowed = /^(?:assets|media)\/products\/[a-z0-9-]+\.(?:webp|avif|jpg|jpeg|png)$/;
+  const imageAllowed = /^\/?(?:assets|media)\/products\/[a-z0-9-]+\.(?:webp|avif|jpg|jpeg|png)$/;
   const nonempty = (value,max) => typeof value === 'string' ? value.slice(0,max) : '';
   const safeImage = value => typeof value==='string' &&
     (imageAllowed.test(value) || /^https:\/\/[a-z0-9.-]+\/[a-z0-9_./-]+\.(?:webp|avif|jpg|jpeg|png)$/i.test(value));
