@@ -4,6 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "start": "node server.js",
+    "build": "npm run build:semantic",
     "validate:knowledge": "node scripts/dt-semantic/validate.mjs",
     "compile:knowledge": "node scripts/dt-semantic/compile.mjs",
     "validate:artifacts": "node scripts/dt-semantic/verify.mjs",
@@ -11,12 +13,14 @@
     "test:observability": "node scripts/dt-semantic/observability.test.mjs",
     "test:nojs": "python tests/qa_semantic_nojs.py",
     "build:css": "node scripts/build-css.mjs",
-    "test:inventory": "node tests/qa_inventory_contract.mjs"
+    "test:inventory": "node tests/qa_inventory_contract.mjs",
+    "test:hostinger": "node --test tests/hostinger-server.test.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
-    "mysql2": "^3.24.4"
+    "mysql2": "^3.24.4",
+    "express": "^5.1.0"
   }
 }

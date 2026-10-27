@@ -6,6 +6,10 @@ Primera versión **demostrable y responsive** de una boutique de accesorios para
 
 > **ESTADO: PRELANZAMIENTO.** El sitio **no vende, no cobra, no reserva inventario y no acepta pedidos**. Su catálogo contiene fichas documentadas de accesorios, sin ventas habilitadas. `noindex` está activo hasta contar con información comercial validada.
 
+## Despliegue Hostinger Web App Node.js
+
+Don Turrón ahora incluye un servidor Express en `server.js` para la publicación desde GitHub como aplicación Node.js de Hostinger. Usar **Entry file: `server.js`**, **Start: `npm start`**, **Build: `npm run build`** y configurar en hPanel las credenciales `DT_DB_*` (productos) por separado de `DB_*`/`TELEMETRY_*` (telemetría). El servidor sirve HTML SEO y `/api/catalog` sin permitir acceso público a migraciones, fuentes privadas ni archivos de configuración. [Configuración y pruebas Hostinger](docs/HOSTINGER_NODE_DEPLOY.md).
+
 ## Qué incluye
 
 - Experiencia visual premium: negro mármol, oro cálido, tipografía editorial, monograma DT.
