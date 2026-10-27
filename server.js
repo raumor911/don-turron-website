@@ -102,7 +102,7 @@ export function createApp({readCatalog=readCatalogSnapshot}={}){
   if(mediaDir && path.isAbsolute(mediaDir) && path.basename(path.normalize(mediaDir))==='products' &&
      fs.existsSync(mediaDir)){
     app.get('/media/products/:file',(req,res)=>{
-      if(!/^[a-z0-9-]+\\.(?:webp|avif|jpg|jpeg|png)$/.test(req.params.file)){
+      if(!/^[a-z0-9-]+\.(?:webp|avif|jpg|jpeg|png)$/.test(req.params.file)){
         return res.status(404).end();
       }
       return res.sendFile(path.join(mediaDir,req.params.file),{
