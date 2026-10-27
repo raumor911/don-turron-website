@@ -54,6 +54,24 @@ function publicProduct(row){
   };
   return result;
 }
+// Esta función no depende de ocho fichas fijas: publication_status se decide en MySQL.
+export function buildPublicCatalog(rows){
+  const grouped=new Map();
+  for(const row of rows){
+    if(row.publication_status==='hidden')continue; // defensa adicional frente a filas no publicables
+    if(!grouped.has(row.product_id))grouped.set(row.product_id,publicProduct(row));
+    const product=grouped.get(row.product_id);
+    if(!row.sku)continue;
+    const known=row.on_hand_qty!==null&&row.on_hand_qty!==undefined;
+    const available=known?Math.max(0,Number(row.on_hand_qty)-Number(row.reserved_qty||0)):null;
+    const variant={key:row.variant_key,label:clean(row.variant_label,80),
+      status:known?'confirmed':'pending_confirmation',stock:available};
+    if(row.variant_key==='default')product.stock=available;
+    else product.variants.push(variant);
+  }
+  return {version:1,source:'don-turron-inventory',products:[...grouped.values()]};
+}
+
 export default async function handler(req,res){
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('Access-Control-Allow-Origin','https://www.donturron.com.mx');
@@ -81,22 +99,7 @@ export default async function handler(req,res){
       WHERE p.publication_status IN ('listed','coming_soon')
       ORDER BY c.sort_order,p.product_id,v.variant_label
     `);
-    const grouped=new Map();
-    for(const row of rows){
-      if(!grouped.has(row.product_id))grouped.set(row.product_id,publicProduct(row));
-      const product=grouped.get(row.product_id);
-      if(!row.sku)continue;
-      const known=row.on_hand_qty!==null&&row.on_hand_qty!==undefined;
-      const available=known?Math.max(0,Number(row.on_hand_qty)-Number(row.reserved_qty||0)):null;
-      const variant={key:row.variant_key,label:clean(row.variant_label,80),
-                     status:known?'confirmed':'pending_confirmation',stock:available};
-      if(row.variant_key==='default')product.stock=available;
-      else product.variants.push(variant);
-    }
-    // El estado de publicación es independiente por producto: 'hidden' no
-    // integra la respuesta. Un catálogo con 7, 1 o 0 artículos publicados
-    // es válido y no debe invalidar precios de los demás productos.
-    const body={version:1,source:'don-turron-inventory',products:[...grouped.values()]};
+    const body=buildPublicCatalog(rows);
     const etag='"'+createHash('sha256').update(JSON.stringify(body)).digest('hex')+'"';
     return {body,etag};
     });
