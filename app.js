@@ -346,7 +346,10 @@
   const imageAllowed = /^assets\/products\/[a-z0-9-]+\.webp$/;
   const nonempty = (value, max) => typeof value === 'string' ? value.slice(0,max) : '';
   function remoteProduct(remote, current) {
-    if (!remote || remote.id !== current.id || !Array.isArray(remote.features) || !Array.isArray(remote.images) || !Array.isArray(remote.variants)) return null;
+    if (!remote || !/^[a-z0-9-]+$/.test(remote.id||'') || !Array.isArray(remote.features) || !Array.isArray(remote.images) || !Array.isArray(remote.variants)) return null;
+    // Un artículo nuevo en MySQL no necesita existir en el catálogo estático.
+    const baseline = current || {id:remote.id,variants:[],features:[],images:[]};
+    const previousVariants = Array.isArray(baseline.variants) ? baseline.variants : [];
     const images = remote.images.filter(image => image && typeof image.label === 'string' && imageAllowed.test(image.src))
       .map(image => ({src:image.src,label:nonempty(image.label,200)}));
     if (!images.length) return null;
@@ -355,21 +358,21 @@
     // orden de los colores conocidos para no alterar de golpe la experiencia.
     const variants = remote.variants.filter(v=>v && typeof v.label==='string')
       .sort((a,b)=>{
-        const ia=current.variants.findIndex(v=>v.label===a.label);
-        const ib=current.variants.findIndex(v=>v.label===b.label);
+        const ia=previousVariants.findIndex(v=>v.label===a.label);
+        const ib=previousVariants.findIndex(v=>v.label===b.label);
         return (ia<0?999:ia)-(ib<0?999:ib);
       }).map(record=>{
-        const prior=current.variants.find(v=>v.label===record.label)||{};
+        const prior=previousVariants.find(v=>v.label===record.label)||{};
         const count=Number.isInteger(record.stock)&&record.stock>=0?record.stock:undefined;
         return {...prior,label:nonempty(record.label,80),stock:count,
           status:count===undefined?'pending_confirmation':'confirmed'};
       });
     const incomingLaunch=remote.launchWindow;
-    const launchWindow=incomingLaunch && current.launchWindow?.month===incomingLaunch.month &&
-      current.launchWindow?.label===incomingLaunch.label ? current.launchWindow : incomingLaunch || undefined;
+    const launchWindow=incomingLaunch && baseline.launchWindow?.month===incomingLaunch.month &&
+      baseline.launchWindow?.label===incomingLaunch.label ? baseline.launchWindow : incomingLaunch || undefined;
     const price=remote.retailPrice && Number.isFinite(remote.retailPrice.amount) && remote.retailPrice.amount>=0 &&
       remote.retailPrice.currency==='MXN' ? remote.retailPrice : undefined;
-    return {...current,
+    return {...baseline,id:remote.id,
       name:nonempty(remote.name,200),category:nonempty(remote.category,64),
       categoryLabel:nonempty(remote.categoryLabel,100),
       subtitle:nonempty(remote.subtitle,250),description:nonempty(remote.description,10000),
@@ -390,24 +393,32 @@
     save();updateCounters();renderDrawer();syncAllStockControls();
   }
   function useRemoteCatalog() {
-    // El flag se habilita solo tras migración, variables privadas y prueba de API.
     if (config.liveCatalogEnabled !== true || !/^https?:$/.test(location.protocol)) return;
+    document.documentElement.dataset.catalogSource='loading';
     const abort = new AbortController();
-    const deadline = setTimeout(()=>abort.abort(),2600);
+    // El servidor Hostinger puede iniciar una conexión MySQL en frío.
+    // No bloquea la carga del HTML; sólo el refresco de tarjetas.
+    const deadline = setTimeout(()=>abort.abort(),10000);
     fetch('/api/catalog',{method:'GET',credentials:'omit',signal:abort.signal,cache:'no-store'})
       .then(async response=>{
-        if(!response.ok)throw new Error('catalog_unavailable');
+        if(!response.ok){
+          const detail=await response.json().catch(()=>null);
+          throw new Error('catalog_'+(detail?.reason||'http_'+response.status));
+        }
         return response.json();
       })
       .then(data=>{
         if(data?.version!==1 || data?.source!=='don-turron-inventory' ||
-          !Array.isArray(data.products)||data.products.length!==catalog.length)throw new Error('catalog_incomplete');
-        const byId=new Map(data.products.map(p=>[p?.id,p]));
-        if(byId.size!==catalog.length || catalog.some(p=>!byId.has(p.id)))throw new Error('catalog_mismatch');
-        const latest=catalog.map(p=>remoteProduct(byId.get(p.id),p));
-        if(latest.some(p=>!p))throw new Error('catalog_invalid');
+          !Array.isArray(data.products))throw new Error('catalog_invalid_response');
+        const byId=new Map(catalog.map(p=>[p.id,p]));
+        const ids=new Set(data.products.map(p=>p?.id));
+        if(ids.size!==data.products.length)throw new Error('catalog_duplicate_ids');
+        // La BD gobierna cuáles artículos están activos, sus altas y bajas.
+        const latest=data.products.map(p=>remoteProduct(p,byId.get(p?.id)));
+        if(latest.some(p=>!p))throw new Error('catalog_invalid_product');
         const hasChange=JSON.stringify(latest)!==JSON.stringify(catalog);
         catalog=latest;
+        document.documentElement.dataset.catalogSource='mysql';
         if(hasChange){
           const existingDialog=currentDialog?.el?.id === 'product-modal';
           const openedId=existingDialog ? $('product-modal-content')?.querySelector('[data-product-id]')?.dataset.productId : null;
@@ -422,7 +433,9 @@
         refreshSelectionAfterCatalog();
         emit('catalog_hydrated',{source:'mysql',products:latest.length});
       })
-      .catch(()=>{
+      .catch(error=>{
+        document.documentElement.dataset.catalogSource='unavailable';
+        console.warn('[Don Turrón] catálogo MySQL no disponible:',error?.message||'error_desconocido');
         // Sin BD disponible, jamás presentar como confirmados los stocks del build.
         catalog=catalog.map(p=>({...p,stock:undefined,retailPrice:undefined,
           variants:p.variants.map(v=>({...v,stock:undefined,status:'pending_confirmation'}))}));
