@@ -1,5 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {createApp} from '../server.js';
 
 test('Hostinger Node.js serves SEO pages, catalog API and public assets without source exposure',async t=>{
@@ -59,4 +62,19 @@ test('Hostinger Node.js serves SEO pages, catalog API and public assets without 
   const telemetryConfig=await telemetry.json();
   assert.equal(telemetryConfig.site_id,'don-turron');
   if(!process.env.TELEMETRY_ENABLED)assert.equal(telemetryConfig.enabled,false);
+});
+
+test('RAUVIA-style Hostinger build keeps private source out of dist/public',()=>{
+  const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+  const publicRoot=path.join(root,'dist','public');
+  const entry=path.join(root,'dist','server.cjs');
+  assert.ok(fs.statSync(entry,{throwIfNoEntry:false})?.isFile(),'Node entry must be built before server start');
+  assert.ok(fs.statSync(path.join(publicRoot,'index.html'),{throwIfNoEntry:false})?.isFile(),'Public home must be built');
+  assert.ok(fs.statSync(path.join(publicRoot,'sitemap.xml'),{throwIfNoEntry:false})?.isFile(),'Sitemap must be in public bundle');
+  const sitemap=fs.readFileSync(path.join(publicRoot,'sitemap.xml'),'utf8');
+  assert.equal((sitemap.match(/<loc>/g)||[]).length,10);
+  for(const name of ['database','knowledge','telemetry','scripts','tests','node_modules','.env','server.js','package.json']){
+    assert.equal(fs.existsSync(path.join(publicRoot,name)),false,'Private path leaked into public build: '+name);
+  }
+  assert.match(fs.readFileSync(entry,'utf8'),/import\('\.\.\/server\.js'\)/);
 });
