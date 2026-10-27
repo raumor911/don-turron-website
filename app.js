@@ -466,6 +466,7 @@
   }
 
   load();
+  refreshCategoryFilters();
   if (!prerenderMatchesCatalog()) renderProducts();
   else $('result-count').textContent = singular(catalog.length);
   renderDrawer();updateCounters();bind();syncAllStockControls();initAgeGate();useRemoteCatalog();
