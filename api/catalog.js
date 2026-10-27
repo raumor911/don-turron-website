@@ -25,8 +25,20 @@ function connection(){
   return pool;
 }
 const clean=(v,max=1000)=>typeof v==='string'?v.slice(0,max):'';
-const imagePath=/^assets\/products\/[a-z0-9-]+\.webp$/;
-const assetName=/^[a-z0-9-]+$/;
+const imagePath=/^assets\/products\/[a-z0-9-]+\.(?:webp|avif|jpg|jpeg|png)$/;
+const mediaPath=/^\/media\/products\/[a-z0-9-]+\.(?:webp|avif|jpg|jpeg|png)$/;
+const allowedMediaOrigins=new Set(['https://www.donturron.com.mx','https://donturron.com.mx',
+  ...(process.env.DT_MEDIA_ORIGINS||'').split(',').map(x=>x.trim()).filter(Boolean)]);
+function validImage(src){
+  if(typeof src!=='string')return false;
+  if(imagePath.test(src)||mediaPath.test(src))return true;
+  try{
+    const url=new URL(src);
+    return url.protocol==='https:'&&!url.username&&!url.password&&!url.search&&!url.hash&&
+      allowedMediaOrigins.has(url.origin)&&mediaPath.test(url.pathname);
+  }catch{return false;}
+}
+const assetName=/^(?:humidor|ashtray|case|lighter|cutter|set)$/;
 function arrayJson(value,max=16){
   try {const v=typeof value==='string'?JSON.parse(value):value;return Array.isArray(v)?v.slice(0,max):[];}catch{return [];}
 }
@@ -42,7 +54,7 @@ function publicProduct(row){
     subtitle:clean(row.subtitle,250),
     description:clean(row.description,10000),
     features:arrayJson(row.features_json,24).filter(x=>typeof x==='string').map(x=>clean(x,500)),
-    images:arrayJson(row.images_json,16).filter(x=>x&&typeof x==='object'&&imagePath.test(x.src))
+    images:arrayJson(row.images_json,16).filter(x=>x&&typeof x==='object'&&validImage(x.src))
       .map(x=>({src:x.src,label:clean(x.label,200)})),
     art:assetName.test(row.art)?row.art:'case',
     badge:clean(row.badge,80),
