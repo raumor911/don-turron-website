@@ -8,6 +8,7 @@
 import express from 'express';
 import path from 'node:path';
 import fs from 'node:fs';
+import {createHash} from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import catalogHandler,{readCatalogSnapshot} from './api/catalog.js';
 import {renderHome,renderProductPage,publicSitemap,catalogMarkdown,liveGraph} from './server/catalog-public.js';
@@ -28,6 +29,11 @@ export function createApp({readCatalog=readCatalogSnapshot}={}){
       throw new Error('DT_HOSTINGER_BUILD_MISSING: '+file+' — run npm run build or enable postinstall');
     }
   }
+  // Script URL is content-addressed so a past 5-minute browser cache cannot
+  // keep the previous add-to-selection logic after a deployment.
+  const jsVersion=createHash('sha256').update(fs.readFileSync(path.join(PUBLIC_ROOT,'app.js'))).digest('hex').slice(0,12);
+  const freshClient=html=>html.replace('<script defer src="app.js"></script>',
+    '<script defer src="app.js?v='+jsVersion+'"></script>');
   const app=express();
   app.disable('x-powered-by');
   app.use((_req,res,next)=>{res.setHeader('X-Content-Type-Options','nosniff');next();});
@@ -66,7 +72,7 @@ export function createApp({readCatalog=readCatalogSnapshot}={}){
   app.get(['/', '/index.html'],async(req,res)=>{
     try{
       const snapshot=await readCatalog();
-      const html=renderHome(fs.readFileSync(path.join(PUBLIC_ROOT,'index.html'),'utf8'),snapshot.body.products);
+      const html=freshClient(renderHome(fs.readFileSync(path.join(PUBLIC_ROOT,'index.html'),'utf8'),snapshot.body.products));
       return res.set('Cache-Control','public, max-age=0, s-maxage=5, must-revalidate').type('html').send(html);
     }catch{
       let html=fs.readFileSync(path.join(PUBLIC_ROOT,'index.html'),'utf8');
@@ -74,7 +80,7 @@ export function createApp({readCatalog=readCatalogSnapshot}={}){
         '<div class="product-grid" id="product-grid"></div>');
       html=html.replace('<script defer src="catalog.js"></script>','<script>window.DON_TURRON_CATALOG=[];</script>');
       html=html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/,'');
-      return res.set('Cache-Control','no-store').set('X-Robots-Tag','noindex').type('html').send(html);
+      return res.set('Cache-Control','no-store').set('X-Robots-Tag','noindex').type('html').send(freshClient(html));
     }
   });
   app.get(['/productos/:id/','/productos/:id'],(req,res)=>live(res,products=>{
@@ -121,7 +127,7 @@ export function createApp({readCatalog=readCatalogSnapshot}={}){
   }
   for(const name of PUBLIC_ROOT_FILES){
     app.get('/'+name,(req,res)=>res.sendFile(path.join(PUBLIC_ROOT,name),{
-      headers:{'Cache-Control':name.endsWith('.xml')||name.endsWith('.txt')?'no-cache':'public, max-age=300'}
+      headers:{'Cache-Control':name==='app.js'||name==='config.js'||name==='catalog.js'||name.endsWith('.xml')||name.endsWith('.txt')?'no-cache, must-revalidate':'public, max-age=300'}
     }));
   }
 
