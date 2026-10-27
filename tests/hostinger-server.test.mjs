@@ -43,7 +43,10 @@ test('Hostinger Node.js serves SEO pages, catalog API and public assets without 
     assert.match(pageHtml,/href="tel:\+525586494076"/,'Teléfono clicable en '+pageName);
     assert.match(pageHtml,/55 8649 4076/,'Teléfono visible en '+pageName);
     assert.match(pageHtml,/href="https:\/\/www\.instagram\.com\/donturron\.mx\/"/,'Enlace Instagram en '+pageName);
-    assert.match(pageHtml,/@donturron\.mx/,'Usuario Instagram visible en '+pageName);
+    assert.match(pageHtml,/class="dt-instagram-button"/,'Botón de Instagram en '+pageName);
+    assert.match(pageHtml,/aria-label="Visitar Instagram de Don Turrón \(@donturron\.mx\), abre en otra pestaña"/,'Descripción accesible de Instagram en '+pageName);
+    assert.match(pageHtml,/<svg[^>]+aria-hidden="true"[^>]*>/,'Icono SVG decorativo en '+pageName);
+    assert.doesNotMatch(pageHtml,/>Instagram · @donturron\.mx<\/a>/,'Sin texto de Instagram en lugar del icono en '+pageName);
   }
   assert.equal((await sitemap.text()).match(/<loc>/g).length,seed.length+2);
   assert.match(await robots.text(),/Allow: \/\s/);
