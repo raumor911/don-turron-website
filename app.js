@@ -9,7 +9,18 @@
   const MAX_QUANTITY = 20;
   // Las imágenes proceden exclusivamente de knowledge/products.json (catálogo generado).
   const photosOf = p => Array.isArray(p.images) && p.images.length ? p.images : null;
-  const responsiveCardImages = new Set((window.DON_TURRON_CATALOG || []).map(p=>photosOf(p)?.[0]?.src).filter(Boolean));
+  // Keep optimized sources only for assets that were compiled with 320/640 versions.
+  // A new MySQL product may have a standalone picture without generated srcsets.
+  const responsiveCardImages = new Set([
+    'assets/products/cortador-v-plateado.webp',
+    'assets/products/encendedor-honest-negro.webp',
+    'assets/products/encendedor-parike-plata.webp',
+    'assets/products/estuche-6-interior.webp',
+    'assets/products/estuche-set-lounge.webp',
+    'assets/products/humidor-viaje-interior.webp',
+    'assets/products/reposa-puros-dos-acabados.webp',
+    'assets/products/set-portatil-conjunto.webp'
+  ]);
   const isUnavailable = p => p && (hasProductStock(p) && p.stock===0 ||
     hasRecordedStock(p) && p.variants.every(v=>v.stock===0));
   function productPicture(p, placement) {
@@ -393,7 +404,7 @@
     const price=remote.retailPrice&&Number.isFinite(remote.retailPrice.amount)&&remote.retailPrice.amount>=0&&
       remote.retailPrice.currency==='MXN'?remote.retailPrice:undefined;
     const launchWindow=remote.launchWindow||undefined;
-    const art=/^[a-z0-9-]+$/.test(remote.art||'')?remote.art:(base.art||'case');
+    const art=['humidor','ashtray','case','lighter','cutter','set'].includes(remote.art)?remote.art:'case';
     return {...base,id:remote.id,name:nonempty(remote.name,200),
       category:nonempty(remote.category,64),
       categoryLabel:nonempty(remote.categoryLabel||remote.category,100),
