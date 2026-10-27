@@ -132,7 +132,7 @@ export function renderProductPage(p,products,template=''){
       '<li><a href="/#coleccion">Explorar el catálogo</a></li>')+
     '</ul><p><a href="/#coleccion">Volver a la colección</a></p></section></main>'+
     '<footer class="dt-footer"><span>Don Turrón · Catálogo digital · Consultas por WhatsApp</span>'+
-    '<address class="dt-contact" aria-label="Contacto de Don Turrón"><a href="mailto:hola@donturron.com.mx">hola@donturron.com.mx</a><a href="tel:+525586494076">55 8649 4076</a><a href="https://www.instagram.com/donturron.mx/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Don Turrón (abre en otra pestaña)">Instagram · @donturron.mx</a></address>'+
+    '<address class="dt-contact" aria-label="Contacto de Don Turrón"><a href="mailto:hola@donturron.com.mx">hola@donturron.com.mx</a><a href="tel:+525586494076">55 8649 4076</a><a class="dt-instagram-button" href="https://www.instagram.com/donturron.mx/" target="_blank" rel="noopener noreferrer" aria-label="Visitar Instagram de Don Turrón (@donturron.mx), abre en otra pestaña" title="Instagram · @donturron.mx"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a></address>'+
     '<span class="dt-credit">Experiencia digital desarrollada por <a href="https://rauvia.com.mx/" target="_blank" rel="noopener noreferrer"><strong>RAUVIA Consulting</strong></a></span></footer>'+
     '</body></html>';
 }

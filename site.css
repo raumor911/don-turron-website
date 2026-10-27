@@ -104,6 +104,28 @@
   .footer-right .footer-contact{gap:8px 18px;padding-bottom:0}
 }
 
+/* Icono de Instagram estilo Don Turrón: oro editorial, sin JS externo. */
+.footer-contact .dt-instagram-button,.dt-contact .dt-instagram-button{
+  display:inline-flex;align-items:center;justify-content:center;flex:0 0 44px;
+  width:44px;height:44px;min-width:44px;min-height:44px;padding:0;
+  border:1px solid #92724b;border-radius:50%;background:rgba(230,193,141,.07);
+  color:#e6c18d;text-decoration:none;line-height:1;
+  transition:background-color .2s ease,border-color .2s ease,color .2s ease,transform .2s ease;
+}
+.footer-contact .dt-instagram-button svg,.dt-contact .dt-instagram-button svg{
+  display:block;width:22px;height:22px;flex:none;
+}
+.footer-contact .dt-instagram-button:hover,.dt-contact .dt-instagram-button:hover{
+  background:rgba(230,193,141,.16);border-color:#e6c18d;color:#fff0ce;transform:translateY(-1px);text-decoration:none;
+}
+.footer-contact .dt-instagram-button:focus-visible,.dt-contact .dt-instagram-button:focus-visible{
+  outline:2px solid #e6c18d;outline-offset:4px;
+}
+@media(prefers-reduced-motion:reduce){
+  .footer-contact .dt-instagram-button,.dt-contact .dt-instagram-button{transition:none}
+  .footer-contact .dt-instagram-button:hover,.dt-contact .dt-instagram-button:hover{transform:none}
+}
+
 /* DON TURRÓN / ATELIER MOTION
    V2 · Opt-in enhancement. Brand first, movement second.
    All effects degrade gracefully without JavaScript. */
