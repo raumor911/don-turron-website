@@ -386,6 +386,14 @@ with sync_playwright() as p:
   gap=contact['y']-(nav['y']+nav['height'])
   assert 0 <= gap <= 28, f'Separación excesiva entre navegación y contacto en {name}: {gap:.1f}px'
   assert contact['x']+contact['width']<=width+2, f'Contacto sin desbordamiento horizontal en {name}'
+  insta=page.locator('.footer-contact .dt-instagram-button')
+  assert insta.count()==1, f'Botón único de Instagram en {name}'
+  assert insta.get_attribute('href')=='https://www.instagram.com/donturron.mx/', f'Instagram lleva al perfil oficial: {name}'
+  assert insta.locator('svg[aria-hidden="true"]').count()==1, f'Instagram utiliza ícono SVG: {name}'
+  assert 'donturron.mx' in insta.get_attribute('aria-label'), f'Instagram conserva nombre accesible: {name}'
+  iconbox=insta.bounding_box()
+  assert iconbox is not None and iconbox['width']>=44 and iconbox['height']>=44, f'Área táctil de Instagram: {name}'
+  assert insta.evaluate('el => getComputedStyle(el).color')=='rgb(230, 193, 141)', f'Dorado Don Turrón en Instagram: {name}'
   assert 'Sitio en preparación' not in page.locator('.footer-bottom').inner_text(), 'Se retiró la leyenda obsoleta'
   assert page.locator('.footer-bottom .footer-credit a[href="https://rauvia.com.mx/"]').count()==1, 'Crédito RAUVIA en footer'
   credit=page.locator('.footer-bottom .footer-credit').bounding_box()
