@@ -12,7 +12,7 @@ BASE = 'http://donturron.test/'
 
 with sync_playwright() as p:
  browser = p.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
- for scenario in ('hidden','all_hidden','unavailable'):
+ for scenario in ('hidden','all_hidden','unavailable','added','sold_out'):
   page = browser.new_page()
   errors = []
   page.on('pageerror', lambda err: errors.append(str(err)))
@@ -48,6 +48,17 @@ with sync_playwright() as p:
    )""")
   elif scenario == 'all_hidden':
    state['products']=[]
+  elif scenario == 'added':
+   import copy
+   new=copy.deepcopy(products[0])
+   new.update({'id':'nuevo-producto-kyberion','name':'Producto nuevo desde Kyberion',
+     'category':'nuevos-productos','categoryLabel':'Nuevos productos',
+     'description':'Descripción de una alta de catálogo sin recompilar',
+     'images':[],'variants':[],'art':'case','stock':3,
+     'retailPrice':{'amount':1290,'currency':'MXN'}})
+   state['products']=[*products,new]
+  elif scenario == 'sold_out':
+   state['products']=[{**p,'stock':0} if p['id']=='cenicero-mesa' else p for p in products]
   else:
    state['products']=products
   page.add_script_tag(content=(ROOT/'app.js').read_text())
@@ -73,6 +84,27 @@ with sync_playwright() as p:
   elif scenario == 'all_hidden':
    page.wait_for_function("document.querySelectorAll('.product-card').length===0",timeout=6000)
    assert page.locator('#result-count').inner_text()=='0 artículos'
+  elif scenario == 'added':
+   page.wait_for_function("document.querySelectorAll('.product-card').length===9",timeout=6000)
+   new=page.locator('.product-card[data-id="nuevo-producto-kyberion"]')
+   assert new.count()==1, 'La nueva alta debe aparecer'
+   assert '$1,290 MXN' in new.locator('.product-price').inner_text()
+   category=page.locator('[data-filter="nuevos-productos"]')
+   assert category.count()==1, 'Crear filtro automáticamente para categoría de Kyberion'
+   category.click()
+   assert page.locator('.product-card').count()==1
+   new.locator('[data-add]').click()
+   assert page.locator('#cart-count').inner_text()=='1'
+  elif scenario == 'sold_out':
+   page.wait_for_function("""() => {
+    const p=document.querySelector('[data-id="cenicero-mesa"]');
+    return p && !!p.querySelector('[data-add]:disabled');
+   }""",timeout=6000)
+   exhausted=page.locator('.product-card[data-id="cenicero-mesa"]')
+   assert 'Agotado' in exhausted.inner_text()
+   assert exhausted.locator('[data-add]').is_disabled()
+   assert '$549 MXN' in exhausted.locator('.product-price').inner_text(), 'El precio no desaparece por stock cero'
+   assert '$649 MXN' in page.locator('.product-card[data-id="humidor-viaje-5-puros"] .product-price').inner_text()
   else:
    page.wait_for_function("""() => [...document.querySelectorAll('.product-card')]
      .every(card=>card.querySelector('.product-price').textContent.includes('Precio por confirmar'))""",timeout=6000)
@@ -80,4 +112,4 @@ with sync_playwright() as p:
   assert not errors, scenario+': '+str(errors)
   page.close()
  browser.close()
-print('OK: hidden individual, otros precios intactos, carrito depurado, catálogo vacío y fallback 503')
+print('OK: altas, bajas, agotados, filtros nuevos, precios y carrito; fallback 503')
