@@ -51,16 +51,50 @@ export function catalogMarkdown(products){
     (p.launchWindow?' '+p.launchWindow.label+'.':'')+'\n'
   ).join('\n');
 }
-export function liveGraph(products){
-  const brand=root+'/#brand';
-  const nodes=[{id:brand,type:'Brand',name:'Don Turrón'}];const edges=[];
+export function liveGraph(products,baseline={}){
+  // Preserve the AETHRYON knowledge framework (sources, intents, use cases,
+  // organization, taxonomy) while replacing only product-owned facts.
+  const originalNodes=Array.isArray(baseline.nodes)?baseline.nodes:[];
+  const originalEdges=Array.isArray(baseline.edges)?baseline.edges:[];
+  const priorProductIds=new Set(originalNodes.filter(n=>n.type==='Product').map(n=>n.id));
+  const priorFeatureIds=new Set(originalNodes.filter(n=>n.type==='Feature'&&/^feature:/.test(n.id)).map(n=>n.id));
+  const activeIds=new Set(products.map(p=>p.id));
+  const removedIds=new Set([...priorProductIds].filter(id=>!activeIds.has(id)));
+  const orphanClaimIds=new Set(originalEdges.filter(e=>e.type==='about'&&removedIds.has(e.target)).map(e=>e.source));
+  const nodes=originalNodes.filter(n=>!priorProductIds.has(n.id)&&!priorFeatureIds.has(n.id)&&!orphanClaimIds.has(n.id));
+  const nodeIds=new Set(nodes.map(n=>n.id));
+  const edges=originalEdges.filter(e=>
+    !priorFeatureIds.has(e.source)&&!priorFeatureIds.has(e.target)&&
+    !priorProductIds.has(e.source)&&!orphanClaimIds.has(e.source)&&!orphanClaimIds.has(e.target)&&
+    !(priorProductIds.has(e.target)&&!activeIds.has(e.target)));
+  const pushNode=n=>{if(!nodeIds.has(n.id)){nodes.push(n);nodeIds.add(n.id);}};
   for(const p of products){
-    const id=root+'/productos/'+p.id+'/#product';
-    nodes.push({id,type:'Product',name:p.name,category:p.category,description:p.description,
-      ...(price(p)?{retailPrice:p.retailPrice}:{}),...(Number.isInteger(p.stock)?{stock:p.stock}:{})});
-    edges.push({source:brand,target:id,type:'hasProduct'});
+    const categoryId='category:'+p.category;
+    if(!nodeIds.has(categoryId)){
+      pushNode({id:categoryId,type:'Category',name:p.categoryLabel});
+      if(nodeIds.has('collection:accesorios-puros'))
+        edges.push({source:'collection:accesorios-puros',target:categoryId,type:'hasCategory'});
+    }
+    pushNode({id:p.id,type:'Product',name:p.name,status:'documented',description:p.description,
+      ...(p.retailPrice?{retailPrice:p.retailPrice}:{}),
+      ...(p.launchWindow?{launchWindow:p.launchWindow}:{}),
+      ...(Number.isInteger(p.stock)?{stock:p.stock}:{})});
+    edges.push({source:categoryId,target:p.id,type:'containsProduct'});
+    for(let i=0;i<p.features.length;i++){
+      const featureId='feature:'+p.id+':'+(i+1);
+      pushNode({id:featureId,type:'Feature',name:p.features[i],status:'supplier_declared'});
+      edges.push({source:p.id,target:featureId,type:'hasDeclaredFeature'});
+    }
   }
-  return {name:'Don Turrón Live Product Graph',source:'mysql',version:'2.0.0',nodes,edges};
+  const seen=new Set();
+  const safeEdges=edges.filter(e=>{
+    if(!nodeIds.has(e.source)||!nodeIds.has(e.target))return false;
+    const key=[e.source,e.target,e.type].join('\0');
+    if(seen.has(key))return false;
+    seen.add(key);return true;
+  });
+  return {...baseline,name:'Don Turrón Live Semantic Knowledge Graph',
+    version:'2.0.0',source:'mysql',nodes,edges:safeEdges};
 }
 export function renderProductPage(p,products,template=''){
   if(!p)return null;
