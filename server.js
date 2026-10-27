@@ -27,8 +27,22 @@ export function createApp(){
   app.all('/api/catalog',(req,res)=>catalogHandler(req,res));
   app.get('/api/healthz',(_req,res)=>res.set('Cache-Control','no-store').json({status:'ok',service:'don-turron'}));
 
-  // Other /api routes, including telemetry, are not silently rewritten to HTML.
-  // Telemetry has its own separately authorized receiver and DB, not this API.
+  // Reuse the existing telemetry receiver *unchanged* when the Hostinger
+  // process has the separate DB_* and TELEMETRY_* configuration. No new DB
+  // pool, schema or event logic is introduced here. Lazy loading keeps a
+  // telemetry misconfiguration from preventing the website from starting.
+  let telemetryReceiver;
+  const getTelemetry=()=>telemetryReceiver??=import('./telemetry/receiver.mjs')
+    .then(({createReceiver})=>createReceiver());
+  const delegateTelemetry=async(req,res)=>{
+    try{
+      const receiver=await getTelemetry();
+      receiver.server.emit('request',req,res);
+    }catch{
+      if(!res.headersSent)res.status(503).json({error:'telemetry_unavailable'});
+    }
+  };
+  app.all(['/api/telemetry','/api/telemetry/config'],delegateTelemetry);
   app.use('/api',(_req,res)=>res.status(404).json({error:'not_found'}));
 
   for(const directory of ['assets','productos','guia','ai']){
