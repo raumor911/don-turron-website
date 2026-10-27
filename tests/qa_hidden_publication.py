@@ -12,7 +12,7 @@ BASE = 'http://donturron.test/'
 
 with sync_playwright() as p:
  browser = p.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
- for scenario in ('hidden','all_hidden','unavailable','added','sold_out','publication_sold_out'):
+ for scenario in ('hidden','all_hidden','unavailable','added','sold_out','publication_sold_out','humidor_sold_out'):
   page = browser.new_page()
   errors = []
   page.on('pageerror', lambda err: errors.append(str(err)))
@@ -62,6 +62,8 @@ with sync_playwright() as p:
   elif scenario == 'publication_sold_out':
    state['products']=[{**p,'publicationStatus':'Out of stock','stock':3} if p['id']=='cenicero-mesa' else p for p in products]
    page.evaluate("""() => localStorage.setItem('dt-selection-v1', JSON.stringify({'cenicero-mesa':1,'humidor-viaje-5-puros':1}))""")
+  elif scenario == 'humidor_sold_out':
+   state['products']=[{**p,'publicationStatus':'Out of stock'} if p['id']=='humidor-viaje-5-puros' else p for p in products]
   else:
    state['products']=products
   page.add_script_tag(content=(ROOT/'app.js').read_text())
@@ -98,6 +100,25 @@ with sync_playwright() as p:
    assert page.locator('.product-card').count()==1
    new.locator('[data-add]').click()
    assert page.locator('#cart-count').inner_text()=='1'
+  elif scenario == 'humidor_sold_out':
+   page.wait_for_function("""() => {
+     const card=document.querySelector('[data-id="humidor-viaje-5-puros"]');
+     return card && card.querySelector('.product-badge')?.textContent === 'AGOTADO' &&
+       card.querySelector('[data-add]:disabled');
+   }""",timeout=6000)
+   card=page.locator('.product-card[data-id="humidor-viaje-5-puros"]')
+   assert card.count()==1
+   assert card.locator('.product-badge').inner_text()=='AGOTADO'
+   assert 'NUEVA PIEZA' not in card.inner_text()
+   assert '$649 MXN' in card.locator('.product-price').inner_text()
+   assert card.locator('[data-add]').is_disabled()
+   assert card.locator('[data-add]').inner_text().startswith('Agotado')
+   detail=card.locator('[data-detail]')
+   detail.click()
+   modal=page.locator('#product-modal-content')
+   assert 'Agotado' in modal.inner_text()
+   assert modal.locator('[data-add]').is_disabled()
+   assert '$299 MXN' in page.locator('.product-card[data-id="estuche-viaje"] .product-price').inner_text()
   elif scenario == 'publication_sold_out':
    page.wait_for_function("""() => {
      const card=document.querySelector('.product-card[data-id="cenicero-mesa"]');
