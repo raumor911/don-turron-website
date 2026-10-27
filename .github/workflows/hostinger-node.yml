@@ -1,0 +1,42 @@
+name: Don Turrón — Hostinger Node.js runtime
+on:
+  pull_request:
+    paths:
+      - 'server.js'
+      - 'api/**'
+      - 'package.json'
+      - 'tests/hostinger-server.test.mjs'
+      - 'telemetry/**'
+      - '.github/workflows/hostinger-node.yml'
+  push:
+    branches: [main, fix/hostinger-node-express-start]
+    paths:
+      - 'server.js'
+      - 'api/**'
+      - 'package.json'
+      - 'tests/hostinger-server.test.mjs'
+      - 'telemetry/**'
+      - '.github/workflows/hostinger-node.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  node:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Node dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Build production semantic assets and check JS
+        run: |
+          npm run build
+          node --check server.js
+          node --check api/catalog.js
+      - name: Exercise Express HTTP routes and private-file boundaries
+        run: npm run test:hostinger
+      - name: Verify inventory contract remains independent
+        run: npm run test:inventory
