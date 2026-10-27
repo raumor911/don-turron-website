@@ -73,7 +73,7 @@ export function createApp({readCatalog=readCatalogSnapshot}={}){
       html=html.replace(/<div class="product-grid" id="product-grid"><!-- DT-CATALOG-START -->[\s\S]*?<!-- DT-CATALOG-END --><\/div>/,
         '<div class="product-grid" id="product-grid"></div>');
       html=html.replace('<script defer src="catalog.js"></script>','<script>window.DON_TURRON_CATALOG=[];</script>');
-      html=html.replace(/<script type="application\/ld\+json">[\\s\\S]*?<\/script>/,'');
+      html=html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/,'');
       return res.set('Cache-Control','no-store').set('X-Robots-Tag','noindex').type('html').send(html);
     }
   });
@@ -93,6 +93,15 @@ export function createApp({readCatalog=readCatalogSnapshot}={}){
     '# Don Turrón\n\nCatálogo vigente: /ai/catalog.md\nProductos: /ai/products.json\n\nConsultas por WhatsApp; sin reservas automáticas.')));
   app.get('/llms-full.txt',(req,res)=>live(res,p=>res.type('text/plain').send(catalogMarkdown(p))));
 
+  // Optional persistent Hostinger media folder: outside the generated dist/
+  // tree so Kyberion can add photos without rebuilding Node.js artifacts.
+  const mediaDir=process.env.DT_MEDIA_DIR;
+  if(mediaDir && path.isAbsolute(mediaDir) && path.basename(path.normalize(mediaDir))==='products' &&
+     fs.existsSync(mediaDir)){
+    app.use('/media/products',express.static(mediaDir,{
+      dotfiles:'deny',index:false,fallthrough:false,maxAge:'5m'
+    }));
+  }
   for(const directory of ['assets','productos','guia','ai']){
     app.use('/'+directory,express.static(path.join(PUBLIC_ROOT,directory),staticOptions));
   }
