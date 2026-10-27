@@ -21,7 +21,9 @@
     'assets/products/reposa-puros-dos-acabados.webp',
     'assets/products/set-portatil-conjunto.webp'
   ]);
-  const isUnavailable = p => p && (hasProductStock(p) && p.stock===0 ||
+  const explicitlySoldOut = p => p?.publicationStatus === 'Out of stock';
+  const isUnavailable = p => p && (explicitlySoldOut(p) ||
+    hasProductStock(p) && p.stock===0 ||
     hasRecordedStock(p) && p.variants.every(v=>v.stock===0));
   function productPicture(p, placement) {
     const photos = photosOf(p);
@@ -56,7 +58,7 @@
   }
   const hasProductStock = p => !!p && Number.isInteger(p.stock) && p.stock >= 0;
   const productStockText = p => p.stock + (p.stock === 1 ? ' unidad disponible' : ' unidades disponibles');
-  const maxFor = entry => entry.variant ? Math.min(MAX_QUANTITY, entry.variant.stock) : hasProductStock(entry.p) ? Math.min(MAX_QUANTITY, entry.p.stock) : MAX_QUANTITY;
+  const maxFor = entry => isUnavailable(entry.p) ? 0 : entry.variant ? Math.min(MAX_QUANTITY, entry.variant.stock) : hasProductStock(entry.p) ? Math.min(MAX_QUANTITY, entry.p.stock) : MAX_QUANTITY;
   const stockLine = p => p.variants.map(v => v.label + ': ' + v.stock + ' ' + (v.stock === 1 ? 'disponible' : 'disponibles')).join(' · ');
   function variantPicker(p) {
     if (!hasRecordedStock(p)) return '';
@@ -70,19 +72,20 @@
     const variant = p.variants.find(v => v.label === color);
     if (!variant) return;
     const qty = root.querySelector('[data-variant-qty]');
-    const available = Math.max(0, variant.stock - (cart[keyFor(p, color)] || 0));
+    const available = explicitlySoldOut(p) ? 0 : Math.max(0, variant.stock - (cart[keyFor(p, color)] || 0));
     const previous = Number(qty.value) || 1;
     qty.innerHTML = available ? Array.from({length:available},(_,i) => `<option value="${i+1}">${i+1}</option>`).join('') : '<option value="0">0</option>';
     qty.value = String(available ? Math.min(previous,available) : 0);
     qty.disabled = available === 0;
     const button = root.closest('.product-card, .modal-text')?.querySelector('[data-add]');
     if (button) button.disabled = available === 0;
-    root.querySelector('[data-variant-remaining]').textContent = available ? available + (available === 1 ? ' unidad restante para agregar' : ' unidades restantes para agregar') : 'Todas las unidades de este color ya están en tu selección';
+    root.querySelector('[data-variant-remaining]').textContent = explicitlySoldOut(p) ? 'Agotado' : available ? available + (available === 1 ? ' unidad restante para agregar' : ' unidades restantes para agregar') : 'Todas las unidades de este color ya están en tu selección';
   }
   function syncAllStockControls() {
     document.querySelectorAll('[data-variant-product]').forEach(syncVariantPicker);
     document.querySelectorAll('[data-add]').forEach(button => {
       const product = productById(button.dataset.add);
+      if (isUnavailable(product)) {button.disabled=true;button.title='Agotado';return;}
       if (!hasProductStock(product)) return;
       button.disabled = (cart[product.id] || 0) >= product.stock;
       button.title = button.disabled ? (product.stock===0 ? 'Agotado' : 'La unidad disponible ya está en tu selección') : '';
@@ -90,7 +93,7 @@
   }
   function addFromButton(button) {
     const p = productById(button.dataset.add);
-    if (!p) return;
+    if (!p || isUnavailable(p)) return;
     if (!hasRecordedStock(p)) return changeQuantity(p.id, 1);
     const picker = button.closest('.product-card, .modal-text')?.querySelector('[data-variant-product]');
     if (!picker) return;
@@ -132,7 +135,7 @@
           <button type="button" class="product-quick" data-detail="${html(p.id)}" aria-label="Ver detalles de ${html(p.name)}">↗</button>
         </div>
         <div class="product-details"><div class="product-category">${html(p.categoryLabel.toUpperCase())}</div>
-          <h3>${html(p.name)}</h3><p class="product-subtitle">${html(p.subtitle)}</p>${hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${hasRecordedStock(p) ? `<p class="product-stock">${html(stockLine(p))}</p>${variantPicker(p)}` : ''}${p.launchWindow ? `<p class="product-availability">${html(p.launchWindow.label)}</p>` : ''}${isUnavailable(p) ? '<p class="product-availability">Agotado</p>' : ''}
+          <h3>${html(p.name)}</h3><p class="product-subtitle">${html(p.subtitle)}</p>${!explicitlySoldOut(p) && hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${hasRecordedStock(p) ? `${!explicitlySoldOut(p) ? `<p class="product-stock">${html(stockLine(p))}</p>` : ''}${variantPicker(p)}` : ''}${p.launchWindow ? `<p class="product-availability">${html(p.launchWindow.label)}</p>` : ''}${isUnavailable(p) ? '<p class="product-availability">Agotado</p>' : ''}
           <div class="product-buy">${priceMarkup(p)}<button type="button" class="add-product" data-add="${html(p.id)}" ${isUnavailable(p)?'disabled title="Agotado"':''}>${isUnavailable(p)?'Agotado':'Seleccionar'} <span>＋</span></button></div>
         </div>
       </article>`).join('');
@@ -148,8 +151,10 @@
       const product = catalog[index];
       if (!product || card.dataset.id !== product.id) return false;
       const visiblePrice = card.querySelector('.product-price strong')?.textContent?.trim();
-      if (hasRecordedStock(product) && (!card.querySelector('[data-variant-product]') || !card.textContent.includes(stockLine(product)))) return false;
-      if (hasProductStock(product) && card.querySelector('.product-stock')?.textContent !== productStockText(product)) return false;
+      if (hasRecordedStock(product) && !card.querySelector('[data-variant-product]')) return false;
+      if (!explicitlySoldOut(product) && hasRecordedStock(product) && !card.textContent.includes(stockLine(product))) return false;
+      if (!explicitlySoldOut(product) && hasProductStock(product) && card.querySelector('.product-stock')?.textContent !== productStockText(product)) return false;
+      if (Boolean(card.querySelector('[data-add]')?.disabled) !== Boolean(isUnavailable(product))) return false;
       return product.retailPrice ? visiblePrice === retailText(product) : !!card.querySelector('.product-price');
     });
   }
@@ -276,6 +281,7 @@
     emit('selection_open');
   }
   function modalDisclosure(p) {
+    if (explicitlySoldOut(p)) return '<p class="modal-caption">Agotado. Envío no incluido. La compra se confirma por WhatsApp.</p>';
     if (p.retailPrice) return '<p class="modal-caption">Envío no incluido. '+(hasRecordedStock(p)||hasProductStock(p)?'Inventario registrado sujeto a cambios; seleccionar no reserva unidades.':'Existencias por confirmar.')+' La compra se confirma por WhatsApp; aún no hay pagos en este sitio.</p>';
     if (p.id === 'encendedor-honest-punch') return '';
     if (p.id === 'encendedor-sarike-butano') return '';
@@ -285,7 +291,7 @@
   function openProduct(id, trigger) {
     const p = productById(id);
     if (!p) return;
-    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${html(item.label)}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p>${hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${p.launchWindow ? `<p class="modal-availability">${html(p.launchWindow.label)}</p>` : ''}${p.retailPrice ? `<p class="modal-retail-price"><strong>${retailText(p)}</strong><small>IVA incluido · Envío no incluido</small></p>` : ''}<ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul>${modalDisclosure(p)}${variantPicker(p)}<button type="button" class="btn btn-gold" data-add="${html(p.id)}">Añadir a mi selección <span>＋</span></button></div></div>`;
+    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${html(item.label)}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p>${!explicitlySoldOut(p) && hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${isUnavailable(p) ? '<p class="modal-availability">Agotado</p>' : ''}${p.launchWindow ? `<p class="modal-availability">${html(p.launchWindow.label)}</p>` : ''}${p.retailPrice ? `<p class="modal-retail-price"><strong>${retailText(p)}</strong><small>IVA incluido · Envío no incluido</small></p>` : ''}<ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul>${modalDisclosure(p)}${variantPicker(p)}<button type="button" class="btn btn-gold" data-add="${html(p.id)}" ${isUnavailable(p)?'disabled title="Agotado"':''}>${isUnavailable(p)?'Agotado':'Añadir a mi selección'} <span>＋</span></button></div></div>`;
     syncAllStockControls();
     openDialog($('product-modal'), $('product-modal-backdrop'), trigger);
     emit('product_view',{product_id:id});
@@ -410,7 +416,8 @@
       categoryLabel:nonempty(remote.categoryLabel||remote.category,100),
       subtitle:nonempty(remote.subtitle,250),description:nonempty(remote.description,10000),
       features:remote.features.filter(v=>typeof v==='string').slice(0,24).map(v=>nonempty(v,500)),
-      images,art,badge:nonempty(remote.badge,80),stock,variants,retailPrice:price,launchWindow};
+      images,art,badge:nonempty(remote.badge,80),stock,variants,retailPrice:price,launchWindow,
+      publicationStatus:remote.publicationStatus==='Out of stock'?'Out of stock':remote.publicationStatus};
   }
   function refreshSelectionAfterCatalog() {
     for (const [key,qty] of Object.entries(cart)) {
