@@ -21,7 +21,7 @@ const PUBLIC_ROOT_FILES=new Set([
 ]);
 const staticOptions={dotfiles:'deny',index:['index.html'],redirect:true,fallthrough:false,maxAge:'5m'};
 
-export function createApp(){
+export function createApp({readCatalog=readCatalogSnapshot}={}){
   // Production always serves the verified public build; no silent source fallback.
   for(const file of ['index.html','robots.txt','sitemap.xml']){
     if(!fs.existsSync(path.join(PUBLIC_ROOT,file))){
@@ -58,14 +58,14 @@ export function createApp(){
   // Canonical catalog projections all use the same read-only 5s MySQL snapshot.
   const live=async(res,render)=>{
     try{
-      const snapshot=await readCatalogSnapshot();
+      const snapshot=await readCatalog();
       res.set('Cache-Control','public, max-age=0, s-maxage=5, must-revalidate');
       return render(snapshot.body.products);
     }catch{return res.status(503).set('Cache-Control','no-store').json({error:'catalog_temporarily_unavailable'});}
   };
   app.get(['/', '/index.html'],async(req,res)=>{
     try{
-      const snapshot=await readCatalogSnapshot();
+      const snapshot=await readCatalog();
       const html=renderHome(fs.readFileSync(path.join(PUBLIC_ROOT,'index.html'),'utf8'),snapshot.body.products);
       return res.set('Cache-Control','public, max-age=0, s-maxage=5, must-revalidate').type('html').send(html);
     }catch{
