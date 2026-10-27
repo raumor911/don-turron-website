@@ -93,8 +93,9 @@ export default async function handler(req,res){
       if(row.variant_key==='default')product.stock=available;
       else product.variants.push(variant);
     }
-    // A partial catalog is not an authoritative response. Fail closed instead.
-    if(grouped.size!==8)throw new Error('incomplete_catalog');
+    // El estado de publicación es independiente por producto: 'hidden' no
+    // integra la respuesta. Un catálogo con 7, 1 o 0 artículos publicados
+    // es válido y no debe invalidar precios de los demás productos.
     const body={version:1,source:'don-turron-inventory',products:[...grouped.values()]};
     const etag='"'+createHash('sha256').update(JSON.stringify(body)).digest('hex')+'"';
     return {body,etag};
