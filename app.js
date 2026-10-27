@@ -10,6 +10,8 @@
   // Las imágenes proceden exclusivamente de knowledge/products.json (catálogo generado).
   const photosOf = p => Array.isArray(p.images) && p.images.length ? p.images : null;
   const responsiveCardImages = new Set((window.DON_TURRON_CATALOG || []).map(p=>photosOf(p)?.[0]?.src).filter(Boolean));
+  const isUnavailable = p => p && (hasProductStock(p) && p.stock===0 ||
+    hasRecordedStock(p) && p.variants.every(v=>v.stock===0));
   function productPicture(p, placement) {
     const photos = photosOf(p);
     const hints = placement === 'modal' ? 'loading="eager" fetchpriority="high"' : 'loading="lazy" fetchpriority="low"';
@@ -72,7 +74,7 @@
       const product = productById(button.dataset.add);
       if (!hasProductStock(product)) return;
       button.disabled = (cart[product.id] || 0) >= product.stock;
-      button.title = button.disabled ? 'La unidad disponible ya está en tu selección' : '';
+      button.title = button.disabled ? (product.stock===0 ? 'Agotado' : 'La unidad disponible ya está en tu selección') : '';
     });
   }
   function addFromButton(button) {
@@ -119,8 +121,8 @@
           <button type="button" class="product-quick" data-detail="${html(p.id)}" aria-label="Ver detalles de ${html(p.name)}">↗</button>
         </div>
         <div class="product-details"><div class="product-category">${html(p.categoryLabel.toUpperCase())}</div>
-          <h3>${html(p.name)}</h3><p class="product-subtitle">${html(p.subtitle)}</p>${hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${hasRecordedStock(p) ? `<p class="product-stock">${html(stockLine(p))}</p>${variantPicker(p)}` : ''}${p.launchWindow ? `<p class="product-availability">${html(p.launchWindow.label)}</p>` : ''}
-          <div class="product-buy">${priceMarkup(p)}<button type="button" class="add-product" data-add="${html(p.id)}">Seleccionar <span>＋</span></button></div>
+          <h3>${html(p.name)}</h3><p class="product-subtitle">${html(p.subtitle)}</p>${hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${hasRecordedStock(p) ? `<p class="product-stock">${html(stockLine(p))}</p>${variantPicker(p)}` : ''}${p.launchWindow ? `<p class="product-availability">${html(p.launchWindow.label)}</p>` : ''}${isUnavailable(p) ? '<p class="product-availability">Agotado</p>' : ''}
+          <div class="product-buy">${priceMarkup(p)}<button type="button" class="add-product" data-add="${html(p.id)}" ${isUnavailable(p)?'disabled title="Agotado"':''}>${isUnavailable(p)?'Agotado':'Seleccionar'} <span>＋</span></button></div>
         </div>
       </article>`).join('');
   }
@@ -141,6 +143,27 @@
     });
   }
 
+  function refreshCategoryFilters() {
+    // New categories entered through Kyberion get their own filter without a rebuild.
+    const filters=$('filters');
+    const known=new Set([...filters.querySelectorAll('[data-filter]')].map(x=>x.dataset.filter));
+    for(const p of catalog){
+      if(!/^[a-z0-9-]{1,64}$/.test(p.category)||known.has(p.category))continue;
+      const btn=document.createElement('button');
+      btn.type='button';btn.className='filter';btn.dataset.filter=p.category;
+      btn.setAttribute('aria-pressed','false');btn.textContent=p.categoryLabel||p.category;
+      filters.appendChild(btn);known.add(p.category);
+    }
+    // Hide obsolete categories while retaining original editorial filters.
+    for(const btn of filters.querySelectorAll('[data-filter]')){
+      if(btn.dataset.filter!=='todos')btn.hidden=!catalog.some(p=>p.category===btn.dataset.filter);
+    }
+    if(selectedFilter!=='todos'&&!catalog.some(p=>p.category===selectedFilter))selectedFilter='todos';
+    for(const btn of filters.querySelectorAll('[data-filter]')){
+      const active=btn.dataset.filter===selectedFilter;
+      btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',String(active));
+    }
+  }
   function setFilter(filter, scroll = false) {
     if (filter !== 'todos' && !catalog.some(p => p.category === filter)) return;
     const previousFilter = selectedFilter;
@@ -343,39 +366,40 @@
   // La fuente de verdad para campos comerciales y disponibilidad es MySQL
   // cuando se activa el release gate. Esta consulta NO bloquea la primera pintura.
   // El HTML y las fichas estáticas siguen existiendo para bots/no-JS.
-  const imageAllowed = /^assets\/products\/[a-z0-9-]+\.webp$/;
-  const nonempty = (value, max) => typeof value === 'string' ? value.slice(0,max) : '';
-  function remoteProduct(remote, current) {
-    if (!remote || remote.id !== current.id || !Array.isArray(remote.features) || !Array.isArray(remote.images) || !Array.isArray(remote.variants)) return null;
-    const images = remote.images.filter(image => image && typeof image.label === 'string' && imageAllowed.test(image.src))
-      .map(image => ({src:image.src,label:nonempty(image.label,200)}));
-    if (!images.length) return null;
-    const stock = Number.isInteger(remote.stock) && remote.stock>=0 ? remote.stock : undefined;
-    // Incorporar altas/bajas de acabados desde dt_variants, conservando el
-    // orden de los colores conocidos para no alterar de golpe la experiencia.
-    const variants = remote.variants.filter(v=>v && typeof v.label==='string')
+  const imageAllowed = /^(?:assets|media)\/products\/[a-z0-9-]+\.(?:webp|avif|jpg|jpeg|png)$/;
+  const nonempty = (value,max) => typeof value === 'string' ? value.slice(0,max) : '';
+  const safeImage = value => typeof value==='string' &&
+    (imageAllowed.test(value) || /^https:\/\/[a-z0-9.-]+\/[a-z0-9_./-]+\.(?:webp|avif|jpg|jpeg|png)$/i.test(value));
+  function remoteProduct(remote,current) {
+    if(!remote || typeof remote.id!=='string' || !/^[a-z0-9-]{1,96}$/.test(remote.id) ||
+       !Array.isArray(remote.features) || !Array.isArray(remote.images) || !Array.isArray(remote.variants))return null;
+    if(!nonempty(remote.name,200).trim() || !/^[a-z0-9-]{1,64}$/.test(remote.category||''))return null;
+    const base=current||{id:remote.id,variants:[],images:[],features:[],stock:undefined,art:'case'};
+    const previous=Array.isArray(base.variants)?base.variants:[];
+    const images=remote.images.filter(im=>im && typeof im.label==='string' && safeImage(im.src))
+      .map(im=>({src:im.src,label:nonempty(im.label,200)}));
+    const stock=Number.isInteger(remote.stock)&&remote.stock>=0?remote.stock:undefined;
+    const variants=remote.variants.filter(v=>v&&typeof v.label==='string'&&v.label.trim())
       .sort((a,b)=>{
-        const ia=current.variants.findIndex(v=>v.label===a.label);
-        const ib=current.variants.findIndex(v=>v.label===b.label);
+        const ia=previous.findIndex(v=>v.label===a.label);
+        const ib=previous.findIndex(v=>v.label===b.label);
         return (ia<0?999:ia)-(ib<0?999:ib);
       }).map(record=>{
-        const prior=current.variants.find(v=>v.label===record.label)||{};
+        const prior=previous.find(v=>v.label===record.label)||{};
         const count=Number.isInteger(record.stock)&&record.stock>=0?record.stock:undefined;
         return {...prior,label:nonempty(record.label,80),stock:count,
           status:count===undefined?'pending_confirmation':'confirmed'};
       });
-    const incomingLaunch=remote.launchWindow;
-    const launchWindow=incomingLaunch && current.launchWindow?.month===incomingLaunch.month &&
-      current.launchWindow?.label===incomingLaunch.label ? current.launchWindow : incomingLaunch || undefined;
-    const price=remote.retailPrice && Number.isFinite(remote.retailPrice.amount) && remote.retailPrice.amount>=0 &&
-      remote.retailPrice.currency==='MXN' ? remote.retailPrice : undefined;
-    return {...current,
-      name:nonempty(remote.name,200),category:nonempty(remote.category,64),
-      categoryLabel:nonempty(remote.categoryLabel,100),
+    const price=remote.retailPrice&&Number.isFinite(remote.retailPrice.amount)&&remote.retailPrice.amount>=0&&
+      remote.retailPrice.currency==='MXN'?remote.retailPrice:undefined;
+    const launchWindow=remote.launchWindow||undefined;
+    const art=/^[a-z0-9-]+$/.test(remote.art||'')?remote.art:(base.art||'case');
+    return {...base,id:remote.id,name:nonempty(remote.name,200),
+      category:nonempty(remote.category,64),
+      categoryLabel:nonempty(remote.categoryLabel||remote.category,100),
       subtitle:nonempty(remote.subtitle,250),description:nonempty(remote.description,10000),
       features:remote.features.filter(v=>typeof v==='string').slice(0,24).map(v=>nonempty(v,500)),
-      images,art:/^[a-z0-9-]+$/.test(remote.art)?remote.art:current.art,
-      badge:nonempty(remote.badge,80),stock,variants,retailPrice:price,launchWindow};
+      images,art,badge:nonempty(remote.badge,80),stock,variants,retailPrice:price,launchWindow};
   }
   function refreshSelectionAfterCatalog() {
     for (const [key,qty] of Object.entries(cart)) {
@@ -404,15 +428,16 @@
         if(data?.version!==1 || data?.source!=='don-turron-inventory' ||
           !Array.isArray(data.products))throw new Error('catalog_invalid');
         const currentById=new Map(catalog.map(p=>[p.id,p]));
-        const byId=new Map(data.products.map(p=>[p?.id,p]));
-        // Ausencia en la respuesta = publication_status hidden en MySQL.
-        // No interpretar una lista de 7 productos como fallo de toda la BD.
-        if(byId.size!==data.products.length ||
-          [...byId.keys()].some(id=>!currentById.has(id)))throw new Error('catalog_mismatch');
-        const latest=catalog.filter(p=>byId.has(p.id)).map(p=>remoteProduct(byId.get(p.id),p));
-        if(latest.some(p=>!p))throw new Error('catalog_invalid');
-        const hasChange=JSON.stringify(latest)!==JSON.stringify(catalog);
-        catalog=latest;
+        const ids=new Set(data.products.map(p=>p?.id));
+        if(ids.size!==data.products.length)throw new Error('catalog_duplicate_ids');
+        // MySQL is authoritative for create, update, hide and reorder. No static ID gate.
+        const latest=data.products.map(p=>remoteProduct(p,currentById.get(p?.id)));
+        // A malformed single record never invalidates other products and their prices.
+        if(latest.some(p=>!p))console.warn('[DT] artículo con ficha incompleta descartado');
+        const published=latest.filter(Boolean);
+        const hasChange=JSON.stringify(published)!==JSON.stringify(catalog);
+        catalog=published;
+        refreshCategoryFilters();
         if(hasChange){
           const existingDialog=currentDialog?.el?.id === 'product-modal';
           const openedId=existingDialog ? $('product-modal-content')?.querySelector('[data-product-id]')?.dataset.productId : null;
@@ -427,7 +452,7 @@
           }
         }
         refreshSelectionAfterCatalog();
-        emit('catalog_hydrated',{source:'mysql',products:latest.length});
+        emit('catalog_hydrated',{source:'mysql',products:published.length});
       })
       .catch(()=>{
         // Sin BD disponible, jamás presentar como confirmados los stocks del build.
