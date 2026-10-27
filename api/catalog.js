@@ -100,7 +100,7 @@ export default async function handler(req,res){
     return {body,etag};
     });
     // Both browser and Hostinger receive at most ~5s of fresh cache.
-    // No stale-while-revalidate on inventory: a failed refresh returns 503.
+    // Expired inventory is never served after a failed refresh (HTTP 503).
     res.setHeader('Cache-Control','public, max-age=5, s-maxage=5, must-revalidate');
     res.setHeader('ETag',snapshot.etag);
     if(req.headers?.['if-none-match']?.split(',').map(v=>v.trim()).includes(snapshot.etag)){
