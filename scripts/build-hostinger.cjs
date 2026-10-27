@@ -34,9 +34,9 @@ function deploy(){
   }
   const pages=fs.readdirSync(path.join(publicDir,'productos'),{withFileTypes:true})
     .filter(entry=>entry.isDirectory()&&fs.existsSync(path.join(publicDir,'productos',entry.name,'index.html')));
-  if(pages.length!==8)throw Error('Expected eight prerendered product pages, received '+pages.length);
+  if(pages.length<1)throw Error('Fallback build has no prerendered product pages');
   const sitemap=fs.readFileSync(path.join(publicDir,'sitemap.xml'),'utf8');
-  if((sitemap.match(/<loc>/g)||[]).length!==10)throw Error('Production sitemap must contain 10 URLs');
+  if((sitemap.match(/<loc>/g)||[]).length!==pages.length+2)throw Error('Fallback sitemap and build page counts disagree');
   const html=fs.readFileSync(path.join(publicDir,'index.html'),'utf8');
   if(!html.includes('name="robots" content="index, follow"'))throw Error('Production homepage must be indexable');
   const robots=fs.readFileSync(path.join(publicDir,'robots.txt'),'utf8');
@@ -55,7 +55,7 @@ function deploy(){
   if(!fs.existsSync(path.join(stage,'server.cjs')))throw Error('Node entry point was not created');
   fs.rmSync(target,{recursive:true,force:true});
   fs.renameSync(stage,target);
-  console.log('DT_HOSTINGER_BUILD_READY: dist/server.cjs, dist/public/, 8 product pages, 10 sitemap URLs');
+  console.log('DT_HOSTINGER_BUILD_READY: dist/server.cjs, dist/public/, fallback pages validated; live product count comes from MySQL');
 }
 try{deploy();}catch(error){
   fs.rmSync(stage,{recursive:true,force:true});
