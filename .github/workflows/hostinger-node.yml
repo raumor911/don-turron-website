@@ -8,6 +8,8 @@ on:
       - '.gitignore'
       - 'docs/HOSTINGER_NODE_DEPLOY.md'
       - 'api/**'
+      - 'app.js'
+      - 'tests/catalog-cache.test.mjs'
       - 'package.json'
       - 'tests/hostinger-server.test.mjs'
       - 'telemetry/**'
@@ -21,6 +23,8 @@ on:
       - '.gitignore'
       - 'docs/HOSTINGER_NODE_DEPLOY.md'
       - 'api/**'
+      - 'app.js'
+      - 'tests/catalog-cache.test.mjs'
       - 'package.json'
       - 'tests/hostinger-server.test.mjs'
       - 'telemetry/**'
@@ -52,5 +56,7 @@ jobs:
           node --check scripts/prepare-hostinger.cjs
       - name: Exercise Express HTTP routes and private-file boundaries
         run: npm run test:hostinger
+      - name: Verify efficient MySQL reads and cache expiry
+        run: node --test tests/catalog-cache.test.mjs
       - name: Verify inventory contract remains independent
         run: npm run test:inventory

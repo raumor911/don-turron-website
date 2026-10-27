@@ -1,9 +1,12 @@
-// Vercel Node.js Function, catálogo público de solo lectura.
+// Lectura pública del catálogo Don Turrón para Express en Hostinger.
 import mysql from 'mysql2/promise';
+import {createHash} from 'node:crypto';
+import {createCatalogCache} from './catalog-cache.js';
 
 const expectedDatabase='u345974778_donturron';
 const configured=Boolean(process.env.DT_DB_HOST && process.env.DT_DB_USER && process.env.DT_DB_PASSWORD && process.env.DT_DB_NAME===expectedDatabase);
 let pool;
+const snapshotCache=createCatalogCache({ttlMs:5000});
 function connection(){
   if (!configured) return null;
   if (!pool) pool=mysql.createPool({
@@ -63,6 +66,7 @@ export default async function handler(req,res){
     return res.status(503).json({error:'catalog_unavailable'});
   }
   try {
+    const snapshot=await snapshotCache.read(async()=>{
     const db=connection();
     const [rows]=await db.query(`
       SELECT p.product_id,p.name,p.retail_price,p.publication_status,p.launch_month,
@@ -91,8 +95,18 @@ export default async function handler(req,res){
     }
     // A partial catalog is not an authoritative response. Fail closed instead.
     if(grouped.size!==8)throw new Error('incomplete_catalog');
-    res.setHeader('Cache-Control','public, max-age=0, s-maxage=10, stale-while-revalidate=10');
-    return res.status(200).json({version:1,source:'don-turron-inventory',products:[...grouped.values()]});
+    const body={version:1,source:'don-turron-inventory',products:[...grouped.values()]};
+    const etag='"'+createHash('sha256').update(JSON.stringify(body)).digest('hex')+'"';
+    return {body,etag};
+    });
+    // Both browser and Hostinger receive at most ~5s of fresh cache.
+    // Expired inventory is never served after a failed refresh (HTTP 503).
+    res.setHeader('Cache-Control','public, max-age=5, s-maxage=5, must-revalidate');
+    res.setHeader('ETag',snapshot.etag);
+    if(req.headers?.['if-none-match']?.split(',').map(v=>v.trim()).includes(snapshot.etag)){
+      return res.status(304).end();
+    }
+    return res.status(200).json(snapshot.body);
   }catch(_error){
     res.setHeader('Cache-Control','no-store');
     return res.status(503).json({error:'catalog_unavailable'});
