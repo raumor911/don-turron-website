@@ -12,7 +12,7 @@ BASE = 'http://donturron.test/'
 
 with sync_playwright() as p:
  browser = p.chromium.launch(headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
- for scenario in ('hidden','all_hidden','unavailable','added','sold_out'):
+ for scenario in ('hidden','all_hidden','unavailable','added','sold_out','publication_sold_out'):
   page = browser.new_page()
   errors = []
   page.on('pageerror', lambda err: errors.append(str(err)))
@@ -59,6 +59,9 @@ with sync_playwright() as p:
    state['products']=[*products,new]
   elif scenario == 'sold_out':
    state['products']=[{**p,'stock':0} if p['id']=='cenicero-mesa' else p for p in products]
+  elif scenario == 'publication_sold_out':
+   state['products']=[{**p,'publicationStatus':'Out of stock','stock':3} if p['id']=='cenicero-mesa' else p for p in products]
+   page.evaluate("""() => localStorage.setItem('dt-selection-v1', JSON.stringify({'cenicero-mesa':1,'humidor-viaje-5-puros':1}))""")
   else:
    state['products']=products
   page.add_script_tag(content=(ROOT/'app.js').read_text())
@@ -95,6 +98,20 @@ with sync_playwright() as p:
    assert page.locator('.product-card').count()==1
    new.locator('[data-add]').click()
    assert page.locator('#cart-count').inner_text()=='1'
+  elif scenario == 'publication_sold_out':
+   page.wait_for_function("""() => {
+     const card=document.querySelector('.product-card[data-id="cenicero-mesa"]');
+     return card && card.querySelector('[data-add]:disabled') && card.innerText.includes('Agotado');
+   }""",timeout=6000)
+   card=page.locator('.product-card[data-id="cenicero-mesa"]')
+   assert card.count()==1
+   assert page.locator('.product-card').count()==8
+   assert '$549 MXN' in card.locator('.product-price').inner_text()
+   assert 'unidades disponibles' not in card.inner_text()
+   assert page.locator('#cart-count').inner_text()=='1'
+   remaining=json.loads(page.evaluate("localStorage.getItem('dt-selection-v1')"))
+   assert 'cenicero-mesa' not in remaining
+   assert '$649 MXN' in page.locator('.product-card[data-id="humidor-viaje-5-puros"] .product-price').inner_text()
   elif scenario == 'sold_out':
    page.wait_for_function("""() => {
     const p=document.querySelector('[data-id="cenicero-mesa"]');
