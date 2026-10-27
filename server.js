@@ -90,7 +90,10 @@ export function createApp({readCatalog=readCatalogSnapshot}={}){
     'window.DON_TURRON_CATALOG='+JSON.stringify(p).replace(/</g,'\\u003c')+';'
   )));
   app.get('/ai/products.json',(req,res)=>live(res,p=>res.json({products:p})));
-  app.get('/ai/knowledge-graph.json',(req,res)=>live(res,p=>res.json(liveGraph(p))));
+  app.get('/ai/knowledge-graph.json',(req,res)=>live(res,p=>{
+    const baseline=JSON.parse(fs.readFileSync(path.join(PUBLIC_ROOT,'ai','knowledge-graph.json'),'utf8'));
+    return res.json(liveGraph(p,baseline));
+  }));
   app.get('/ai/catalog.md',(req,res)=>live(res,p=>res.type('text/markdown').send(catalogMarkdown(p))));
   app.get('/llms.txt',(req,res)=>live(res,p=>res.type('text/plain').send(
     '# Don Turrón\n\nCatálogo vigente: /ai/catalog.md\nProductos: /ai/products.json\n\nConsultas por WhatsApp; sin reservas automáticas.')));
