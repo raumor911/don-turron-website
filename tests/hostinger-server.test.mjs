@@ -149,3 +149,31 @@ test('MySQL outage prevents publishing obsolete stock/prices or hidden products 
   assert.equal((await fetch(base+'/sitemap.xml')).status,503);
   assert.equal((await fetch(base+'/productos/estuche-viaje/')).status,503);
 });
+
+test('Out of stock remains publicly visible without stale availability claims',async t=>{
+  const productId='cenicero-mesa';
+  const products=seed.map(p=>p.id===productId?{
+    ...p,publicationStatus:'Out of stock',
+    stock:3,variants:[],retailPrice:{amount:549,currency:'MXN',taxIncluded:true}
+  }:p);
+  const app=createApp({readCatalog:async()=>catalogSnapshot(products)});
+  const server=await new Promise(resolve=>{const s=app.listen(0,'127.0.0.1',()=>resolve(s));});
+  t.after(()=>new Promise(resolve=>server.close(resolve)));
+  const url='http://127.0.0.1:'+server.address().port;
+  const home=await (await fetch(url+'/')).text();
+  const card=home.match(/<article class="product-card" data-id="cenicero-mesa">[\s\S]*?<\/article>/)?.[0]||'';
+  assert.match(card,/Agotado/);
+  assert.match(card,/\$549 MXN/);
+  assert.match(card,/data-add="cenicero-mesa" disabled title="Agotado"/);
+  assert.doesNotMatch(card,/3 unidades disponibles/);
+  const detail=await fetch(url+'/productos/cenicero-mesa/');
+  assert.equal(detail.status,200);
+  const page=await detail.text();
+  assert.match(page,/Agotado/);
+  assert.match(page,/\$549 MXN/);
+  assert.doesNotMatch(page,/Inventario registrado: 3/);
+  const sitemap=await (await fetch(url+'/sitemap.xml')).text();
+  assert.match(sitemap,/\/productos\/cenicero-mesa\//);
+  const ai=await (await fetch(url+'/ai/catalog.md')).text();
+  assert.match(ai,/Agotado/);
+});
