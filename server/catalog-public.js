@@ -80,7 +80,7 @@ export function liveGraph(products,baseline={}){
       ...(p.retailPrice?{retailPrice:p.retailPrice}:{}),
       ...(p.launchWindow?{launchWindow:p.launchWindow}:{}),
       ...(soldOut(p)?{availability:'OutOfStock'}:{}),
-      ...(Number.isInteger(p.stock)?{stock:p.stock}:{})});
+      ...(!explicitlySoldOut(p)&&Number.isInteger(p.stock)?{stock:p.stock}:{})});
     edges.push({source:categoryId,target:p.id,type:'containsProduct'});
     for(let i=0;i<p.features.length;i++){
       const featureId='feature:'+p.id+':'+(i+1);
@@ -122,7 +122,7 @@ export function renderProductPage(p,products,template=''){
     (p.launchWindow?'<p class="dt-launch">'+esc(p.launchWindow.label)+'</p>':'')+
     (soldOut(p)?'<p class="dt-launch">Agotado</p>':'')+
     '<h2>Características</h2><ul class="dt-features">'+p.features.map(f=>'<li>'+esc(f)+'</li>').join('')+'</ul>'+
-    (Number.isInteger(p.stock)?'<p>Inventario registrado: '+p.stock+'.</p>':'')+
+    (!explicitlySoldOut(p)&&Number.isInteger(p.stock)?'<p>Inventario registrado: '+p.stock+'.</p>':'')+
     (known(p)?'<p>Existencias por acabado: '+esc(p.variants.map(v=>v.label+': '+v.stock).join(' · '))+'</p>':'')+
     '<p class="dt-note">Consultar disponibilidad y envío por WhatsApp. La selección no reserva existencias ni procesa pagos.</p></div>'+
     '<div class="dt-images" aria-label="Fotografías del producto">'+imgs+'</div></section>'+
