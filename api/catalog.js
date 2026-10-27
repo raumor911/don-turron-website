@@ -44,10 +44,12 @@ function arrayJson(value,max=16){
 }
 function publicProduct(row){
   const upcoming=row.publication_status==='coming_soon';
+  const status=row.publication_status;
   const amount=row.retail_price==null?null:Number(row.retail_price);
   const hasPrice=!upcoming&&Number.isFinite(amount)&&amount>=0;
   const result={
     id:row.product_id,
+    publicationStatus:status,
     name:clean(row.name,200),
     category:clean(row.category,64),
     categoryLabel:clean(row.category_label,100),
@@ -70,7 +72,7 @@ function publicProduct(row){
 export function buildPublicCatalog(rows){
   const grouped=new Map();
   for(const row of rows){
-    if(row.publication_status==='hidden')continue; // defensa adicional frente a filas no publicables
+    if(!['listed','coming_soon','Out of stock'].includes(row.publication_status))continue;
     if(!grouped.has(row.product_id))grouped.set(row.product_id,publicProduct(row));
     const product=grouped.get(row.product_id);
     if(!row.sku)continue;
@@ -98,7 +100,7 @@ export function readCatalogSnapshot(){
       INNER JOIN dt_product_content c ON c.product_id=p.product_id
       LEFT JOIN dt_variants v ON v.product_id=p.product_id AND v.is_active=1
       LEFT JOIN dt_inventory i ON i.sku=v.sku
-      WHERE p.publication_status IN ('listed','coming_soon')
+      WHERE p.publication_status IN ('listed','coming_soon','Out of stock')
       ORDER BY c.sort_order,p.product_id,v.variant_label
     `);
     const body=buildPublicCatalog(rows);
