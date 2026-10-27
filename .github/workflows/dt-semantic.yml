@@ -39,6 +39,7 @@ jobs:
           python -m pip install playwright
           python -m playwright install --with-deps chromium
           python tests/qa_browser.py
+          python tests/qa_hidden_publication.py
           python tests/qa_semantic_nojs.py
           python tests/qa_favicon.py
           python tests/qa_rauvia_footer.py

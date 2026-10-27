@@ -402,16 +402,22 @@
       })
       .then(data=>{
         if(data?.version!==1 || data?.source!=='don-turron-inventory' ||
-          !Array.isArray(data.products)||data.products.length!==catalog.length)throw new Error('catalog_incomplete');
+          !Array.isArray(data.products))throw new Error('catalog_invalid');
+        const currentById=new Map(catalog.map(p=>[p.id,p]));
         const byId=new Map(data.products.map(p=>[p?.id,p]));
-        if(byId.size!==catalog.length || catalog.some(p=>!byId.has(p.id)))throw new Error('catalog_mismatch');
-        const latest=catalog.map(p=>remoteProduct(byId.get(p.id),p));
+        // Ausencia en la respuesta = publication_status hidden en MySQL.
+        // No interpretar una lista de 7 productos como fallo de toda la BD.
+        if(byId.size!==data.products.length ||
+          [...byId.keys()].some(id=>!currentById.has(id)))throw new Error('catalog_mismatch');
+        const latest=catalog.filter(p=>byId.has(p.id)).map(p=>remoteProduct(byId.get(p.id),p));
         if(latest.some(p=>!p))throw new Error('catalog_invalid');
         const hasChange=JSON.stringify(latest)!==JSON.stringify(catalog);
         catalog=latest;
         if(hasChange){
           const existingDialog=currentDialog?.el?.id === 'product-modal';
           const openedId=existingDialog ? $('product-modal-content')?.querySelector('[data-product-id]')?.dataset.productId : null;
+          // Evitar que quede abierto un detalle de un producto ocultado.
+          if(openedId && !productById(openedId))closeDialog();
           renderProducts();
           if(openedId && productById(openedId)){
             // Mantener el diálogo y el foco; la galería vuelve a cargar al siguiente acceso.
