@@ -12,6 +12,7 @@ El backend publica desde una lectura MySQL común: página inicial, tarjetas, fi
 | Alta válida en dt_products + dt_product_content, con variantes opcionales | Nueva tarjeta, filtro, ficha, sitemap y datos para crawlers |
 | listed | Publicado; precio e inventario independientes por producto |
 | coming_soon | Visible, próximamente, sin precio publicado |
+| Out of stock | Visible como «Agotado», conserva el precio y bloquea selección sin modificar inventario |
 | hidden | No visible, ficha HTTP 404, retirado del sitemap y de AI |
 | Inventario 0 | Visible y marcado Agotado, selección deshabilitada |
 | Inventario NULL | Por confirmar; nunca representa cero implícito |

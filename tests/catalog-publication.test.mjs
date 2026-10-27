@@ -73,3 +73,15 @@ test('inventario cero no equivale a producto oculto ni a precio no confirmado',(
   assert.equal(product.stock,0);
   assert.equal(product.retailPrice.amount,549);
 });
+
+test('Out of stock mantiene tarjeta y precio aunque el inventario positivo',()=>{
+  const changed=rows.map(r=>r.product_id==='cenicero-mesa'
+    ?{...r,publication_status:'Out of stock',on_hand_qty:3}:r);
+  const result=buildPublicCatalog(changed);
+  assert.equal(result.products.length,8);
+  const item=result.products.find(p=>p.id==='cenicero-mesa');
+  assert.equal(item.publicationStatus,'Out of stock');
+  assert.equal(item.stock,3);
+  assert.equal(item.retailPrice.amount,549);
+  assert.equal(result.products.find(p=>p.id==='humidor-viaje-5-puros').retailPrice.amount,649);
+});

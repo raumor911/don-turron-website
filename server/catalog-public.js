@@ -4,7 +4,8 @@ const json=x=>JSON.stringify(x).replace(/</g,'\\u003c');
 const root='https://www.donturron.com.mx';
 const price=p=>p.retailPrice?'$'+Number(p.retailPrice.amount).toLocaleString('es-MX')+' MXN':null;
 const known=p=>p.variants.length>0&&p.variants.every(v=>Number.isInteger(v.stock)&&v.stock>=0);
-const soldOut=p=>p.stock===0||(known(p)&&p.variants.every(v=>v.stock===0));
+const explicitlySoldOut=p=>p.publicationStatus==='Out of stock';
+const soldOut=p=>explicitlySoldOut(p)||p.stock===0||(known(p)&&p.variants.every(v=>v.stock===0));
 const imgSrc=src=>src.startsWith('https://')||src.startsWith('/')?src:'/'+src;
 function card(p){
   const first=p.images?.[0];
@@ -15,8 +16,8 @@ function card(p){
     '<button type="button" class="product-image-trigger" data-open-photo="'+esc(p.id)+'" aria-label="Ver detalles de '+esc(p.name)+'">'+image+'</button>'+
     '<button type="button" class="product-quick" data-detail="'+esc(p.id)+'" aria-label="Ver detalles de '+esc(p.name)+'">↗</button></div>'+
     '<div class="product-details"><div class="product-category">'+esc(p.categoryLabel.toUpperCase())+'</div><h3>'+esc(p.name)+'</h3><p class="product-subtitle">'+esc(p.subtitle)+'</p>'+
-    (Number.isInteger(p.stock)?'<p class="product-stock">'+esc(p.stock+' '+(p.stock===1?'unidad disponible':'unidades disponibles'))+'</p>':'')+
-    (known(p)?'<p class="product-stock">'+esc(p.variants.map(v=>v.label+': '+v.stock).join(' · '))+'</p>':'')+
+    (!explicitlySoldOut(p)&&Number.isInteger(p.stock)?'<p class="product-stock">'+esc(p.stock+' '+(p.stock===1?'unidad disponible':'unidades disponibles'))+'</p>':'')+
+    (!explicitlySoldOut(p)&&known(p)?'<p class="product-stock">'+esc(p.variants.map(v=>v.label+': '+v.stock).join(' · '))+'</p>':'')+
     (p.launchWindow?'<p class="product-availability">'+esc(p.launchWindow.label)+'</p>':'')+
     (soldOut(p)?'<p class="product-availability">Agotado</p>':'')+
     '<div class="product-buy">'+(price(p)?'<span class="product-price product-price-set"><strong>'+esc(price(p))+'</strong><small>IVA incluido</small></span>':'<span class="product-price">Precio por confirmar</span>')+
@@ -78,7 +79,8 @@ export function liveGraph(products,baseline={}){
     pushNode({id:p.id,type:'Product',name:p.name,status:'documented',description:p.description,
       ...(p.retailPrice?{retailPrice:p.retailPrice}:{}),
       ...(p.launchWindow?{launchWindow:p.launchWindow}:{}),
-      ...(Number.isInteger(p.stock)?{stock:p.stock}:{})});
+      ...(soldOut(p)?{availability:'OutOfStock'}:{}),
+      ...(!explicitlySoldOut(p)&&Number.isInteger(p.stock)?{stock:p.stock}:{})});
     edges.push({source:categoryId,target:p.id,type:'containsProduct'});
     for(let i=0;i<p.features.length;i++){
       const featureId='feature:'+p.id+':'+(i+1);
@@ -120,7 +122,7 @@ export function renderProductPage(p,products,template=''){
     (p.launchWindow?'<p class="dt-launch">'+esc(p.launchWindow.label)+'</p>':'')+
     (soldOut(p)?'<p class="dt-launch">Agotado</p>':'')+
     '<h2>Características</h2><ul class="dt-features">'+p.features.map(f=>'<li>'+esc(f)+'</li>').join('')+'</ul>'+
-    (Number.isInteger(p.stock)?'<p>Inventario registrado: '+p.stock+'.</p>':'')+
+    (!explicitlySoldOut(p)&&Number.isInteger(p.stock)?'<p>Inventario registrado: '+p.stock+'.</p>':'')+
     (known(p)?'<p>Existencias por acabado: '+esc(p.variants.map(v=>v.label+': '+v.stock).join(' · '))+'</p>':'')+
     '<p class="dt-note">Consultar disponibilidad y envío por WhatsApp. La selección no reserva existencias ni procesa pagos.</p></div>'+
     '<div class="dt-images" aria-label="Fotografías del producto">'+imgs+'</div></section>'+
