@@ -379,6 +379,13 @@ with sync_playwright() as p:
   page.emulate_media(reduced_motion='reduce')
   assert page.evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches"), 'Respeta preferencia del sistema'
   page.emulate_media(reduced_motion='no-preference')
+  assert page.locator('.footer-top > .footer-right > .footer-contact').count()==1, f'Contacto integrado al bloque superior del footer: {name}'
+  nav=page.locator('.footer-right .footer-links').bounding_box()
+  contact=page.locator('.footer-right .footer-contact').bounding_box()
+  assert nav is not None and contact is not None, f'Footer visible: {name}'
+  gap=contact['y']-(nav['y']+nav['height'])
+  assert 0 <= gap <= 28, f'Separación excesiva entre navegación y contacto en {name}: {gap:.1f}px'
+  assert contact['x']+contact['width']<=width+2, f'Contacto sin desbordamiento horizontal en {name}'
   assert 'Sitio en preparación' not in page.locator('.footer-bottom').inner_text(), 'Se retiró la leyenda obsoleta'
   assert page.locator('.footer-bottom .footer-credit a[href="https://rauvia.com.mx/"]').count()==1, 'Crédito RAUVIA en footer'
   credit=page.locator('.footer-bottom .footer-credit').bounding_box()
