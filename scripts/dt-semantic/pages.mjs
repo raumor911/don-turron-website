@@ -10,8 +10,19 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const jsonld=obj=>JSON.stringify(obj).replace(/</g,'\\u003c');
 const retailText=p=>p.retailPrice?'$'+p.retailPrice.amount.toLocaleString('es-MX')+' MXN':null;
 const hasRecordedStock=p=>p.id==='reposa-puros-plegable' && p.variants.length===2 && p.variants.every(v=>Number.isInteger(v.stock));
+const hasOfferVariants=p=>p.commercialStatus==='available'&&p.variants.length>0;
+const variantBlocked=v=>v.status==='unavailable'||v.stock===0;
 const stockText=p=>p.variants.map(v=>v.label+': '+v.stock+' '+(v.stock===1?'disponible':'disponibles')).join(' · ');
-const stockCard=p=>Number.isInteger(p.stock)?`<p class="product-stock">${esc(p.stock+' '+(p.stock===1?'unidad disponible':'unidades disponibles'))}</p>`:!hasRecordedStock(p)?'':`<p class="product-stock">${esc(stockText(p))}</p><div class="variant-picker" data-variant-product="${esc(p.id)}"><label>Color<select data-variant-color aria-label="Color del reposa puros">${p.variants.map(v=>`<option value="${esc(v.label)}">${esc(v.label)}</option>`).join('')}</select></label><label>Cantidad<select data-variant-qty aria-label="Cantidad del reposa puros"><option value="1">1</option><option value="2">2</option></select></label><p class="variant-remaining" data-variant-remaining aria-live="polite"></p></div>`;
+const offerText=p=>p.variants.map(v=>v.label+': '+(variantBlocked(v)?'SIN EXISTENCIA':'Disponible')).join(' · ');
+const stockCard=p=>{
+ if(Number.isInteger(p.stock))return `<p class="product-stock">${esc(p.stock+' '+(p.stock===1?'unidad disponible':'unidades disponibles'))}</p>`;
+ if(!hasRecordedStock(p)&&!hasOfferVariants(p))return '';
+ const known=hasRecordedStock(p);
+ const summary=known?stockText(p):offerText(p);
+ const first=p.variants.find(v=>!variantBlocked(v))?.label;
+ const select=p.variants.map(v=>`<option value="${esc(v.label)}" ${!known&&variantBlocked(v)?'disabled':''} ${v.label===first?'selected':''}>${esc(v.label)}${!known&&variantBlocked(v)?' — SIN EXISTENCIA':''}</option>`).join('');
+ return `<p class="product-stock">${esc(summary)}</p><div class="variant-picker" data-variant-product="${esc(p.id)}"><label>Color<select data-variant-color aria-label="Color de ${esc(p.name)}">${select}</select></label><label>Cantidad<select data-variant-qty aria-label="Cantidad de ${esc(p.name)}"><option value="1">1</option></select></label><p class="variant-remaining" data-variant-remaining aria-live="polite"></p></div>`;
+};
 function relatedProducts(p,k){
   const visible=k.products.filter(x=>x.id!==p.id&&x.contentStatus==='documented');
   const score=x=>{
@@ -84,8 +95,8 @@ function productPage(p,k){
     ${p.retailPrice?`<p class="dt-retail-price"><strong>${esc(retailText(p))}</strong><span>IVA incluido · Envío no incluido</span></p>`:''}
     ${p.launchWindow?`<p class="dt-launch">${esc(p.launchWindow.label)}</p>`:''}
     <h2>Características descritas</h2><ul class="dt-features">${p.features.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
-    ${Number.isInteger(p.stock)?`<p>Inventario registrado: ${p.stock} ${p.stock===1?'unidad':'unidades'}. Este inventario no constituye una reserva.</p>`:''}${p.variants.length?`<p>${hasRecordedStock(p)?'Inventario registrado por acabado: '+esc(stockText(p))+'. Las unidades no están reservadas.':'Acabados descritos: '+p.variants.map(v=>esc(v.label)).join(' y ')+'. Las existencias por acabado están pendientes.'}</p>`:''}
-    <p class="dt-note">${p.launchWindow?'Disponibilidad prevista para enero de 2027. Esta página presenta el producto y no procesa pagos directamente; consulta existencias por WhatsApp.':(hasRecordedStock(p)||Number.isInteger(p.stock))?'Precio final al público con IVA incluido; envío por separado. Inventario registrado sujeto a cambios; seleccionar no reserva unidades y la compra se coordina por WhatsApp tras confirmar existencias y costo total.':'Precio final al público con IVA incluido; el envío se calcula por separado. Existencias por confirmar. Esta página informa sobre el producto; no procesa pagos directamente; consulta existencias por WhatsApp.'}</p></div>
+    ${Number.isInteger(p.stock)?`<p>Inventario registrado: ${p.stock} ${p.stock===1?'unidad':'unidades'}. Este inventario no constituye una reserva.</p>`:''}${p.variants.length?`<p>${hasRecordedStock(p)?'Inventario registrado por acabado: '+esc(stockText(p))+'. Las unidades no están reservadas.':hasOfferVariants(p)?'Estado por acabado: '+esc(offerText(p))+'. Se confirma el inventario antes del pago por WhatsApp.':'Acabados descritos: '+p.variants.map(v=>esc(v.label)).join(' y ')+'. Las existencias por acabado están pendientes.'}</p>`:''}
+    <p class="dt-note">${p.launchWindow?'Disponibilidad prevista para enero de 2027. Esta página presenta el producto y no procesa pagos directamente; consulta existencias por WhatsApp.':hasOfferVariants(p)?'Precio final con IVA incluido y envío por separado. Selecciona un acabado disponible desde el catálogo principal. No se inventan unidades de inventario; la existencia y compra se confirman por WhatsApp.':(hasRecordedStock(p)||Number.isInteger(p.stock))?'Precio final al público con IVA incluido; envío por separado. Inventario registrado sujeto a cambios; seleccionar no reserva unidades y la compra se coordina por WhatsApp tras confirmar existencias y costo total.':'Precio final al público con IVA incluido; el envío se calcula por separado. Existencias por confirmar. Esta página informa sobre el producto; no procesa pagos directamente; consulta existencias por WhatsApp.'}</p></div>
     <div class="dt-images" aria-label="Fotografías del producto">${images}</div></section>
     <section class="dt-related"><h2>También puedes conocer</h2><ul>${related.map(x=>`<li><a href="../${esc(x.id)}/">${esc(x.name)}</a></li>`).join('')||'<li><a href="../../index.html#coleccion">Explorar la colección</a></li>'}</ul><p><a href="../../index.html#coleccion">Volver a la colección</a> · <a href="../../guia/estuche-o-humidor/">Estuche o humidor: qué cambia</a></p></section>
   </main>`;

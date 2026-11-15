@@ -40,20 +40,32 @@ with sync_playwright() as p:
   page.locator('#age-yes').click()
   page.wait_for_timeout(350)
   page.screenshot(path=str(PROJECT/f'tests/{name}.png'),full_page=True)
+  # Captura real del DOM de esta rama con solo las tres tarjetas solicitadas.
+  page.evaluate("""() => {
+   const ids=new Set(['cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch']);
+   document.querySelectorAll('#product-grid > .product-card').forEach(el => {
+     if(!ids.has(el.dataset.id))el.style.display='none';
+   });
+  }""")
+  page.locator('#product-grid').screenshot(path=str(PROJECT/f'tests/preview-three-products-{name}.png'),animations='disabled')
+  page.evaluate("""() => document.querySelectorAll('#product-grid > .product-card').forEach(el => el.style.display='')""")
   assert page.locator('.product-card').count()==8, 'Ocho productos con respaldo documental'
   assert page.locator('.product-card').first.get_attribute('data-prerender-marker')=='original', 'Conservar DOM prerenderizado sin repintar al cargar'
   assert page.locator('.product-card[data-id="encendedor-jet"]').count()==0, 'Sin referencia de encendedor inexistente'
-  assert page.locator('.product-card .product-badge').filter(has_text='PRÓXIMAMENTE').count()==3, 'Tres etiquetas Próximamente'
-  assert page.locator('.product-card .product-availability').count()==3, 'Tres lanzamientos con mes definido'
+  assert page.locator('.product-card .product-badge').filter(has_text='PRÓXIMAMENTE').count()==0, 'Sin productos Próximamente'
+  assert page.locator('.product-card .product-availability').count()==0, 'Tres lanzamientos pasan a disponibles'
   assert page.locator('.product-card .product-image-trigger').count()==8, 'Imagen clicable en las ocho tarjetas'
 
-  price_examples={'humidor-viaje-5-puros':649,'cenicero-mesa':549,'estuche-viaje':299,'estuche-kit-viaje':949,'reposa-puros-plegable':189}
+  price_examples={'humidor-viaje-5-puros':649,'cenicero-mesa':549,'estuche-viaje':299,'estuche-kit-viaje':949,'reposa-puros-plegable':189,'cortador-v-geometrico':479,'encendedor-sarike-butano':719,'encendedor-honest-punch':489}
   for product_id,amount in price_examples.items():
    card=page.locator(f'.product-card[data-id="{product_id}"]')
    assert f'${amount} MXN' in card.locator('.product-price').inner_text(),product_id
    assert 'IVA incluido' in card.locator('.product-price').inner_text(),product_id
   for product_id in ('cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch'):
-   assert page.locator(f'.product-card[data-id="{product_id}"] .product-price').inner_text()=='Precio por confirmar',product_id
+   card=page.locator(f'.product-card[data-id="{product_id}"]')
+   assert card.locator('.product-badge').inner_text()=='DISPONIBLE',product_id
+   assert card.locator('.product-availability').count()==0,product_id
+   assert card.locator('[data-variant-color]').count()==1,product_id
 
   page.locator('.product-card[data-id="humidor-viaje-5-puros"] .product-image-trigger').focus()
   page.keyboard.press('Enter')
@@ -69,13 +81,17 @@ with sync_playwright() as p:
   page.locator('[data-filter="encendedores"]').click()
   assert page.locator('.product-card').count()==2, 'Parike y HONEST en la categoría encendedores'
   assert page.locator('.product-card[data-id="encendedor-sarike-butano"]').count()==1, 'Tarjeta Parike añadida'
-  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-badge').inner_text()=='PRÓXIMAMENTE', 'Encendedor Parike: nueva etiqueta'
-  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Parike: mes previsto'
+  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-stock').inner_text()=='Plata: SIN EXISTENCIA · Dorado: Disponible', 'Parike: estado por acabado'
+  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] option[value="Plata"]').is_disabled(), 'Parike plateado bloqueado'
+  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] [data-variant-color]').input_value()=='Dorado', 'Parike dorado predeterminado'
+  assert page.locator('.product-card[data-id="encendedor-sarike-butano"] [data-add]').is_enabled(), 'Parike dorado seleccionable'
   assert 'Flama suave y jet' in page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-subtitle').inner_text(), 'Parike reúne ambos tipos de flama'
   page.locator('.product-card[data-id="encendedor-sarike-butano"] .product-image-trigger').click()
   assert page.locator('#product-modal-name').inner_text()=='Encendedor metálico Parike de doble llama', 'Ficha Parike'
-  assert page.locator('.modal-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Encendedor Parike: fecha en modal'
-  assert page.locator('.modal-retail-price').count()==0, 'No price on upcoming lighter'
+  assert page.locator('.modal-availability').count()==0, 'Parike sin próxima fecha'
+  assert '$719 MXN' in page.locator('.modal-retail-price').inner_text(), 'Parike IVA incluido'
+  assert 'SIN EXISTENCIA' in page.locator('#product-modal-content').inner_text(), 'Plata ausente'
+  assert page.locator('#product-modal-content option[value="Plata"]').is_disabled(), 'Plata bloqueada en modal'
   assert page.locator('.travel-gallery-controls button').count()==4, 'Galería Parike con cuatro fotos'
   assert 'pendientes de verificación independiente' not in page.locator('#product-modal-content').inner_text().lower(), 'No verificación en ficha Parike'
   assert 'declarado por el proveedor' not in page.locator('#product-modal-content').inner_text().lower(), 'Combustible sin expresión redundante'
@@ -83,22 +99,28 @@ with sync_playwright() as p:
   assert 'Las características se muestran según la información disponible' not in page.locator('#product-modal-content').inner_text(), 'Sin aviso genérico en Parike'
   page.locator('#product-modal-close').click()
   assert page.locator('.product-card[data-id="encendedor-honest-punch"]').count()==1, 'HONEST presente en encendedores'
-  assert page.locator('.product-card[data-id="encendedor-honest-punch"] .product-badge').inner_text()=='PRÓXIMAMENTE', 'HONEST próximamente'
-  assert page.locator('.product-card[data-id="encendedor-honest-punch"] .product-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'HONEST enero de 2027'
+  assert page.locator('.product-card[data-id="encendedor-honest-punch"] .product-badge').inner_text()=='DISPONIBLE', 'HONEST disponible'
+  assert page.locator('.product-card[data-id="encendedor-honest-punch"] .product-availability').count()==0, 'HONEST sin próxima fecha'
+  assert page.locator('.product-card[data-id="encendedor-honest-punch"] option[value="Rojo"]').is_enabled(), 'Rojo confirmado'
+  page.locator('.product-card[data-id="encendedor-honest-punch"] [data-variant-color]').select_option('Rojo')
+  assert page.locator('.product-card[data-id="encendedor-honest-punch"] [data-add]').is_enabled(), 'Rojo seleccionable'
+  page.locator('.product-card[data-id="encendedor-honest-punch"] [data-variant-color]').select_option('Negro')
   page.locator('.product-card[data-id="encendedor-honest-punch"] .product-image-trigger').click()
   assert page.locator('#product-modal-name').inner_text()=='Encendedor HONEST de doble flama con cortador punch', 'Título HONEST'
   assert page.locator('.travel-gallery-controls button').count()==5, 'HONEST tiene cinco fotografías'
   assert 'resistente al viento' not in page.locator('#product-modal-content').inner_text().lower(), 'HONEST sin afirmaciones de resistencia al viento'
-  assert page.locator('.modal-retail-price').count()==0, 'HONEST sin precio previo a lanzamiento'
+  assert '$489 MXN' in page.locator('.modal-retail-price').inner_text(), 'HONEST IVA incluido'
   page.locator('#product-modal-close').click()
   page.locator('[data-filter="cortadores"]').click()
   assert page.locator('.product-card').count()==1, 'Nueva categoría cortadores'
   assert page.locator('.product-card[data-id="cortador-v-geometrico"]').count()==1, 'El cortapuros conserva la tarjeta actual'
-  assert page.locator('.product-card[data-id="cortador-v-geometrico"] .product-badge').inner_text()=='PRÓXIMAMENTE', 'Cortapuros: etiqueta próxima'
-  assert page.locator('.product-card[data-id="cortador-v-geometrico"] .product-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Cortapuros: mes previsto'
+  assert page.locator('.product-card[data-id="cortador-v-geometrico"] .product-badge').inner_text()=='DISPONIBLE', 'Cortapuros disponible'
+  assert page.locator('.product-card[data-id="cortador-v-geometrico"] option[value="Plateado"]').is_enabled(), 'Cortador plateado'
+  assert page.locator('.product-card[data-id="cortador-v-geometrico"] option[value="Dorado"]').is_enabled(), 'Cortador dorado'
   page.locator('.product-card[data-id="cortador-v-geometrico"] [data-detail]').click()
   assert page.locator('#product-modal-name').inner_text()=='Cortapuros en V de metal con acabado geométrico', 'Detalle cortapuros'
-  assert page.locator('.modal-availability').inner_text()=='Disponibilidad prevista: enero de 2027', 'Cortapuros: fecha en modal'
+  assert page.locator('.modal-availability').count()==0, 'Cortapuros sin próxima fecha'
+  assert '$479 MXN' in page.locator('.modal-retail-price').inner_text(), 'Cortador IVA incluido'
   assert page.locator('.travel-gallery-controls button').count()==5, 'Cinco vistas cortapuros'
   assert 'pendientes de verificación independiente' not in page.locator('#product-modal-content').inner_text().lower(), 'Sin verificación en ficha del cortador'
   assert 'desempeño pendiente de verificación' not in page.locator('#product-modal-content').inner_text().lower(), 'Sin desempeño no verificado en cortador'
@@ -401,6 +423,24 @@ with sync_playwright() as p:
   assert credit is not None and footer is not None and credit['x']+credit['width']>=footer['x']+footer['width']-18, 'Crédito alineado a la derecha'
   overflow=page.evaluate('document.documentElement.scrollWidth > window.innerWidth + 2')
   assert not overflow, f'Overflow horizontal {name}'
+  # Confirmar compra por variante sin modificar precios previos ni el CTA.
+  page.locator('[data-filter="todos"]').click()
+  cutter=page.locator('.product-card[data-id="cortador-v-geometrico"]')
+  cutter.locator('[data-variant-color]').select_option('Dorado')
+  cutter.locator('[data-add]').click()
+  parike=page.locator('.product-card[data-id="encendedor-sarike-butano"]')
+  assert parike.locator('option[value="Plata"]').is_disabled(), 'Parike plata no se habilita'
+  parike.locator('[data-add]').click()
+  honest=page.locator('.product-card[data-id="encendedor-honest-punch"]')
+  honest.locator('[data-variant-color]').select_option('Rojo')
+  honest.locator('[data-add]').click()
+  page.locator('#open-selection').click()
+  for pid,variant in [('cortador-v-geometrico','Dorado'),('encendedor-sarike-butano','Dorado'),('encendedor-honest-punch','Rojo')]:
+   assert page.locator(f'#drawer-contents [data-remove="{pid}::{variant}"]').count()==1,f'Selección {pid}/{variant}'
+  assert page.locator('#drawer-contents [data-remove="encendedor-sarike-butano::Plata"]').count()==0,'No agregar Parike plata'
+  for pid,variant in [('cortador-v-geometrico','Dorado'),('encendedor-sarike-butano','Dorado'),('encendedor-honest-punch','Rojo')]:
+   page.locator(f'#drawer-contents [data-remove="{pid}::{variant}"]').click()
+  page.locator('#close-selection').click()
   assert not errors, f'Errores JS {name}: {errors}'
   print(name,'OK','screenshot',f'tests/{name}.png')
   page.close()

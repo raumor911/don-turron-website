@@ -25,7 +25,9 @@ export function validate(data=load()){
     check(Array.isArray(p.images),p.id+': images must be list');
     check(Array.isArray(p.variants),p.id+': variants must be list');
     check(p.categoryId==='category:'+p.category,'category mismatch '+p.id);
-    check(p.commercialStatus!=='available','unverified inventory not permitted '+p.id);
+    const targetSale=['cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch'].includes(p.id);
+    check(!targetSale || p.commercialStatus==='available',p.id+': requested WhatsApp availability missing');
+    check(targetSale || p.commercialStatus!=='available',p.id+': unrelated commercial state changed');
     // El precio es información pública y no confirma inventario ni habilita comercio.
     const hasPrice=Object.prototype.hasOwnProperty.call(p,'retailPrice');
     if(hasPrice){
@@ -45,18 +47,18 @@ export function validate(data=load()){
       check(p.stock===1 && p.variants.length===0 && p.commercialStatus==='pending_confirmation',p.id+': expected one recorded unit without checkout enabled');
     } else check(p.stock===undefined,p.id+': unexpected product-level stock');
     if(p.id==='reposa-puros-plegable')check(p.variants.map(x=>x.label).join('|')==='Plata|Negro' && p.variants[0]?.stock===2 && p.variants[1]?.stock===1 && p.variants.every(x=>x.status==='confirmed'&&!x.sku) && p.commercialStatus==='pending_confirmation', 'invalid confirmed stock or prelaunch gate for reposa puros');
-    if(p.id==='cortador-v-geometrico')check(p.variants.map(x=>x.label).join('|')==='Plateado|Dorado' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed cortador variants');
-    if(p.id==='encendedor-sarike-butano')check(p.variants.map(x=>x.label).join('|')==='Plata|Dorado' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed Parike variants');
-    if(p.id==='encendedor-honest-punch')check(p.variants.map(x=>x.label).join('|')==='Negro|Rojo' && p.variants.every(x=>!x.sku&&!x.stock),'unconfirmed HONEST variants');
+    if(p.id==='cortador-v-geometrico')check(p.variants.map(x=>x.label).join('|')==='Plateado|Dorado' && p.variants.every(x=>x.status==='available'&&x.stock===undefined&&!x.sku),'cortador variants must be available with no invented stock');
+    if(p.id==='encendedor-sarike-butano')check(p.variants.map(x=>x.label).join('|')==='Plata|Dorado' && p.variants[0]?.status==='unavailable' && p.variants[0]?.stock===0 && p.variants[1]?.status==='available'&&p.variants[1]?.stock===undefined && p.variants.every(x=>!x.sku),'Parike silver must remain out of stock, gold available');
+    if(p.id==='encendedor-honest-punch')check(p.variants.map(x=>x.label).join('|')==='Negro|Rojo' && p.variants.every(x=>x.status==='available'&&x.stock===undefined&&!x.sku),'HONEST black/red must be available with no invented stock');
     if(p.manufacturerBrand!==undefined)check(typeof p.manufacturerBrand==='string'&&!!p.manufacturerBrand,p.id+': invalid manufacturer brand');
-    // Planned launch months never constitute stock confirmation or a commercial Offer.
-    if(['cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch'].includes(p.id)){
-      check(p.badge==='PRÓXIMAMENTE',p.id+': unexpected upcoming badge');
-      check(p.launchWindow?.status==='planned' && p.launchWindow.month==='2027-01' && p.launchWindow.label==='Disponibilidad prevista: enero de 2027' && p.launchWindow.source==='brand_owner_statement',p.id+': invalid planned month');
-      check(p.commercialStatus==='pending_confirmation',p.id+': release plan cannot activate commerce');
-    } else check(p.launchWindow===undefined,p.id+': unexpected launch window');
+    if(targetSale){
+      const prices={'cortador-v-geometrico':479,'encendedor-sarike-butano':719,'encendedor-honest-punch':489};
+      check(p.retailPrice?.amount===prices[p.id]&&p.retailPrice?.taxIncluded===true&&p.retailPrice?.shippingIncluded===false,p.id+': incorrect final retail price');
+      check(p.badge==='DISPONIBLE'&&p.launchWindow===undefined,p.id+': old coming-soon state must be removed');
+      check(p.stock===undefined,p.id+': do not invent product-level inventory');
+    }else check(p.launchWindow===undefined,p.id+': unrelated launch window appeared');
   }
-  check(data.products.filter(p=>p.retailPrice).length===5,'exactly five priced accessories');
+  check(data.products.filter(p=>p.retailPrice).length===8,'exactly eight priced accessories');
   check(data.products.length===8,'exactly eight documented products expected');
   check(data.products.filter(p=>p.contentStatus==='documented').length===8,'eight documented products expected');
   check(!data.products.some(p=>p.id==='encendedor-jet'),'unsupported conceptual jet product must not return');

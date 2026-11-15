@@ -284,11 +284,11 @@
       "Dimensiones de referencia del proveedor: 50.5 × 42 × 14.5 mm"
     ],
     "art": "cutter",
-    "badge": "PRÓXIMAMENTE",
+    "badge": "DISPONIBLE",
     "collectionId": "collection:accesorios-puros",
     "categoryId": "category:cortadores",
     "contentStatus": "documented",
-    "commercialStatus": "pending_confirmation",
+    "commercialStatus": "available",
     "visibility": "public",
     "sourceIds": [
       "source:cortador-v-geometrico"
@@ -321,19 +321,19 @@
     "variants": [
       {
         "label": "Plateado",
-        "status": "pending_confirmation"
+        "status": "available"
       },
       {
         "label": "Dorado",
-        "status": "pending_confirmation"
+        "status": "available"
       }
     ],
     "sortOrder": 7,
-    "launchWindow": {
-      "status": "planned",
-      "month": "2027-01",
-      "label": "Disponibilidad prevista: enero de 2027",
-      "source": "brand_owner_statement"
+    "retailPrice": {
+      "amount": 479,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
     }
   },
   {
@@ -351,11 +351,11 @@
       "Acabados: plata y dorado"
     ],
     "art": "lighter",
-    "badge": "PRÓXIMAMENTE",
+    "badge": "DISPONIBLE",
     "collectionId": "collection:accesorios-puros",
     "categoryId": "category:encendedores",
     "contentStatus": "documented",
-    "commercialStatus": "pending_confirmation",
+    "commercialStatus": "available",
     "visibility": "public",
     "sourceIds": [
       "source:encendedor-sarike-butano"
@@ -384,19 +384,20 @@
     "variants": [
       {
         "label": "Plata",
-        "status": "pending_confirmation"
+        "status": "unavailable",
+        "stock": 0
       },
       {
         "label": "Dorado",
-        "status": "pending_confirmation"
+        "status": "available"
       }
     ],
     "sortOrder": 8,
-    "launchWindow": {
-      "status": "planned",
-      "month": "2027-01",
-      "label": "Disponibilidad prevista: enero de 2027",
-      "source": "brand_owner_statement"
+    "retailPrice": {
+      "amount": 719,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
     }
   },
   {
@@ -414,11 +415,11 @@
       "Acabados: negro y rojo"
     ],
     "art": "lighter",
-    "badge": "PRÓXIMAMENTE",
+    "badge": "DISPONIBLE",
     "collectionId": "collection:accesorios-puros",
     "categoryId": "category:encendedores",
     "contentStatus": "documented",
-    "commercialStatus": "pending_confirmation",
+    "commercialStatus": "available",
     "visibility": "public",
     "sourceIds": [
       "source:encendedor-honest-punch"
@@ -451,20 +452,20 @@
     "variants": [
       {
         "label": "Negro",
-        "status": "pending_confirmation"
+        "status": "available"
       },
       {
         "label": "Rojo",
-        "status": "pending_confirmation"
+        "status": "available"
       }
     ],
     "manufacturerBrand": "HONEST",
     "sortOrder": 9,
-    "launchWindow": {
-      "status": "planned",
-      "month": "2027-01",
-      "label": "Disponibilidad prevista: enero de 2027",
-      "source": "brand_owner_statement"
+    "retailPrice": {
+      "amount": 489,
+      "currency": "MXN",
+      "taxIncluded": true,
+      "shippingIncluded": false
     }
   }
 ]

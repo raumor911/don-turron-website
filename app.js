@@ -24,7 +24,7 @@
   const explicitlySoldOut = p => p?.publicationStatus === 'Out of stock';
   const isUnavailable = p => p && (explicitlySoldOut(p) ||
     hasProductStock(p) && p.stock===0 ||
-    hasRecordedStock(p) && p.variants.every(v=>v.stock===0));
+    hasVariantOptions(p) && p.variants.every(v=>variantLimit(v)===0));
   // El estado comercial tiene prioridad sobre etiquetas editoriales como NUEVA PIEZA.
   const visibleBadge = p => isUnavailable(p) ? 'AGOTADO' : (p.badge || '');
   function productPicture(p, placement) {
@@ -48,40 +48,58 @@
   const priceMarkup = p => p.retailPrice ? `<span class="product-price product-price-set"><strong>${retailText(p)}</strong><small>IVA incluido</small></span>` : '<span class="product-price">Precio por confirmar</span>';
   const asInt = (x) => Number.isFinite(Number(x)) ? Math.max(0, Math.min(MAX_QUANTITY, Math.floor(Number(x)))) : 0;
   const hasRecordedStock = p => !!p && Array.isArray(p.variants) && p.variants.length > 0 && p.variants.every(v => Number.isInteger(v.stock) && v.stock >= 0);
-  const keyFor = (p, label) => hasRecordedStock(p) ? p.id + '::' + label : p.id;
+  // La disponibilidad declarada no es una cantidad de inventario: nunca inventar stock.
+  const hasVariantOptions = p => !!p && Array.isArray(p.variants) && p.variants.length > 0 &&
+    p.variants.every(v => ['available','unavailable','confirmed'].includes(v.status) || Number.isInteger(v.stock));
+  const variantLimit = v => v.status==='unavailable' || v.stock===0 ? 0 :
+    Number.isInteger(v.stock) && v.stock>0 ? Math.min(MAX_QUANTITY,v.stock) :
+    v.status==='available' ? MAX_QUANTITY : 0;
+  const variantBlocked = v => variantLimit(v)===0;
+  const variantSummary = p => p.variants.map(v => v.label+': '+(
+    variantBlocked(v) ? 'SIN EXISTENCIA' :
+    Number.isInteger(v.stock) ? v.stock+' '+(v.stock===1?'disponible':'disponibles') : 'Disponible'
+  )).join(' · ');
+  const keyFor = (p, label) => hasVariantOptions(p) ? p.id + '::' + label : p.id;
   function entryFor(key) {
     const [id, label, extra] = key.split('::');
     if (extra !== undefined) return null;
     const p = productById(id);
     if (!p) return null;
-    if (!hasRecordedStock(p)) return label === undefined ? {p, variant:null} : null;
+    if (!hasVariantOptions(p)) return label === undefined ? {p, variant:null} : null;
+    if (label===undefined) return null;
     const variant = p.variants.find(v => v.label === label);
     return variant ? {p, variant} : null;
   }
   const hasProductStock = p => !!p && Number.isInteger(p.stock) && p.stock >= 0;
   const productStockText = p => p.stock + (p.stock === 1 ? ' unidad disponible' : ' unidades disponibles');
-  const maxFor = entry => isUnavailable(entry.p) ? 0 : entry.variant ? Math.min(MAX_QUANTITY, entry.variant.stock) : hasProductStock(entry.p) ? Math.min(MAX_QUANTITY, entry.p.stock) : MAX_QUANTITY;
-  const stockLine = p => p.variants.map(v => v.label + ': ' + v.stock + ' ' + (v.stock === 1 ? 'disponible' : 'disponibles')).join(' · ');
+  const maxFor = entry => isUnavailable(entry.p) ? 0 : entry.variant ? variantLimit(entry.variant) : hasProductStock(entry.p) ? Math.min(MAX_QUANTITY,entry.p.stock) : MAX_QUANTITY;
+  const stockLine = p => variantSummary(p);
   function variantPicker(p) {
-    if (!hasRecordedStock(p)) return '';
-    return `<div class="variant-picker" data-variant-product="${html(p.id)}"><label>Color<select data-variant-color aria-label="Color de ${html(p.name)}">${p.variants.map(v => `<option value="${html(v.label)}">${html(v.label)}</option>`).join('')}</select></label><label>Cantidad<select data-variant-qty aria-label="Cantidad de ${html(p.name)}"><option value="1">1</option><option value="2">2</option></select></label><p class="variant-remaining" data-variant-remaining aria-live="polite"></p></div>`;
+    if (!hasVariantOptions(p)) return '';
+    const first=p.variants.find(v=>!variantBlocked(v))?.label;
+    return `<div class="variant-picker" data-variant-product="${html(p.id)}"><label>Color<select data-variant-color aria-label="Color de ${html(p.name)}">${p.variants.map(v => `<option value="${html(v.label)}" ${variantBlocked(v)?'disabled':''} ${v.label===first?'selected':''}>${html(v.label)}${variantBlocked(v)?' — SIN EXISTENCIA':''}</option>`).join('')}</select></label><label>Cantidad<select data-variant-qty aria-label="Cantidad de ${html(p.name)}"><option value="1">1</option></select></label><p class="variant-remaining" data-variant-remaining aria-live="polite"></p></div>`;
   }
   function syncVariantPicker(root) {
     if (!root) return;
     const p = productById(root.dataset.variantProduct);
-    if (!hasRecordedStock(p)) return;
+    if (!hasVariantOptions(p)) return;
     const color = root.querySelector('[data-variant-color]')?.value;
     const variant = p.variants.find(v => v.label === color);
     if (!variant) return;
     const qty = root.querySelector('[data-variant-qty]');
-    const available = explicitlySoldOut(p) ? 0 : Math.max(0, variant.stock - (cart[keyFor(p, color)] || 0));
+    const available = explicitlySoldOut(p) ? 0 : Math.max(0, variantLimit(variant) - (cart[keyFor(p, color)] || 0));
     const previous = Number(qty.value) || 1;
     qty.innerHTML = available ? Array.from({length:available},(_,i) => `<option value="${i+1}">${i+1}</option>`).join('') : '<option value="0">0</option>';
     qty.value = String(available ? Math.min(previous,available) : 0);
     qty.disabled = available === 0;
     const button = root.closest('.product-card, .modal-text')?.querySelector('[data-add]');
     if (button) button.disabled = available === 0;
-    root.querySelector('[data-variant-remaining]').textContent = explicitlySoldOut(p) ? 'Agotado' : available ? available + (available === 1 ? ' unidad restante para agregar' : ' unidades restantes para agregar') : 'Todas las unidades de este color ya están en tu selección';
+    root.querySelector('[data-variant-remaining]').textContent = variantBlocked(variant) || explicitlySoldOut(p)
+      ? 'SIN EXISTENCIA — no disponible para selección'
+      : available ? Number.isInteger(variant.stock)
+        ? available+(available===1?' unidad restante para agregar':' unidades restantes para agregar')
+        : 'Disponible · confirmar existencias y entrega por WhatsApp'
+      : 'Alcanzaste el máximo de artículos para este acabado en tu selección';
   }
   function syncAllStockControls() {
     document.querySelectorAll('[data-variant-product]').forEach(syncVariantPicker);
@@ -96,7 +114,7 @@
   function addFromButton(button) {
     const p = productById(button.dataset.add);
     if (!p || isUnavailable(p)) return;
-    if (!hasRecordedStock(p)) return changeQuantity(p.id, 1);
+    if (!hasVariantOptions(p)) return changeQuantity(p.id, 1);
     const picker = button.closest('.product-card, .modal-text')?.querySelector('[data-variant-product]');
     if (!picker) return;
     const label = picker.querySelector('[data-variant-color]').value;
@@ -137,7 +155,7 @@
           <button type="button" class="product-quick" data-detail="${html(p.id)}" aria-label="Ver detalles de ${html(p.name)}">↗</button>
         </div>
         <div class="product-details"><div class="product-category">${html(p.categoryLabel.toUpperCase())}</div>
-          <h3>${html(p.name)}</h3><p class="product-subtitle">${html(p.subtitle)}</p>${!explicitlySoldOut(p) && hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${hasRecordedStock(p) ? `${!explicitlySoldOut(p) ? `<p class="product-stock">${html(stockLine(p))}</p>` : ''}${variantPicker(p)}` : ''}${p.launchWindow ? `<p class="product-availability">${html(p.launchWindow.label)}</p>` : ''}${isUnavailable(p) ? '<p class="product-availability">Agotado</p>' : ''}
+          <h3>${html(p.name)}</h3><p class="product-subtitle">${html(p.subtitle)}</p>${!explicitlySoldOut(p) && hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${hasVariantOptions(p) ? `${!explicitlySoldOut(p) ? `<p class="product-stock">${html(stockLine(p))}</p>` : ''}${variantPicker(p)}` : ''}${p.launchWindow ? `<p class="product-availability">${html(p.launchWindow.label)}</p>` : ''}${isUnavailable(p) ? '<p class="product-availability">Agotado</p>' : ''}
           <div class="product-buy">${priceMarkup(p)}<button type="button" class="add-product" data-add="${html(p.id)}" ${isUnavailable(p)?'disabled title="Agotado"':''}>${isUnavailable(p)?'Agotado':'Seleccionar'} <span>＋</span></button></div>
         </div>
       </article>`).join('');
@@ -155,8 +173,8 @@
       const visiblePrice = card.querySelector('.product-price strong')?.textContent?.trim();
       const currentBadge=card.querySelector('.product-badge')?.textContent?.trim()||'';
       if(currentBadge!==visibleBadge(product))return false;
-      if (hasRecordedStock(product) && !card.querySelector('[data-variant-product]')) return false;
-      if (!explicitlySoldOut(product) && hasRecordedStock(product) && !card.textContent.includes(stockLine(product))) return false;
+      if (hasVariantOptions(product) && !card.querySelector('[data-variant-product]')) return false;
+      if (!explicitlySoldOut(product) && hasVariantOptions(product) && !card.textContent.includes(stockLine(product))) return false;
       if (!explicitlySoldOut(product) && hasProductStock(product) && card.querySelector('.product-stock')?.textContent !== productStockText(product)) return false;
       if (Boolean(card.querySelector('[data-add]')?.disabled) !== Boolean(isUnavailable(product))) return false;
       return product.retailPrice ? visiblePrice === retailText(product) : !!card.querySelector('.product-price');
@@ -286,7 +304,7 @@
   }
   function modalDisclosure(p) {
     if (explicitlySoldOut(p)) return '<p class="modal-caption">Agotado. Envío no incluido. La compra se confirma por WhatsApp.</p>';
-    if (p.retailPrice) return '<p class="modal-caption">Envío no incluido. '+(hasRecordedStock(p)||hasProductStock(p)?'Inventario registrado sujeto a cambios; seleccionar no reserva unidades.':'Existencias por confirmar.')+' La compra se confirma por WhatsApp; aún no hay pagos en este sitio.</p>';
+    if (p.retailPrice) return '<p class="modal-caption">Envío no incluido. '+(hasRecordedStock(p)||hasProductStock(p)?'Inventario registrado sujeto a cambios; seleccionar no reserva unidades.':hasVariantOptions(p)?'Selecciona un acabado disponible; confirmar existencias antes del pago.':'Existencias por confirmar.')+' La compra se confirma por WhatsApp; aún no hay pagos en este sitio.</p>';
     if (p.id === 'encendedor-honest-punch') return '';
     if (p.id === 'encendedor-sarike-butano') return '';
     if (p.id === 'cortador-v-geometrico') return '<p class="modal-caption">Precio por confirmar.</p>';
@@ -295,7 +313,7 @@
   function openProduct(id, trigger) {
     const p = productById(id);
     if (!p) return;
-    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${html(item.label)}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p>${!explicitlySoldOut(p) && hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${isUnavailable(p) ? '<p class="modal-availability">Agotado</p>' : ''}${p.launchWindow ? `<p class="modal-availability">${html(p.launchWindow.label)}</p>` : ''}${p.retailPrice ? `<p class="modal-retail-price"><strong>${retailText(p)}</strong><small>IVA incluido · Envío no incluido</small></p>` : ''}<ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul>${modalDisclosure(p)}${variantPicker(p)}<button type="button" class="btn btn-gold" data-add="${html(p.id)}" ${isUnavailable(p)?'disabled title="Agotado"':''}>${isUnavailable(p)?'Agotado':'Añadir a mi selección'} <span>＋</span></button></div></div>`;
+    $('product-modal-content').innerHTML = `<div class="modal-content-layout"><div class="modal-art">${productPicture(p, "modal")}${photosOf(p) ? `<div class="travel-gallery-controls" role="group" aria-label="Vistas de ${html(p.name)}">${photosOf(p).map((item, i) => `<button type="button" data-photo-index="${i}" aria-label="${html(item.label)}" aria-pressed="${i === 0}">${String(i + 1).padStart(2, "0")}</button>`).join("")}</div>` : ""}</div><div class="modal-text"><p class="eyebrow eyebrow-dark">${html(p.categoryLabel.toUpperCase())} / ${photosOf(p) ? "ARTÍCULO PRESENTADO" : "CATÁLOGO CONCEPTUAL"}</p><h2 id="product-modal-name">${html(p.name)}</h2><p>${html(p.description)}</p>${!explicitlySoldOut(p) && hasProductStock(p) ? `<p class="product-stock">${html(productStockText(p))}</p>` : ''}${isUnavailable(p) ? '<p class="modal-availability">Agotado</p>' : ''}${p.launchWindow ? `<p class="modal-availability">${html(p.launchWindow.label)}</p>` : ''}${p.retailPrice ? `<p class="modal-retail-price"><strong>${retailText(p)}</strong><small>IVA incluido · Envío no incluido</small></p>` : ''}${p.commercialStatus==='available'&&hasVariantOptions(p)?`<p class="product-stock">${html(stockLine(p))}</p>`:''}<ul>${p.features.map(s=>`<li>${html(s)}</li>`).join('')}</ul>${modalDisclosure(p)}${variantPicker(p)}<button type="button" class="btn btn-gold" data-add="${html(p.id)}" ${isUnavailable(p)?'disabled title="Agotado"':''}>${isUnavailable(p)?'Agotado':'Añadir a mi selección'} <span>＋</span></button></div></div>`;
     syncAllStockControls();
     openDialog($('product-modal'), $('product-modal-backdrop'), trigger);
     emit('product_view',{product_id:id});
@@ -437,6 +455,9 @@
   }
   function useRemoteCatalog() {
     // El flag se habilita solo tras migración, variables privadas y prueba de API.
+    // Los despliegues de preview usan el catálogo versionado de la rama;
+    // producción sigue usando la API de inventario como fuente autoritativa.
+    if (location.hostname.endsWith('.vercel.app')) return;
     if (config.liveCatalogEnabled !== true || !/^https?:$/.test(location.protocol)) return;
     const abort = new AbortController();
     // Consulta no bloqueante; tolerar temporalmente conexiones frías de MySQL.
