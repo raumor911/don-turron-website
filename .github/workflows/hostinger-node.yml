@@ -62,6 +62,8 @@ jobs:
           node --check scripts/prepare-hostinger.cjs
       - name: Exercise Express HTTP routes and private-file boundaries
         run: npm run test:hostinger
+      - name: Verify approved release across stale MySQL, SSR and LLMO
+        run: npm run test:catalog-release
       - name: Verify independent publication status and catalog pricing
         run: node --test tests/catalog-publication.test.mjs
       - name: Verify efficient MySQL reads and cache expiry

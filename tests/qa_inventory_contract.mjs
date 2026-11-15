@@ -15,5 +15,11 @@ assert.ok(!/DROP TABLE|TRUNCATE TABLE|DELETE FROM|UPDATE dt_inventory/i.test(sql
 assert.ok(api.includes("process.env.DT_DB_NAME===expectedDatabase"));
 assert.ok(api.includes('res.status(503)'));
 assert.ok(api.includes('publication_status'));
+assert.ok(api.includes('reconcileApprovedCatalog(body.products)'),
+  'Hostinger API must use the approved release before ETag and SSR');
+const release=fs.readFileSync(new URL('../api/catalog-release.js',import.meta.url),'utf8');
+assert.match(release,/encendedor-sarike-butano/);
+assert.match(release,/status:'unavailable',stock:0/,
+  'Parike silver must remain unselectable');
 assert.ok(browser.includes("fetch('/api/catalog'"));
 console.log('8 productos; descripciones e imágenes SQL; lectura segura y degradación del cliente: OK');
