@@ -15,7 +15,8 @@
     "build:css": "node scripts/build-css.mjs",
     "test:inventory": "node tests/qa_inventory_contract.mjs",
     "test:hostinger": "node --test tests/hostinger-server.test.mjs",
-    "postinstall": "node scripts/prepare-hostinger.cjs"
+    "postinstall": "node scripts/prepare-hostinger.cjs",
+    "test:catalog-release": "node --test tests/catalog-release.test.mjs"
   },
   "engines": {
     "node": ">=20"

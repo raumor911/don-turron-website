@@ -426,8 +426,11 @@
       }).map(record=>{
         const prior=previous.find(v=>v.label===record.label)||{};
         const count=Number.isInteger(record.stock)&&record.stock>=0?record.stock:undefined;
-        return {...prior,label:nonempty(record.label,80),stock:count,
-          status:count===undefined?'pending_confirmation':'confirmed'};
+        const status=record.status==='unavailable'||count===0?'unavailable':
+          count!==undefined?'confirmed':
+          record.status==='available'?'available':'pending_confirmation';
+        return {...prior,label:nonempty(record.label,80),
+          stock:status==='unavailable'?0:count,status};
       });
     const price=remote.retailPrice&&Number.isFinite(remote.retailPrice.amount)&&remote.retailPrice.amount>=0&&
       remote.retailPrice.currency==='MXN'?remote.retailPrice:undefined;
@@ -439,6 +442,7 @@
       subtitle:nonempty(remote.subtitle,250),description:nonempty(remote.description,10000),
       features:remote.features.filter(v=>typeof v==='string').slice(0,24).map(v=>nonempty(v,500)),
       images,art,badge:nonempty(remote.badge,80),stock,variants,retailPrice:price,launchWindow,
+      commercialStatus:remote.commercialStatus||base.commercialStatus,
       publicationStatus:remote.publicationStatus==='Out of stock'?'Out of stock':remote.publicationStatus};
   }
   function refreshSelectionAfterCatalog() {

@@ -2,6 +2,7 @@
 import mysql from 'mysql2/promise';
 import {createHash} from 'node:crypto';
 import {createCatalogCache} from './catalog-cache.js';
+import {reconcileApprovedCatalog} from './catalog-release.js';
 
 const expectedDatabase='u345974778_donturron';
 const configured=Boolean(process.env.DT_DB_HOST && process.env.DT_DB_USER && process.env.DT_DB_PASSWORD && process.env.DT_DB_NAME===expectedDatabase);
@@ -104,6 +105,9 @@ export function readCatalogSnapshot(){
       ORDER BY c.sort_order,p.product_id,v.variant_label
     `);
     const body=buildPublicCatalog(rows);
+    // Only the approved three-product release overrides stale DB editorial fields.
+    // MySQL still determines publication visibility and real stock quantities.
+    body.products=reconcileApprovedCatalog(body.products);
     const etag='"'+createHash('sha256').update(JSON.stringify(body)).digest('hex')+'"';
     return {body,etag};
   });
