@@ -11,7 +11,11 @@ const json=JSON.parse(read('ai/products.json')),kg=JSON.parse(read('ai/knowledge
 const ids=k.products.map(p=>p.id);
 if(!ids.every(id=>cat.includes('"id": "'+id+'"')))throw new Error('Catalog diverges from knowledge');
 const retailMap=new Map(k.products.filter(p=>p.retailPrice).map(p=>[p.id,p.retailPrice.amount]));
-if(retailMap.size!==5)throw new Error('Only five priced accessories allowed');
+if(retailMap.size!==8)throw new Error('Exactly eight published prices required');
+const expectedPrices={'humidor-viaje-5-puros':649,'cenicero-mesa':549,'estuche-viaje':299,'estuche-kit-viaje':949,'reposa-puros-plegable':189,'cortador-v-geometrico':479,'encendedor-sarike-butano':719,'encendedor-honest-punch':489};
+for(const [id,price] of Object.entries(expectedPrices))if(retailMap.get(id)!==price)throw new Error('Unexpected retail price for '+id);
+const parike=k.products.find(p=>p.id==='encendedor-sarike-butano');
+if(parike.variants[0]?.status!=='unavailable'||parike.variants[0]?.stock!==0||parike.variants[1]?.status!=='available')throw new Error('Parike variant status mismatch');
 for(const p of k.products){
   const source=p.retailPrice;
   const publicRecord=json.products.find(x=>x.id===p.id);
