@@ -123,7 +123,7 @@ test('Hostinger SSR, product detail and LLMO consistently publish the approved p
     assert.match(detail,new RegExp(value.replace('$','\\$')));
     assert.doesNotMatch(detail,/Disponibilidad prevista: enero de 2027/);
   }
-  const parike=html.match(/<article class="product-card" data-id="encendedor-sarike-butano">[\\s\\S]*?<\\/article>/)?.[0];
+  const parike=html.match(new RegExp('<article class="product-card" data-id="encendedor-sarike-butano">[\\s\\S]*?<\\/article>'))?.[0];
   assert.match(parike,/Plata: SIN EXISTENCIA/);
   assert.match(parike,/<option value="Plata" disabled>/);
   assert.match(parike,/value="Dorado" selected/);
