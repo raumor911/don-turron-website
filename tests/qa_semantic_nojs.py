@@ -33,15 +33,40 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
         assert page.locator('.product-card[data-id="encendedor-jet"]').count()==0,'Sin ficha ficticia'
         assert page.locator('meta[name=robots]').get_attribute('content') == 'index, follow'
         assert page.locator('link[rel=canonical]').get_attribute('href') == 'https://www.donturron.com.mx/'
-        # Los tres cambios son precios IVA incluido y estados disponibles por acabado.
+        for item in ('cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch'):
+            card=page.locator(f'.product-card[data-id="{item}"]')
+            assert card.locator('.product-badge').inner_text()=='DISPONIBLE',item
+            assert card.locator('.product-availability').count()==0,item
+            assert card.locator('[data-variant-color]').count()==1,item
+        parike=page.locator('.product-card[data-id="encendedor-sarike-butano"]')
+        assert parike.locator('.product-stock').inner_text()=='Plata: SIN EXISTENCIA · Dorado: Disponible'
+        assert parike.locator('option[value="Plata"]').is_disabled()
+        assert page.locator('.product-availability').count()==0,'No upcoming launch badges'
+        expected={'humidor-viaje-5-puros':649,'cenicero-mesa':549,'estuche-viaje':299,'estuche-kit-viaje':949,'reposa-puros-plegable':189,'cortador-v-geometrico':479,'encendedor-sarike-butano':719,'encendedor-honest-punch':489}
+        for item,amount in expected.items():
+            card=page.locator(f'.product-card[data-id="{item}"]')
+            assert card.locator('.product-price').inner_text().startswith(f'${amount} MXN'),item
+            assert 'IVA incluido' in card.locator('.product-price').inner_text(),item
+        assert page.locator('.product-price').count()==8,'Eight products have a retail price'
+
+        # Los precios y estados deben coincidir entre catálogo, grafo y ficha.
+        api_products=page.request.get(base+'/ai/products.json').json()['products']
+        graph=page.request.get(base+'/ai/knowledge-graph.json').json()['nodes']
+        for item,amount in expected.items():
+            api=next(p for p in api_products if p['id']==item)
+            node=next(n for n in graph if n['id']==item)
+            assert api['retailPrice']=={'amount':amount,'currency':'MXN','taxIncluded':True,'shippingIncluded':False},item
+            assert node['retailPrice']==api['retailPrice'],item
         for item in ('cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch'):
             api=next(p for p in api_products if p['id']==item)
-            assert api.get('launchWindow') is None,item
+            node=next(n for n in graph if n['id']==item)
+            assert api['launchWindow'] is None,item
+            assert node.get('launchWindow') in (None,{}),item
             assert api['commercialStatus']=='available',item
-        assert not any(p.get('launchWindow') for p in api_products),'Sin fechas de lanzamiento obsoletas'
-        variant=next(p for p in api_products if p['id']=='encendedor-sarike-butano')['variants']
-        assert variant[0]['status']=='unavailable' and variant[0]['stock']==0
-        assert variant[1]['status']=='available'
+        assert sum(bool(p.get('launchWindow')) for p in api_products)==0,'No outdated planned launches'
+        variants=next(p for p in api_products if p['id']=='encendedor-sarike-butano')['variants']
+        assert variants[0]['status']=='unavailable' and variants[0]['stock']==0
+        assert variants[1]['status']=='available'
         product_ids=['humidor-viaje-5-puros','cenicero-mesa','estuche-viaje','estuche-kit-viaje','reposa-puros-plegable','cortador-v-geometrico','encendedor-sarike-butano','encendedor-honest-punch']
         for product_id in product_ids:
             response=page.goto(base+'/productos/'+product_id+'/',wait_until='domcontentloaded')
@@ -51,7 +76,7 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
             assert page.locator('.dt-retail-price').count()==1,product_id
             assert 'IVA incluido' in page.locator('.dt-retail-price').inner_text(),product_id
             assert 'Envío no incluido' in page.locator('.dt-retail-price').inner_text(),product_id
-            assert '"offers"' not in page.locator('script[type="application/ld+json"]').inner_text().lower(),'No unsupported Offers'
+            assert '"offers"' not in page.locator('script[type="application/ld+json"]').inner_text().lower(),'No unsupported checkout Offer'
             if product_id=='encendedor-sarike-butano':
                 assert 'Plata: SIN EXISTENCIA' in page.locator('.dt-main').inner_text()
             assert page.locator('.dt-images img').count()>=2,f'Fotografías {product_id}'
@@ -62,6 +87,6 @@ with ThreadingHTTPServer(('127.0.0.1',0),partial(SilentHandler,directory=str(ROO
         response=page.goto(base+'/guia/estuche-o-humidor/',wait_until='domcontentloaded')
         assert response.status==200 and page.locator('h1').count()==1
         assert page.locator('meta[name=robots]').get_attribute('content')=='index, follow'
-        print('DT static no-JS: 8 cards, 8 product routes, 1 guide, production canonical/indexing OK')
+        print('DT preview static no-JS: 8 priced products; Parike silver blocked; product routes and canonical retained')
         context.close();browser.close()
     server.shutdown()
